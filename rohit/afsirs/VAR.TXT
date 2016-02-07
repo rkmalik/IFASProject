@@ -1,0 +1,10 @@
+**************************DATA************************
+Output file name : OUTFIL = Piyush.out
+Today's date : PDATE = Wed Jul 08 12:03:36 EDT 2015
+Site name : SITE = UFL
+Style of output : ICODE = -1
+Suppress output if Irrigation is 0 : IPRT = 0
+Crop type : CTYPE = null
+Irrigation season start date : STARTIRRDATE = Wed Jul 08 00:00:00 EDT 2015
+Irrigation season end date : ENDIRRDATE = Sun Nov 08 00:00:00 EST 2015
+Climate File selected : CLIMFIL = CLIM.APL

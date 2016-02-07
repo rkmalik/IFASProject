@@ -1,0 +1,113 @@
+*EXP.DETAILS: TCTC1601PT 
+
+// Also Change the code from the Weather File
+
+*GENERAL
+//1 @PEOPLE  and Farmers name Should be UPdated
+@ADDRESS
+ UNIVERSITY OF FLORIDA, GAINESVILLE, FL, USA
+//2 @Site put the site name. 
+
+//3 Keep ONly one treat ment or what ever is available 
+//4 TCTC Should also be updated
+//5 Alignment shouuld be correct
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 TCTC1601_2007              1  1  0  0  1  0  0  0  0  0  0  0  1
+ 2 1 1 0 TCTC1601_2008              1  1  0  0  2  0  0  0  0  0  0  0  1
+1 4 1 1 0 TCTC1601_2010              1  1  0  0  4  0  0  0  0  0  0  0  1
+ 5 1 1 0 TCTC1601_2011              1  1  0  0  5  0  0  0  0  0  0  0  1
+ 6 1 1 0 TCTC1601_2012              1  1  0  0  6  0  0  0  0  0  0  0  1
+ 7 1 1 0 TCTC1601_2013              1  1  0  0  7  0  0  0  0  0  0  0  1
+ 8 1 1 0 TCTC1601_2014              1  1  0  0  8  0  0  0  0  0  0  0  1
+ 9 1 1 0 TCTC1601_2015              1  1  0  0  9  0  0  0  0  0  0  0  1
+10 1 1 0 TCTC1601_2016              1  1  0  0 10  0  0  0  0  0  0  0  1
+
+*CULTIVARS
+@C CR INGENO CNAME
+ 1 PT IB0005 -99
+
+ //6 Five space and check with the chm file how many spaces. Correc the alignment,
+// 7 Bed width and Bed Height shoulu be updated
+// 8 TCT should be TCTC Check the Original code
+// 9 Alginment Should be correct for Original code. 
+// PMALB is bed color
+
+// Color Data in the Code so that I can use tha to set in the PTX file. 
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    BDWD  BDHT PMALB FLNAME		
+ 1 TCTC1601 TCT        -99   -99 -99     -99   -99 -99   -99    -99  FL00101098    -99   -99   -99   -99
+ // ONly Two decimal places. Right Alignement Of Corodinates.
+ // Elevation I get it from Weather FIle. From Fawn Station CSV File
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1 -82.35410308838 29.676599502564       -99               -99   -99   -99   -99   -99   -99
+
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 07018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 2 08018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 3 09018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 4 10018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 5 11018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 6 12018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 7 13018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 8 14018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+ 9 15018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+10 16018   -99  1280  1280     C   -99    2    -99    2    -99   -99   -99   -99   -99                        -99
+
+*IRRIGATION AND WATER MANAGEMENT
+// Efficiency 1.0 always
+// Dripper Emitter Space is IRSPC  in between all are -99
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRSPC IROFS IRDEP IRNAME
+ 1  0.95   -99   -99   -99   -99   -99   -99   20.    0.    0. Drip Irrig
+
+ // Idate, Irop is IR005, IRVAL is the Rate which is need to change from Gal/sec, IRSTR is hh:mm, duration, IRINT, IRNUM will be different. 
+@I IDATE  IROP IRVAL IRSTR IRDUR IRINT IRNUM
+ 1 11074 IR005 0.270 10:00   15.  135.     3
+ 1 11076 IR007 90.35
+ 1 11077 IR007 74.03
+ 1 11078 IR007 73.36
+ 1 11079 IR007 80.65
+ 1 11080 IR007 85.05
+ 1 11081 IR007 86.83
+ 1 11082 IR007 87.31
+
+ // Use the Application Table
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1 11046 FE001   -99    15    56     0     0     0     0   -99 -99
+ 1 11046 FE013   -99    15     0   112     0     0     0   -99 -99
+ 1 11046 FE016   -99    15     0     0   168     0     0   -99 -99
+
+// SImulation is 3 Days before the planting date 
+// NYERS = 10 always
+// SDATE is 3 days before the planting data
+// RSEED 2150
+// SNAME keep this blank
+// SMODEL KEEP THIS ALSO BLANK
+
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S   -99  2150 DEFAULT SIMULATION CONTRL 
+// Pass all the fields this data
+ @N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              Y     Y     Y     N     N     N     N     Y     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     L     R     1     P     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     R     R     M
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     N     N     N     N     N     N     N
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          82050 82064    40   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10  1.00
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI             30    50    25 FE001 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 83057   100     0
+
