@@ -1,0 +1,10 @@
+$BATCH(POTATO)
+!
+! Command Line : C:\DSSAT45\DSCS0M45.EXE B DSSBatch.v45
+! Crop         : Potato
+! Experiment   : JUJU1601.PTX
+! ExpNo        : 1
+! Debug        : C:\DSSAT45\DSCSM045.EXE " B DSSBatch.v45"
+!
+@FILEX                                                                                        TRTNO     RP     SQ     OP     CO
+JUJU1601.PTX                                                                                      1      1      1      1      0
