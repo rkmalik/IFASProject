@@ -7,7 +7,7 @@ package org.agmip.ui.afsirs.util;
 
 /**
  *
- * @author Piyush
+ * @author Rohit Kumar Malik
  */
 public class Irrigation {
     private int code;

@@ -42,7 +42,7 @@ import java.text.SimpleDateFormat;
 
 /**
  *
- * @author Piyush
+ * @author Rohit Kumar Malik
  */
 public class SWFrame extends javax.swing.JFrame {
 
@@ -620,6 +620,12 @@ public class SWFrame extends javax.swing.JFrame {
 
         
         System.out.println("DWT ="  + DWT);
+        
+        
+        //@rohit_note: Data needs to be taken based on the selection from UI Map/File/Keyboard. For eg. If this is file/Keyboard
+        // Then Take the data from the controls/ else if it is Map then take the data from the json File. 
+        
+        
 
         SNAME = soilNameText.getText();
         TXT[0] = soilTextureText.getText();

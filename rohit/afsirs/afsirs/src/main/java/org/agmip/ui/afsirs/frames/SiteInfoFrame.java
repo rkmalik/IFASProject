@@ -33,7 +33,7 @@ import org.agmip.ui.afsirs.util.Irrigation;
 
 /**
  *
- * @author Piyush
+ * @author Rohit Kumar Malik
  */
 public class SiteInfoFrame extends javax.swing.JFrame {
 

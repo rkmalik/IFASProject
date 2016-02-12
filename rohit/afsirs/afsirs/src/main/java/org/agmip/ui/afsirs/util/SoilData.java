@@ -7,7 +7,8 @@ package org.agmip.ui.afsirs.util;
 
 /**
  *
- * @author Piyush
+ * @author  Rohit Kumar Malik
+ * 
  */
 public class SoilData {
     int ID;
@@ -19,6 +20,9 @@ public class SoilData {
     double[] WCU;
     double[] DU;
     
+    double soilTypeArea;
+    
+
     public SoilData(int id, String name, int nl){
         ID = id;
         SNAME = name;
@@ -58,5 +62,14 @@ public class SoilData {
     
     public int getNL(){
         return NL;
+    }
+    
+        
+    public void setSoilTypeArea (double soilTypeArea) {
+        this.soilTypeArea = soilTypeArea;
+    }
+    
+    public double getSoilTypeArea () {
+        return this.soilTypeArea;
     }
 }

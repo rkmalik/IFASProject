@@ -27,7 +27,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
- * @author Piyush
+ * @author Rohit Kumar Malik
  */
 public class PlotFrame extends javax.swing.JFrame {
 
