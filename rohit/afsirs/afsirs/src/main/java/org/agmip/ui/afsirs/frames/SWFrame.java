@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.text.SimpleDateFormat;
  
 
 /**
@@ -109,7 +110,8 @@ public class SWFrame extends javax.swing.JFrame {
             }
         }
 
-        soilListBox.addItem("Enter from Keyboard");
+        //soilListBox.addItem("Enter from Keyboard");
+        toogleStateOfControls ();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/data/soil.dat")));
             String line;
@@ -362,9 +364,9 @@ public class SWFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Take Data From:");
+        jLabel2.setText("Input Data From:");
 
-        jButtonRefresh.setText("Refresh Map Data");
+        jButtonRefresh.setText("Upload Map Data");
         jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRefreshActionPerformed(evt);
@@ -380,97 +382,94 @@ public class SWFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(soilListBox, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(dwtText, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel7)
-                                .addGap(18, 18, 18)
-                                .addComponent(infoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(251, 251, 251)
-                                .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(soilNameLabel)
-                                .addGap(193, 193, 193)
-                                .addComponent(soilTextureLabel))
-                            .addComponent(NLLabel)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dwtLabel))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(jLabel1)
+                                .addGap(292, 292, 292)))
+                        .addGap(50, 50, 50)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addGap(42, 42, 42))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(81, 81, 81)
+                                .addComponent(prevButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(nextButton)
+                                .addGap(127, 127, 127))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(NLLabel)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
+                                        .addComponent(NLComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(70, 70, 70)
+                                        .addComponent(errorLabel)
+                                        .addGap(37, 37, 37)
+                                        .addComponent(wcErrorLabel))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jButtonRefresh)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                    .addComponent(soilNameText)
-                                                    .addComponent(soilListBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 219, Short.MAX_VALUE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(showSoilDataButton))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(NLComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(60, 60, 60)
-                                                .addComponent(errorLabel))))
-                                    .addComponent(jLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(wcErrorLabel))
+                                                .addComponent(jRadioMap)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jRadioFile)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jRadioKeyboard)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(showSoilDataButton)))))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jRadioMap)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jRadioFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jRadioKeyboard)
-                                .addGap(118, 118, 118)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jLabel5)
-                                        .addComponent(jButtonMap, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jButtonRefresh, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                        .addContainerGap())))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(93, 93, 93)
-                .addComponent(prevButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(nextButton)
-                .addGap(139, 139, 139))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irrTypeLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)
+                                .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jButtonMap, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(soilNameLabel)
+                                    .addGap(153, 153, 153)
+                                    .addComponent(soilTextureLabel)
+                                    .addGap(40, 40, 40)))
+                            .addComponent(dwtLabel)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(dwtText, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7)
+                                .addGap(27, 27, 27)
+                                .addComponent(infoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(irrTypeLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(irrTypeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioFile)
-                            .addComponent(jRadioMap)
-                            .addComponent(jRadioKeyboard)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(dwtLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(jButtonMap)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonRefresh)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)))
+                .addComponent(irrTypeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(dwtLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dwtText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(infoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel7)
+                    .addComponent(infoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioFile)
+                    .addComponent(jRadioMap)
+                    .addComponent(jRadioKeyboard)
+                    .addComponent(jLabel2)
+                    .addComponent(showSoilDataButton))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonMap)
+                    .addComponent(jButtonRefresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -478,17 +477,16 @@ public class SWFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(soilListBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(showSoilDataButton)
                     .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(soilTextureLabel)
-                    .addComponent(soilNameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(soilNameLabel)
+                    .addComponent(soilTextureLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(NLLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -501,7 +499,7 @@ public class SWFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(prevButton)
                     .addComponent(nextButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(21, 21, 21))
         );
 
         pack();
@@ -520,7 +518,7 @@ public class SWFrame extends javax.swing.JFrame {
         if (row < NL) {
             while (row < NL) {
                 Object[] vec = new Object[3];
-                if (soilListBox.getSelectedIndex() == 0) {
+                if (jRadioKeyboard.isSelected()) {
                     vec[0] = row + 1;
                     model.addRow(vec);
                     row++;
@@ -546,7 +544,7 @@ public class SWFrame extends javax.swing.JFrame {
         }
         int index = soilListBox.getSelectedIndex();
 
-        soilNameText.setEnabled(index == 0);
+        /*soilNameText.setEnabled(index == 0);
         soilTextureText.setEnabled(index == 0);
         NLComboBox.setEnabled(index == 0);
         soilTable.setEnabled(index == 0);
@@ -559,16 +557,18 @@ public class SWFrame extends javax.swing.JFrame {
             NLComboBox.setSelectedIndex(-1);
             waterholdcapacityBox.setSelectedIndex(0);
             return;
-        }
+        }*/
 
-        try {
-            readFromFile(soilListBox.getSelectedIndex());
-            soilNameText.setText(SNAME);
-            soilTextureText.setText(TXT[0]);
-            NLComboBox.setSelectedIndex(NL - 1);
-            waterholdcapacityBox.setSelectedIndex(0);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (jRadioFile.isSelected()) {
+            try {
+                readFromFile(soilListBox.getSelectedIndex());
+                soilNameText.setText(SNAME);
+                soilTextureText.setText(TXT[0]);
+                NLComboBox.setSelectedIndex(NL - 1);
+                waterholdcapacityBox.setSelectedIndex(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }//GEN-LAST:event_soilListBoxActionPerformed
 
@@ -692,15 +692,35 @@ public class SWFrame extends javax.swing.JFrame {
 
     private void showSoilDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showSoilDataButtonActionPerformed
         // TODO add your handling code here:
+        
+        // There are two paths of this 1. if the Map is enabled 
+        boolean isMapEnabled = jRadioMap.isSelected();
+        boolean isFileEnabled = jRadioFile.isSelected();
         String str = "";
-        str += "Soil Name = " + SNAME + "\n";
-        str += "Texture = " + TXT[0] + "\n";
-        str += "Number of Layers = " + NL + "\n";
-        str += "    DU        WCL        WCU\n";
-        for (int i = 0; i < NL; i++) {
-            str += (i + 1) + "  " + DU[i] + "       " + WCL[i] + "       " + WCU[i] + "\n";
+            
+        if (isMapEnabled) {
+            
+            try {
+                str = readFromMapJson();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(null, str);
+        }  else if (isFileEnabled) {
+            str += "Soil Name = " + SNAME + "\n";
+            str += "Texture = " + TXT[0] + "\n";
+            str += "Number of Layers = " + NL + "\n";
+            str += "    DU        WCL        WCU\n";
+            for (int i = 0; i < NL; i++) {
+                str += (i + 1) + "  " + DU[i] + "       " + WCL[i] + "       " + WCU[i] + "\n";
+            }
+            JOptionPane.showMessageDialog(null, str);
         }
-        JOptionPane.showMessageDialog(null, str);
+            
+        // If the File is enabled.
+        
+        
+        
     }//GEN-LAST:event_showSoilDataButtonActionPerformed
 
     private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoButtonActionPerformed
@@ -758,7 +778,7 @@ public class SWFrame extends javax.swing.JFrame {
         if (jRadioFile.isSelected()) {
             
             try {
-            readFromFile(soilListBox.getSelectedIndex());
+                readFromFile(soilListBox.getSelectedIndex());
                 soilNameText.setText(SNAME);
                 soilTextureText.setText(TXT[0]);
                 NLComboBox.setSelectedIndex(NL - 1);
@@ -771,26 +791,42 @@ public class SWFrame extends javax.swing.JFrame {
 
     private void toogleStateOfControls () {
         
-        jButtonMap.setEnabled(jRadioMap.isSelected());
-        jButtonRefresh.setEnabled(jRadioMap.isSelected());
-        
         boolean isKeyboardEnabled = jRadioKeyboard.isSelected();
-            
-        if (!isKeyboardEnabled) {
-            soilNameText.setText("");
-            soilTextureText.setText("");
-            NLComboBox.setSelectedIndex(-1);
-            waterholdcapacityBox.setSelectedIndex(0);
-                    
-        } 
+        boolean isMapSelected = jRadioMap.isSelected();
+        boolean isFileSelected = jRadioFile.isSelected();
+        
+        
+        
+        
+        jButtonMap.setEnabled(isMapSelected||(isKeyboardEnabled&&isFileSelected));
+        jButtonRefresh.setEnabled(isMapSelected||(isKeyboardEnabled&&isFileSelected));
+        
+        
+        showSoilDataButton.setEnabled(isMapSelected||isFileSelected);
+
+        soilListBox.setEnabled(isFileSelected);
+        waterholdcapacityBox.setEnabled(isFileSelected);
+
         
         soilNameText.setEnabled(isKeyboardEnabled);
         soilTextureText.setEnabled(isKeyboardEnabled);
         NLComboBox.setEnabled(isKeyboardEnabled);
         soilTable.setEnabled(isKeyboardEnabled);
-        waterholdcapacityBox.setEnabled(isKeyboardEnabled);
-        showSoilDataButton.setEnabled(isKeyboardEnabled);
-        
+            
+        if (!isFileSelected) {
+            soilNameText.setText("");
+            soilTextureText.setText("");
+            NLComboBox.setSelectedIndex(-1);
+            waterholdcapacityBox.setSelectedIndex(0);
+            
+            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+            int row = model.getRowCount();
+            for (int i = 0; i < row; i++) {
+                model.removeRow(0);
+            }
+            row = 0;
+
+        } 
     }
     
     private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
@@ -804,7 +840,7 @@ public class SWFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRefreshActionPerformed
 
     
-    public void readFromMapJson () throws IOException {
+    public String readFromMapJson () throws IOException {
         
         // Get the latest file form the download folder.
         String home = System.getProperty("user.home");
@@ -814,10 +850,16 @@ public class SWFrame extends javax.swing.JFrame {
         FileFilter fileFilter = new WildcardFileFilter("*." + "json");
         File[] files = dir.listFiles(fileFilter);
         
+        String str = "";
+        
         if (files.length > 0) {
             Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
             theNewestFile = files[0];
         }
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        str += "Data Date: " + sdf.format(theNewestFile.lastModified()) + "\n";
+        
         
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(theNewestFile);
@@ -828,21 +870,42 @@ public class SWFrame extends javax.swing.JFrame {
             model.removeRow(0);
         }
         row = 0;
+        
         for (JsonNode n : soils) {
-            //System.out.println (n);
+            
             String soilName = n.path("soilName").textValue();
-            double soilArea = Double.parseDouble(n.path("soilArea").textValue());
-            soilNameText.setText(soilName);
+            String soilTypeArea = n.path("soilArea").textValue();
+            
+            str += "Soil Name = " + soilName + "\n";
+            str += "Soil Area= " + soilTypeArea + "\n";
+            
+            int numberOfLayers = 0;
+            String layerDetails = "";
+            
+            String wcu = "";
+            String du = "";
+            String wcl = "";
+            String strTmp = "";
+            
             JsonNode soilLayersNodes = n.path("soilLayer");
-             for (JsonNode node : soilLayersNodes) {
-                Object[] vec = new Object[3];
-                vec[0] = row + 1;
-                vec[1] = node.get("sldul").asDouble();
-                vec[2] =node.get("slll").asDouble()/100;
-                model.addRow(vec);
-                row++;
+
+            for (JsonNode node : soilLayersNodes) {
+                wcu = String.valueOf(node.get("sldul").asDouble());
+                du = String.valueOf(node.get("slll").asDouble());
+                wcl = String.valueOf(node.get("sllb").asDouble());
+                strTmp += (++numberOfLayers) + "  " + du + "       " + wcl + "       " + wcu + "\n";
             }
+            
+            str += "Number of Layers = " + numberOfLayers + "\n";
+            str += "    DU        WCL        WCU\n";
+            str+= strTmp;
+            
+            
+            str+= "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" ;
+            
         }
+        
+        return str;
     }
     public void readFromFile(int code) throws IOException {
 

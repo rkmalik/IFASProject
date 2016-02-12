@@ -573,7 +573,7 @@ public class DCOEFAnnualFrame extends javax.swing.JFrame {
             
 
             this.setVisible(false);
-            JFrame finish = new FinalFrame();
+            JFrame finish = new PlotFrame();
         }
     }//GEN-LAST:event_nextButtonActionPerformed
 

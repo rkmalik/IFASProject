@@ -568,7 +568,7 @@ public class DCOEFPerennialFrame extends javax.swing.JFrame {
             utils.finishInput();
 
             this.setVisible(false);
-            JFrame finish = new FinalFrame();
+            JFrame finish = new PlotFrame();
         }
 
 

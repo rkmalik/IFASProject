@@ -29,14 +29,14 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author Piyush
  */
-public class FinalFrame extends javax.swing.JFrame {
+public class PlotFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form FinalFrame
+     * Creates new form PlotFrame
      */
     AFSIRSUtils utils;
 
-    public FinalFrame() {
+    public PlotFrame() {
         initComponents();
         setLocation(400, 50);
         utils = AFSIRSUtils.getInstance();
