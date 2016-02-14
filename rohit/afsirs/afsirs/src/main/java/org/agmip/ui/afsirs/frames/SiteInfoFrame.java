@@ -1157,13 +1157,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             climateFile = climFileList.get(climateLocationBox.getSelectedIndex());
             climIR = new InputStreamReader(getClass().getResourceAsStream("/data/" + climateFile));
         }
-//        if (AFSIRSUtils.defaultMode) {
-//            try {
-//                climIR = new InputStreamReader(new FileInputStream("C:\\Users\\Piyush\\Documents\\NetBeansProjects\\AFSIRS\\CLMFIL.txt"));
-//            } catch (Exception e) {
-//
-//            }
-//        }
+
         utils.setClimateFile(climIR);
 
         utils.setIrrigationSystem(ir, arzi, exir, eff, irrTypeBox.getSelectedItem().toString());

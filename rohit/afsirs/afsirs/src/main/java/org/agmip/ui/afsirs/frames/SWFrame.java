@@ -632,15 +632,11 @@ public class SWFrame extends javax.swing.JFrame {
         
         // Check if the data is to be read from the file or from the table.
         // Avoid this patching and rewrite the code after imp
+        // Segregate both the logics/ Map Handline and File+Keyboard handling.
         if (jRadioMap.isSelected()) {
-            SoilData soidData = readSoilDataFromJSONMap ();
-            
-            
-            // Read data from JSON Map
-            
-            
-            
-           return; 
+            SoilData soilData = readSoilDataFromJSONMap ();
+            utils.setSoilData(soilData);
+            return; 
         }
         
         if(soilTable.isEditing()){
