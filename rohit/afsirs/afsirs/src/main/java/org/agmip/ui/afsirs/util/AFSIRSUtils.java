@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Rohit Kumar Malik
+ * @author rkmalik
  */
 
 /*
@@ -110,7 +110,8 @@ public class AFSIRSUtils {
     
     BufferedWriter bw;
 
-    private SoilData soil;
+    //private Soil firstSoil;
+    private SoilData soilData;
 
     private AFSIRSUtils() {
 
@@ -318,8 +319,10 @@ public class AFSIRSUtils {
         }
     }
 
-    public void setSoilData(SoilData soil) {
-        this.soil = soil;
+    public void setSoilData(SoilData soilData) {
+        Soil soil = soilData.getSoils().get(0);
+        this.soilData = soilData;
+        
         SNAME = soil.getName();
         TXT = soil.getTXT();
         DU = soil.getDU();
@@ -327,10 +330,19 @@ public class AFSIRSUtils {
         WCU = soil.getWCU();
         WC = soil.getWC();
         NL = soil.getNL();
+        
+        
+        /*SNAME = firstSoil.getName();
+        TXT = firstSoil.getTXT();
+        DU = firstSoil.getDU();
+        WCL = firstSoil.getWCL();
+        WCU = firstSoil.getWCU();
+        WC = firstSoil.getWC();
+        NL = firstSoil.getNL();*/
     }
 
     public SoilData getSoilData() {
-        return soil;
+        return soilData;
     }
 
     public void setSWIRR(double[] swirr) {
@@ -770,7 +782,7 @@ public class AFSIRSUtils {
                         }
                         NIR[j] = SWCIX[j] - SWCI[j] + ETINC;
                     } else {
-                        //Irrigate to restore soil water content to field capacity
+                        //Irrigate to restore firstSoil water content to field capacity
                         NIR[j] = SWCIX[j] - SWCI[j];
                         //Irrigate to only a fraction of field capacity
                         if (IDCODE == 2) {
@@ -797,7 +809,7 @@ public class AFSIRSUtils {
                     }
                 }
 
-                //Save last day's soil water contents to begin first day ofnext year for perennial crops
+                //Save last day's firstSoil water contents to begin first day ofnext year for perennial crops
                 SWCISV = SWCI[JN];
                 SWCNSV = SWCN[JN];
             } else {
@@ -1005,7 +1017,7 @@ public class AFSIRSUtils {
             DL[k] = DU[k - 1];
         }
 
-        //Calculate maximum soil water-holding capacities
+        //Calculate maximum firstSoil water-holding capacities
         //For perennial crops
         if (isPerennial) {
             //Check for high water table limiting irrigated root zone
@@ -1028,7 +1040,7 @@ public class AFSIRSUtils {
                 }
             }
 
-            //Calculate available soil water in irrigated root zone
+            //Calculate available firstSoil water in irrigated root zone
             int IS1 = IS - 1;
             System.out.println(IS1);
             double SWI = 0.0;
@@ -1104,7 +1116,7 @@ public class AFSIRSUtils {
                 setEXIR(1.00);
             }
 
-            //Assign daily soil water capacity data
+            //Assign daily firstSoil water capacity data
             for (int JD = J1 - 1; JD < JN; JD++) {
                 SWMAX[JD] = SWX;
                 SWCIX[JD] = SWI;
@@ -1141,7 +1153,7 @@ public class AFSIRSUtils {
                     }
                 }
 
-                //Check for soil depth limiting irrigated root zone
+                //Check for firstSoil depth limiting irrigated root zone
                 int IS = 0;
 
                 for (int JD = J1 - 1; JD < JN; JD++) {
@@ -1157,7 +1169,7 @@ public class AFSIRSUtils {
                         DRZI[JD] = DU[NL];
                     }
 
-                    //Calculate irrigated zone available soil water for each day from root zone expansion
+                    //Calculate irrigated zone available firstSoil water for each day from root zone expansion
                     double SWI = 0.0;
                     if (IS != 0) {
                         int IS1 = IS - 1;
@@ -1206,7 +1218,7 @@ public class AFSIRSUtils {
                 }
 
                 for (int JD = J1 - 1; JD < JN; JD++) {
-                    //Check for soil depth limiting total root zone
+                    //Check for firstSoil depth limiting total root zone
                     IS = 0;
                     boolean flag = false;
                     for (int I = 0; I < NL; I++) {
@@ -1237,7 +1249,7 @@ public class AFSIRSUtils {
             }
         }
 
-        //Calculate starting soil water content as 0.9*Field Capacity
+        //Calculate starting firstSoil water content as 0.9*Field Capacity
         SWCI1 = 0.9 * SWCIX[J1 - 1];
         SWCN1 = 0.9 * SWCNX[J1 - 1];
 
@@ -1245,7 +1257,7 @@ public class AFSIRSUtils {
             setEXIR(1.00);
         }
 
-        //Calculate soil water content at which irrigation will be scheduled
+        //Calculate firstSoil water content at which irrigation will be scheduled
         for (int JD = J1 - 1;
                 JD < JN;
                 JD++) {
@@ -1256,13 +1268,13 @@ public class AFSIRSUtils {
 
     public void DECOEF() {
         if (isPerennial) {
-            //Calculate daily root depths and allowable soil water depletions
+            //Calculate daily root depths and allowable firstSoil water depletions
             for (int i = 0; i < 365; i++) {
                 DRZI[i] = DRZIRR;
                 DRZ[i] = DRZTOT;
             }
 
-            //Calculate daily root depths & allowable soil water depletions
+            //Calculate daily root depths & allowable firstSoil water depletions
             int jd = -1;
             for (int imo = 0; imo < 12; imo++) {
                 for (int j = 0; j < MDAY[imo]; j++) {

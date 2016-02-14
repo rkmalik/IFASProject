@@ -27,7 +27,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import org.agmip.ui.afsirs.util.AFSIRSUtils;
-import org.agmip.ui.afsirs.util.SoilData;
+import org.agmip.ui.afsirs.util.Soil;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.text.SimpleDateFormat;
+import org.agmip.ui.afsirs.util.SoilData;
  
 
 /**
@@ -544,21 +545,6 @@ public class SWFrame extends javax.swing.JFrame {
         }
         int index = soilListBox.getSelectedIndex();
 
-        /*soilNameText.setEnabled(index == 0);
-        soilTextureText.setEnabled(index == 0);
-        NLComboBox.setEnabled(index == 0);
-        soilTable.setEnabled(index == 0);
-        waterholdcapacityBox.setEnabled(index != 0);
-        showSoilDataButton.setEnabled(index != 0);
-
-        if (index == 0) {
-            soilNameText.setText("");
-            soilTextureText.setText("");
-            NLComboBox.setSelectedIndex(-1);
-            waterholdcapacityBox.setSelectedIndex(0);
-            return;
-        }*/
-
         if (jRadioFile.isSelected()) {
             try {
                 readFromFile(soilListBox.getSelectedIndex());
@@ -572,8 +558,90 @@ public class SWFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_soilListBoxActionPerformed
 
+    private SoilData readSoilDataFromJSONMap () {
+        
+        SoilData soilData = new SoilData ();    
+        // Get the latest file form the download folder.
+        String home = System.getProperty("user.home");
+        File dir = new File(home+"/Downloads"); 
+        File theNewestFile = null;
+        //File dir = new File(filePath);
+        FileFilter fileFilter = new WildcardFileFilter("*." + "json");
+        File[] files = dir.listFiles(fileFilter);
+        
+        String str = "";
+        
+        if (files.length > 0) {
+            Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+            theNewestFile = files[0];
+        }
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        str += "Data Date: " + sdf.format(theNewestFile.lastModified()) + "\n";
+        
+        
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = null;
+        
+        try 
+        {
+             root = mapper.readTree(theNewestFile);
+                        
+        } catch (IOException e) {
+            System.out.println (e.getMessage());
+            
+        } 
+        JsonNode soils = root.path("soils");
+        
+        int row = 0;
+        
+        for (JsonNode n : soils) {
+            String soilName = n.path("soilName").textValue();
+            
+            JsonNode soilLayersNodes = n.path("soilLayer");
+            
+            int NL = 0;
+
+            double[] wc = new double [6];
+            double[] wcl= new double [6];
+            double[] wcu= new double [6];
+            double[] du= new double [6];
+            String[] txt  = new String[3];
+            
+            
+            for (JsonNode node : soilLayersNodes) {
+                wcu[NL] = node.get("sldul").asDouble();
+                du[NL] = node.get("slll").asDouble();
+                wcl[NL] = node.get("sllb").asDouble();
+                // Currently Lets sest the wc value as the average, this needs to be updated after discussion
+                wc[NL] = (wcu[NL]+wcl[NL])/2;
+                NL++;
+            }
+        
+            Soil soil = new Soil (row, soilName, NL);
+            soil.setValues(wc, wcl, wcu, du, txt);
+            soilData.getSoils().add(soil);
+            row++;
+        }
+        
+        return soilData;
+    }
+    
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         //Validation of data
+        
+        // Check if the data is to be read from the file or from the table.
+        // Avoid this patching and rewrite the code after imp
+        if (jRadioMap.isSelected()) {
+            SoilData soidData = readSoilDataFromJSONMap ();
+            
+            
+            // Read data from JSON Map
+            
+            
+            
+           return; 
+        }
         
         if(soilTable.isEditing()){
             soilTable.getCellEditor().stopCellEditing();
@@ -650,9 +718,12 @@ public class SWFrame extends javax.swing.JFrame {
 
         //Define Lower Soil Layer Dimensions
         utils.setDWT(DWT);
-        SoilData soil = new SoilData(ISOIL, SNAME, NL);
+        Soil soil = new Soil(ISOIL, SNAME, NL);
         soil.setValues(WC, WCL, WCU, DU, TXT);
-        utils.setSoilData(soil);
+        
+        SoilData soilData = new SoilData ();
+        soilData.addSoil(soil);
+        utils.setSoilData(soilData);
         
         setVisible(false);
         if (next != null) {
@@ -878,6 +949,8 @@ public class SWFrame extends javax.swing.JFrame {
         row = 0;
         
         for (JsonNode n : soils) {
+            
+            //Soil soil = new Soil ();
             
             String soilName = n.path("soilName").textValue();
             String soilTypeArea = n.path("soilArea").textValue();

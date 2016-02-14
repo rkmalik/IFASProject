@@ -5,71 +5,24 @@
  */
 package org.agmip.ui.afsirs.util;
 
+import java.util.ArrayList;
+
 /**
  *
- * @author  Rohit Kumar Malik
- * 
+ * @author rohit
  */
 public class SoilData {
-    int ID;
-    String SNAME;
-    String[] TXT = new String[3];
-    int NL;
-    double[] WC;
-    double[] WCL;
-    double[] WCU;
-    double[] DU;
     
-    double soilTypeArea;
+    private static final ArrayList<Soil> soils = new ArrayList<> ();
     
-
-    public SoilData(int id, String name, int nl){
-        ID = id;
-        SNAME = name;
-        NL = nl;
+    public SoilData () {
     }
-    
-    public void setValues(double[] wc, double[] wcl, double[] wcu, double[] du, String[] txt){
-        WC = wc;
-        WCL = wcl;
-        WCU = wcu;
-        DU = du;
-        TXT = txt;
+   
+    public void addSoil (Soil soil) {
+        soils.add(soil);
     }
 
-    public String getName(){
-        return SNAME;
-    }
-    
-    public String[] getTXT(){
-        return TXT;
-    }
-    public double[] getWC(){
-        return WC;
-    }
-    
-    public double[] getWCL(){
-        return WCL;
-    }
-    
-    public double[] getWCU(){
-        return WCU;
-    }
-    
-    public double[] getDU(){
-        return DU;
-    }
-    
-    public int getNL(){
-        return NL;
-    }
-    
-        
-    public void setSoilTypeArea (double soilTypeArea) {
-        this.soilTypeArea = soilTypeArea;
-    }
-    
-    public double getSoilTypeArea () {
-        return this.soilTypeArea;
+    public ArrayList<Soil> getSoils () {
+        return soils;
     }
 }
