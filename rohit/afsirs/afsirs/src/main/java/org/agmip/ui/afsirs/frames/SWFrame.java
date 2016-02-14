@@ -43,7 +43,7 @@ import org.agmip.ui.afsirs.util.SoilData;
 
 /**
  *
- * @author Rohit Kumar Malik
+ * @author rkmalik
  */
 public class SWFrame extends javax.swing.JFrame {
 
@@ -636,91 +636,87 @@ public class SWFrame extends javax.swing.JFrame {
         if (jRadioMap.isSelected()) {
             SoilData soilData = readSoilDataFromJSONMap ();
             utils.setSoilData(soilData);
-            return; 
-        }
-        
-        if(soilTable.isEditing()){
-            soilTable.getCellEditor().stopCellEditing();
-        }
-
-        wcErrorLabel.setVisible(false);
-        errorLabel.setVisible(false);
-        soilNameLabel.setForeground(Color.black);
-        soilTextureLabel.setForeground(Color.black);
-        dwtLabel.setForeground(Color.black);
-
-        boolean isFailed = false;
-        int ISOIL = soilListBox.getSelectedIndex();
-        if (ISOIL == 0) {
-            if (soilNameText.getText().length() < 1) {
-                isFailed = true;
-                soilNameLabel.setForeground(Color.red);
+            
+        } else {
+            
+            if(soilTable.isEditing()){
+                soilTable.getCellEditor().stopCellEditing();
             }
 
-            if (soilTextureText.getText().length() < 1) {
-                isFailed = true;
-                soilTextureLabel.setForeground(Color.red);
-            }
+            wcErrorLabel.setVisible(false);
+            errorLabel.setVisible(false);
+            soilNameLabel.setForeground(Color.black);
+            soilTextureLabel.setForeground(Color.black);
+            dwtLabel.setForeground(Color.black);
 
-            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-            int nl = NLComboBox.getSelectedIndex() + 1;
-            if (nl != model.getRowCount()) {
-                isFailed = true;
-            }
-        }
-
-        if (dwtText.isEnabled()) {
-            try {
-                DWT = Double.parseDouble(dwtText.getText());
-            } catch (NumberFormatException e) {
-                dwtLabel.setForeground(Color.red);
-                isFailed = true;
-            }
-            if (DWT < 0.01) {
-                dwtLabel.setForeground(Color.red);
-                isFailed = true;
-            }
-        }
-
-        
-        System.out.println("DWT ="  + DWT);
-        
-        
-        //@rohit_note: Data needs to be taken based on the selection from UI Map/File/Keyboard. For eg. If this is file/Keyboard
-        // Then Take the data from the controls/ else if it is Map then take the data from the json File. 
-        
-        
-
-        SNAME = soilNameText.getText();
-        TXT[0] = soilTextureText.getText();
-        DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-        try {
-            for (int i = 0; i < NL; i++) {
-                DU[i] = (Double) model.getValueAt(i, 1);
-                WC[i] = (Double) model.getValueAt(i, 2);
-                if (WC[i] < 0.01 || WC[i] > 0.9) {
+            boolean isFailed = false;
+            int ISOIL = soilListBox.getSelectedIndex();
+            if (ISOIL == 0) {
+                if (soilNameText.getText().length() < 1) {
                     isFailed = true;
-                    wcErrorLabel.setVisible(true);
+                    soilNameLabel.setForeground(Color.red);
+                }
+
+                if (soilTextureText.getText().length() < 1) {
+                    isFailed = true;
+                    soilTextureLabel.setForeground(Color.red);
+                }
+
+                DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+                int nl = NLComboBox.getSelectedIndex() + 1;
+                if (nl != model.getRowCount()) {
+                    isFailed = true;
                 }
             }
-        } catch (Exception e) {
-            isFailed = true;
-            errorLabel.setVisible(true);
-        }
 
-        if (isFailed) {
-            return;
-        }
+            if (dwtText.isEnabled()) {
+                try {
+                    DWT = Double.parseDouble(dwtText.getText());
+                } catch (NumberFormatException e) {
+                    dwtLabel.setForeground(Color.red);
+                    isFailed = true;
+                }
+                if (DWT < 0.01) {
+                    dwtLabel.setForeground(Color.red);
+                    isFailed = true;
+                }
+            }
 
-        //Define Lower Soil Layer Dimensions
-        utils.setDWT(DWT);
-        Soil soil = new Soil(ISOIL, SNAME, NL);
-        soil.setValues(WC, WCL, WCU, DU, TXT);
-        
-        SoilData soilData = new SoilData ();
-        soilData.addSoil(soil);
-        utils.setSoilData(soilData);
-        
+            System.out.println("DWT ="  + DWT);
+            //@rohit_note: Data needs to be taken based on the selection from UI Map/File/Keyboard. For eg. If this is file/Keyboard
+            // Then Take the data from the controls/ else if it is Map then take the data from the json File. 
+            SNAME = soilNameText.getText();
+            TXT[0] = soilTextureText.getText();
+            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+            try {
+                for (int i = 0; i < NL; i++) {
+                    DU[i] = (Double) model.getValueAt(i, 1);
+                    WC[i] = (Double) model.getValueAt(i, 2);
+                    if (WC[i] < 0.01 || WC[i] > 0.9) {
+                        isFailed = true;
+                        wcErrorLabel.setVisible(true);
+                    }
+                }
+            } catch (Exception e) {
+                isFailed = true;
+                errorLabel.setVisible(true);
+            }
+
+            if (isFailed) {
+                return;
+            }
+
+            //Define Lower Soil Layer Dimensions
+            utils.setDWT(DWT);
+            Soil soil = new Soil(ISOIL, SNAME, NL);
+            soil.setValues(WC, WCL, WCU, DU, TXT);
+
+            SoilData soilData = new SoilData ();
+            soilData.addSoil(soil);
+            utils.setSoilData(soilData);
+            
+        }
+                
         setVisible(false);
         if (next != null) {
             next.setVisible(true);
