@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class SoilData {
     
-    private static final ArrayList<Soil> soils = new ArrayList<> ();
+    private ArrayList<Soil> soils = new ArrayList<> ();
     
     public SoilData () {
     }

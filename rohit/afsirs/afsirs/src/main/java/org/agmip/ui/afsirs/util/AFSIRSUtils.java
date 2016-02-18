@@ -5,11 +5,17 @@
  */
 package org.agmip.ui.afsirs.util;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
@@ -86,6 +92,9 @@ public class AFSIRSUtils {
     double[] PDATM = new double[12];
     double[] PDATBW = new double[26];
     double[] PDATW = new double[52];
+    
+    // ArrayList to Hold all the data
+    ArrayList<PDAT> allSoilInfo = new ArrayList<> ();
 
     int[] JDAY = new int[365];
     int MONTH, IIDAY, IYEAR;
@@ -109,8 +118,9 @@ public class AFSIRSUtils {
     private static AFSIRSUtils instance;
     
     BufferedWriter bw;
-
-    //private Soil firstSoil;
+    private double[] soilFractions;
+    private double[] soilArea;
+    private Soil soil;
     private SoilData soilData;
 
     private AFSIRSUtils() {
@@ -320,7 +330,7 @@ public class AFSIRSUtils {
     }
 
     public void setSoilData(SoilData soilData) {
-        Soil soil = soilData.getSoils().get(0);
+        this.soil = soilData.getSoils().get(0);
         this.soilData = soilData;
         
         SNAME = soil.getName();
@@ -382,14 +392,27 @@ public class AFSIRSUtils {
     }
 
     //type = 0, Monthly : 1, Bi-Weekly : 2, Weekly
-    public double[] getGraphData(int type) {
+    public ArrayList<Double[]> getGraphData(int type) {
+        
+        ArrayList<Double []> data = new ArrayList<> ();
+        
         switch (type) {
             case 0:
-                return PDATM;
+                
+                for (PDAT i : allSoilInfo) {
+                    data.add(i.PDATM);
+                }
+                return data;
             case 1:
-                return PDATBW;
+                for (PDAT i : allSoilInfo) {
+                    data.add(i.PDATBW);
+                }
+                return data;
             case 2:
-                return PDATW;
+                for (PDAT i : allSoilInfo) {
+                    data.add(i.PDATW);
+                }
+                return data;
         }
         return null;
     }
@@ -1263,6 +1286,35 @@ public class AFSIRSUtils {
                 JD++) {
             SWIRR[JD] = (1.0 - AWD[JD]) * SWCIX[JD];
         }
+        
+                //Print all soil data
+        String txt = "";
+        double[] WCL = soil.getWCL();
+        double[] WCU = soil.getWCU();
+        for (String t : soil.getTXT()) {
+            if (t != null) {
+                txt += t + " ";
+            }
+        }
+        writeOutput(EOL + EOL + "     SOIL :  SERIES = " + soil.getName() + "         TEXTURE = " + txt + "           AREA(Fraction ) = " + soil.getSoilTypeArea() + EOL + EOL);
+        writeOutput(EOL + "               SOIL LAYER DEPTHS (INCHES) AND WATER CONTENTS" + EOL);
+        String str = "";
+        str += "                   lDepth(I)        WCON(Min)    WCON(Max)\r\n";
+        for (int i = 0; i < soil.getNL(); i++) {
+            str += String.format("                %2d%8.1f%18.2f%12.2f" + EOL, i + 1, DU[i], Math.round(WCL[i] * 100.0) / 100.0, Math.round(WCU[i] * 100.0) / 100.0);
+        }
+        writeOutput(str);
+
+        writeOutput(EOL + "                DEPTH TO WATER TABLE ENTERED =  " + DWT / 12.0 + " FEET" + EOL + EOL);
+
+        if (ICODE >= 1) {
+            writeOutput(EOL + "     OUTPUT PARAMETERS - ROOT DEPTHS, KCs, AND SOIL WATER CONTENTS" + EOL);
+            writeOutput("       CDAY JDAY   DRZ    DRZI   RKC   SWMAX  SWCIX  SWCNX  SWIRR" + EOL + "       ");
+            for (int i = J1 - 1; i < JN; i++) {
+                String row = String.format("%4d %4d %6.1f %6.1f %6.3f %6.2f %6.2f %6.2f %6.2f", (i + 1), JDAY[i], DRZ[i], DRZI[i], RKC[i], SWMAX[i], SWCIX[i], SWCNX[i], SWIRR[i]);
+                writeOutput(row + EOL + "       ");
+            }
+        }
 
     }
 
@@ -1579,6 +1631,8 @@ public class AFSIRSUtils {
 
         writeOutput("                -------------------------------------------" + EOL);
 
+        PDAT pdat = new PDAT ();
+        
         int NX = -1;
         for (int imo = 0; imo < 12; imo++) {
             int NN = NX + 1;
@@ -1628,6 +1682,7 @@ public class AFSIRSUtils {
                     statResult.XMEAN, statResult.XMED, statResult.XCV, statResult.XMAX, statResult.XMIN, probResult.X00, probResult.RSQ,
                     probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[imo], TETP[imo], TET[imo], TDR[imo]);
             writeOutput(str + EOL);
+            pdat.PDATM[imo] = statResult.XMEAN;
             PDATM[imo] = statResult.XMEAN;
             if (ICODE >= 1) {
                 writeOutput(EOL + "                            MONTH = " + (imo + 1) + EOL);
@@ -1693,6 +1748,7 @@ public class AFSIRSUtils {
                         probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[i2w], TETP[i2w], TET[i2w], TDR[i2w]);
                 writeOutput(str + EOL);
                 PDATBW[i2w] = statResult.XMEAN;
+                pdat.PDATBW[i2w] = statResult.XMEAN;
                 if (ICODE >= 1) {
                     writeOutput(EOL + "                       2-WEEK PERIOD = " + (i2w + 1) + EOL);
                     writeOutput("               SUMMARY OF WATER BUDGET COMPONENTS" + EOL);
@@ -1759,6 +1815,7 @@ public class AFSIRSUtils {
                         probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[i7], TETP[i7], TET[i7], TDR[i7]);
                 writeOutput(str + EOL);
                 PDATW[i7] = statResult.XMEAN;
+                pdat.PDATW[i7] = statResult.XMEAN;
                 if (ICODE >= 1) {
                     writeOutput(EOL + "                       WEEKLY PERIOD = " + (i7 + 1) + EOL);
                     writeOutput("               SUMMARY OF WATER BUDGET COMPONENTS" + EOL);
@@ -1770,6 +1827,8 @@ public class AFSIRSUtils {
                 }
             }
         }
+        
+        allSoilInfo.add(pdat);
     }
 
     public void initOutputFile() {
@@ -1906,7 +1965,7 @@ public class AFSIRSUtils {
                 writeOutput(row + EOL);
             }
         }
-        SW();
+        /*SW();
         String txt = "";
         for (String t : TXT) {
             if (t != null) {
@@ -1933,12 +1992,57 @@ public class AFSIRSUtils {
             }
         }
         calculateBalance();
-        SUMX();
+        SUMX();*/
         try {
+   
+            ArrayList<Soil> soils = soilData.getSoils();
+            soilFractions = new double[soils.size()];
+            soilArea = new double[soils.size()];
+            int i = 0;
+            for (Soil soil : soils) {
+                //setSoilData(soil);
+                this.soil = soil;
+                if(i>0)
+                    soilFractions[i] = soilFractions[i-1];
+                soilFractions[i]+=soil.getSoilTypeArea();
+                soilArea [i] = soil.getSoilTypeArea();
+                
+                System.out.println ("Soil Area : " + soilArea[i]);
+                
+                SNAME = soil.getName();
+                TXT = soil.getTXT();
+                DU = soil.getDU();
+                WCL = soil.getWCL();
+                WCU = soil.getWCU();
+                WC = soil.getWC();
+                NL = soil.getNL();
+            
+                
+                SW();
+                calculateBalance();
+                SUMX();
+                i++;
+            }
+            
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        for (PDAT p : allSoilInfo) {
+            
+            System.out.println("Soil");
+            //System.out.println ( + "\n" + 
+            for (double d: p.PDATBW) System.out.print (d + " ");
+            System.out.println ("\n");
+            for (double d: p.PDATM) System.out.print (d + " ");
+            System.out.println ("\n");
+            for (double d: p.PDATW) System.out.print (d + " ");
+            System.out.println ("\n");
+
+        }
+        
+        
 //
 //        File file = new File(OUTFIL);
 //        try {
@@ -1957,6 +2061,15 @@ public class AFSIRSUtils {
         return str1.append(str).toString();
 
     }
+    
+    public double[] getFractions(){
+        return soilFractions;
+    }
+    
+    public double [] getSoilArea() {
+        return soilArea;
+    }
+    
 }
 
 class LSQResult {
@@ -1999,4 +2112,10 @@ class STATResult {
         }
     }
 
+}
+
+class PDAT {
+    Double[] PDATM = new Double[12];
+    Double[] PDATBW = new Double[26];
+    Double[] PDATW = new Double[52];
 }

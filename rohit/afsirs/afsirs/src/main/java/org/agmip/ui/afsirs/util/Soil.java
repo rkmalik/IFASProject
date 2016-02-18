@@ -18,7 +18,6 @@ public class Soil {
         double[] WCL;
         double[] WCU;
         double[] DU;
-
         double soilTypeArea;
 
 
@@ -71,4 +70,5 @@ public class Soil {
         public double getSoilTypeArea () {
             return this.soilTypeArea;
         }
+
 }

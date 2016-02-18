@@ -193,7 +193,6 @@ public class SWFrame extends javax.swing.JFrame {
         jRadioMap = new javax.swing.JRadioButton();
         jRadioKeyboard = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
-        jButtonRefresh = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -367,13 +366,6 @@ public class SWFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Input Data From:");
 
-        jButtonRefresh.setText("Upload Map Data");
-        jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonRefreshActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -384,10 +376,8 @@ public class SWFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(soilListBox, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(292, 292, 292)))
-                        .addGap(50, 50, 50)
+                            .addComponent(jLabel1))
+                        .addGap(176, 176, 176)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))
@@ -414,16 +404,13 @@ public class SWFrame extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jButtonRefresh)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jRadioMap)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jRadioFile)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jRadioKeyboard)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(showSoilDataButton)))))
+                                        .addComponent(jRadioMap)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jRadioFile)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jRadioKeyboard)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(showSoilDataButton)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
@@ -468,9 +455,7 @@ public class SWFrame extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(showSoilDataButton))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonMap)
-                    .addComponent(jButtonRefresh))
+                .addComponent(jButtonMap)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -597,6 +582,7 @@ public class SWFrame extends javax.swing.JFrame {
         
         for (JsonNode n : soils) {
             String soilName = n.path("soilName").textValue();
+            String soilTypeArea = n.path("soilArea").textValue();
             
             JsonNode soilLayersNodes = n.path("soilLayer");
             
@@ -611,8 +597,8 @@ public class SWFrame extends javax.swing.JFrame {
             
             for (JsonNode node : soilLayersNodes) {
                 wcu[NL] = node.get("sldul").asDouble();
-                du[NL] = node.get("slll").asDouble();
-                wcl[NL] = node.get("sllb").asDouble();
+                du[NL] = node.get("sllb").asDouble();
+                wcl[NL] = node.get("slll").asDouble();
                 // Currently Lets sest the wc value as the average, this needs to be updated after discussion
                 wc[NL] = (wcu[NL]+wcl[NL])/2;
                 NL++;
@@ -620,6 +606,7 @@ public class SWFrame extends javax.swing.JFrame {
         
             Soil soil = new Soil (row, soilName, NL);
             soil.setValues(wc, wcl, wcu, du, txt);
+            soil.setSoilTypeArea(Double.valueOf(soilTypeArea));
             soilData.getSoils().add(soil);
             row++;
         }
@@ -710,6 +697,7 @@ public class SWFrame extends javax.swing.JFrame {
             utils.setDWT(DWT);
             Soil soil = new Soil(ISOIL, SNAME, NL);
             soil.setValues(WC, WCL, WCU, DU, TXT);
+            //soil.setSoilTypeArea(area);
 
             SoilData soilData = new SoilData ();
             soilData.addSoil(soil);
@@ -868,13 +856,12 @@ public class SWFrame extends javax.swing.JFrame {
         
         
         jButtonMap.setEnabled(isMapSelected||(isKeyboardEnabled&&isFileSelected));
-        jButtonRefresh.setEnabled(isMapSelected||(isKeyboardEnabled&&isFileSelected));
         
         
         showSoilDataButton.setEnabled(isMapSelected||isFileSelected);
 
         soilListBox.setEnabled(isFileSelected);
-        waterholdcapacityBox.setEnabled(isFileSelected);
+        waterholdcapacityBox.setEnabled(isFileSelected||isMapSelected);
 
         
         soilNameText.setEnabled(isKeyboardEnabled);
@@ -898,16 +885,6 @@ public class SWFrame extends javax.swing.JFrame {
         } 
     }
     
-    private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
-        // TODO add your handling code here:
-        try {
-            readFromMapJson () ;
-        } catch (IOException e) {
-            e.printStackTrace ();
-        }
-        
-    }//GEN-LAST:event_jButtonRefreshActionPerformed
-
     
     public String readFromMapJson () throws IOException {
         
@@ -940,6 +917,8 @@ public class SWFrame extends javax.swing.JFrame {
         }
         row = 0;
         
+        String fileName = theNewestFile.getName();
+        str+= "Data File Name: " + fileName+"\n";
         for (JsonNode n : soils) {
             
             //Soil soil = new Soil ();
@@ -948,10 +927,10 @@ public class SWFrame extends javax.swing.JFrame {
             String soilTypeArea = n.path("soilArea").textValue();
             
             str += "Soil Name = " + soilName + "\n";
-            str += "Soil Area= " + soilTypeArea + "\n";
+            str += "Soil Area= " + soilTypeArea + " (acres)\n";
             
             int numberOfLayers = 0;
-            String layerDetails = "";
+            //String layerDetails = "";
             
             String wcu = "";
             String du = "";
@@ -960,15 +939,22 @@ public class SWFrame extends javax.swing.JFrame {
             
             JsonNode soilLayersNodes = n.path("soilLayer");
 
+            String formatter = "%2s%-15s%-15s%-15s\n";
             for (JsonNode node : soilLayersNodes) {
-                wcu = String.valueOf(node.get("sldul").asDouble());
-                du = String.valueOf(node.get("slll").asDouble());
-                wcl = String.valueOf(node.get("sllb").asDouble());
-                strTmp += (++numberOfLayers) + "  " + du + "       " + wcl + "       " + wcu + "\n";
+                double slll_wcl= node.get("slll").asDouble()*0.39370;
+                wcl = String.format("%.1f", slll_wcl);
+                double sllb_du= node.get("sllb").asDouble()*0.39370;
+                du = String.format("%.1f", sllb_du);
+                double sldul_wcu = node.get("sldul").asDouble()*0.39370;
+                wcu = String.format("%.1f", sldul_wcu);
+                // strTmp +=  String.format ("%-5d%-15s%-15s%-15s\n", ++numberOfLayers, du, wcl, wcu);
+                strTmp +=  String.format ("%-5d%-25.1f%-25.1f%-25.1f\n", ++numberOfLayers, sllb_du, slll_wcl,  sldul_wcu);
+
             }
             
             str += "Number of Layers = " + numberOfLayers + "\n";
-            str += "    DU        WCL        WCU\n";
+            str+= String.format ("%-5s%-15s%-15s%-15s\n", "LN", "DU(inches)", "WCL", "WCU\n");
+            //str += "LN   DU(inches)   WCL(inches)   WCU(inches)\n";
             str+= strTmp;
             
             
@@ -1015,7 +1001,9 @@ public class SWFrame extends javax.swing.JFrame {
             DU[i] = Double.parseDouble(fields[0]);
             WCL[i] = Double.parseDouble(fields[1]) / 100.0;
             WCU[i] = Double.parseDouble(fields[2]) / 100.0;
-            WC[i] = WCL[i];
+            
+            WC[i] =  Math.round(WCL[i] * 100) / 100;
+            //WC[i] = WCL[i];
             i++;
         }
 
@@ -1031,7 +1019,6 @@ public class SWFrame extends javax.swing.JFrame {
     private javax.swing.JButton infoButton;
     private javax.swing.JLabel irrTypeLabel;
     private javax.swing.JButton jButtonMap;
-    private javax.swing.JButton jButtonRefresh;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
