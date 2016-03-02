@@ -392,25 +392,37 @@ public class AFSIRSUtils {
     }
 
     //type = 0, Monthly : 1, Bi-Weekly : 2, Weekly
-    public ArrayList<Double[]> getGraphData(int type) {
+    public ArrayList<SoilSpecificPeriodData> getGraphData(int type) {
         
-        ArrayList<Double []> data = new ArrayList<> ();
+        ArrayList<SoilSpecificPeriodData> data = new ArrayList<> ();
         
         switch (type) {
             case 0:
                 
                 for (PDAT i : allSoilInfo) {
-                    data.add(i.PDATM);
+                    
+                    SoilSpecificPeriodData d = new SoilSpecificPeriodData ();
+                    d.setSoilDataPoints(i.PDATM);
+                    d.setSoilName(i.soilName);
+                    data.add(d);
                 }
                 return data;
             case 1:
                 for (PDAT i : allSoilInfo) {
-                    data.add(i.PDATBW);
+                    
+                    SoilSpecificPeriodData d = new SoilSpecificPeriodData ();
+
+                    d.setSoilDataPoints(i.PDATBW);
+                    d.setSoilName(i.soilName);
+                     data.add(d);
                 }
                 return data;
             case 2:
                 for (PDAT i : allSoilInfo) {
-                    data.add(i.PDATW);
+                    SoilSpecificPeriodData d = new SoilSpecificPeriodData ();
+                    d.setSoilDataPoints(i.PDATW);
+                    d.setSoilName(i.soilName);
+                    data.add(d);
                 }
                 return data;
         }
@@ -870,7 +882,11 @@ public class AFSIRSUtils {
                 SRAIN[j] += RAIN[iy][j];
             }
             if (ICODE == 2) {
-                writeOutput(EOL + EOL + "       OUTPUT DAILY COMPONENTS OF SOIL WATER BUDGET FOR DEBUGGING" + EOL + EOL);
+                writeOutput(EOL + "C   RAIN = TOTAL RAINFALL (INCHES)");
+                writeOutput(EOL + "C   ET = EVAPORATION TRANSPIRATION (INCHES)");
+
+                
+                writeOutput(EOL + "       OUTPUT DAILY COMPONENTS OF SOIL WATER BUDGET FOR DEBUGGING" + EOL + EOL);
                 writeOutput(String.format("                            YEAR =  %2d" + EOL, iy + 1));
                 writeOutput(" CDY JDY  SWCN SWCI  ETP   KC  ET  RAIN  ER   DR     SWMX  SWIX SWIR  NIR  IRR" + EOL);
                 for (int jd = J1 - 1; jd < JN; jd++) {
@@ -1555,11 +1571,13 @@ public class AFSIRSUtils {
             writeOutput(EOL + "          SEASONAL OR ANNUAL GROSS IRRIGATION REQUIREMENT (INCHES)" + EOL);
         }
         writeOutput("          --------------------------------------------------------" + EOL);
+        
+        //writeOutput(EOL + EOL + "C   CDAY = CONSECUTIVE DAYS OF CROP IRRIGATION SEASON" + EOL);
         if (ICODE >= 1) {
             writeOutput("               SUMMARY OF WATER BUDGET COMPONENTS" + EOL);
-            writeOutput("                  YEAR    ETP    RAIN  IRR.RQD." + EOL);
+            writeOutput("                  YEAR    ETP(INCHES)    RAIN(INCHES)  IRR.RQD.(INCHES)" + EOL);
             for (int i = 0; i < NYR; i++) {
-                String row = String.format("                 %4d%8.2f%8.2f%8.2f" + EOL, i + 1, AETP[i][0], ARAIN[i][0], AIRR[i][0]);
+                String row = String.format("                 %4d%-16.2f%8.2f%8.2f" + EOL, i + 1, AETP[i][0], ARAIN[i][0], AIRR[i][0]);
                 writeOutput(row);
                 AI[i] = AIRR[i][0];
             }
@@ -1827,7 +1845,7 @@ public class AFSIRSUtils {
                 }
             }
         }
-        
+        pdat.soilName=SNAME;
         allSoilInfo.add(pdat);
     }
 
@@ -1950,6 +1968,10 @@ public class AFSIRSUtils {
                     ff += F[i];
                     writeOutput(String.format("%s %5d%7.3f%5d%5d%5d", row, (i + 1), ff, NF[i], J1, JN));
                 }
+                writeOutput(EOL + "C   CDAY = CONSECUTIVE DAYS OF CROP IRRIGATION SEASON");
+                writeOutput(EOL + "C   DRZI(JD) = CROP ROOT ZONE DEPTH IRRIGATED (INCHES)");
+                writeOutput(EOL + "C   DRZ(JD) = TOTAL EFFECTIVE CROP ROOT ZONE DEPTH (INCHES)");
+                
                 writeOutput(EOL + EOL + "   CDAY JDAY NF1  NF2  NF3  DRZI DRZ  RKC ALD1 ALD2 ALD3 ALD4   AWD" + EOL);
                 for (int i = J1 - 1; i < JN; i++) {
                     writeOutput(String.format(" %5d%5d%5d%5d%5d %3.1f %3.1f %.2f %.2f %.2f %.2f %.2f  %.2f\r\n", i + 1, JDAY[i], NF[0], NF[1], NF[2], DRZI[i], DRZ[i], RKC[i], ALD[0], ALD[1], ALD[2], ALD[3], AWD[i]));
@@ -1958,6 +1980,9 @@ public class AFSIRSUtils {
         }
 
         if (ICODE >= 1) {
+            writeOutput(EOL + "C   CDAY = CONSECUTIVE DAYS OF CROP IRRIGATION SEASON");
+            writeOutput(EOL + "C   DRZI(JD) = CROP ROOT ZONE DEPTH IRRIGATED (INCHES)");
+            writeOutput(EOL + "C   DRZ(JD) = TOTAL EFFECTIVE CROP ROOT ZONE DEPTH (INCHES)");
             writeOutput(EOL + " DAILY ROOT ZONE DEPTHS, CROP COEFFICIENTS, & ALLOWABLE WATER DEPLETIONS" + EOL);
             writeOutput("               CDAY JDAY  DRZI(JD) DRZ(JD) RKC(JD) AWD(JD)" + EOL);
             for (int i = J1 - 1; i < JN; i++) {
@@ -2021,6 +2046,7 @@ public class AFSIRSUtils {
                 SW();
                 calculateBalance();
                 SUMX();
+                
                 i++;
             }
             
@@ -2115,6 +2141,7 @@ class STATResult {
 }
 
 class PDAT {
+    String soilName = "";
     Double[] PDATM = new Double[12];
     Double[] PDATBW = new Double[26];
     Double[] PDATW = new Double[52];

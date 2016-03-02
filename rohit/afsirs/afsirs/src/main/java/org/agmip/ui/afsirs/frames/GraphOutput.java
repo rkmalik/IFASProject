@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import javax.swing.JFrame;
 import org.agmip.ui.afsirs.util.AFSIRSUtils;
+import org.agmip.ui.afsirs.util.SoilSpecificPeriodData;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -56,7 +57,7 @@ public class GraphOutput extends javax.swing.JFrame {
 
     private CategoryDataset createDataset(int type) {
 
-        ArrayList<Double []> PDATA = utils.getGraphData(type);
+        ArrayList<SoilSpecificPeriodData> PDATA = utils.getGraphData(type);
         //double[] PDATA = utils.getGraphData(type);
 
         double avg = 0.0;
@@ -68,12 +69,11 @@ public class GraphOutput extends javax.swing.JFrame {
         for (double a: soilArea)
             areaSum+=a;
         
-        for (int i = 0; i < PDATA.get(0).length; i++) {
+        for (int i = 0; i < PDATA.get(0).getSoilDataPoints().length; i++) {
             for (int j = 0; j < PDATA.size(); j++) {
-                dataset.addValue(PDATA.get(j)[i], "Soil " + (j+1), "" + (i + 1));
-                avg+=PDATA.get(j)[i]*soilArea[j];
+                dataset.addValue(PDATA.get(j).getSoilDataPoints()[i], PDATA.get(j).getSoilName(), "" + (i + 1));
+                avg+=PDATA.get(j).getSoilDataPoints()[i]*soilArea[j];
             }
-
             avg /= areaSum;
             dataset.addValue(avg, "Weighted Avg", ""+(i+1));
             avg=0.0;

@@ -83,7 +83,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="ASFIRS INTERACTIVE VERSION 5.5"/>
+        <Property name="text" type="java.lang.String" value="ASFIRS INTERACTIVE VERSION 6.0"/>
         <Property name="toolTipText" type="java.lang.String" value="THIS MODEL CALCULATES IRRIGATION REQUIREMENTS FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS."/>
       </Properties>
     </Component>
@@ -117,13 +117,9 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="todayDate" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="outFileText" alignment="0" pref="210" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="todayDate" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="outFileText" alignment="0" pref="210" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="irrigationStartDateChooser" min="-2" pref="210" max="-2" attributes="0"/>
                                   <Component id="irrigationEndDateChooser" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
@@ -166,10 +162,7 @@
                               <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                               <Component id="outFileLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="outFileText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="outFileText" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="dateLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -237,14 +230,9 @@
                 <Property name="text" type="java.lang.String" value="Location/Site Name"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel10">
-              <Properties>
-                <Property name="text" type="java.lang.String" value=".OUT"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="outFileLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Output File Name "/>
+                <Property name="text" type="java.lang.String" value="Farmer&apos;s Name"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="climFileNameLabel">
@@ -256,7 +244,7 @@
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="irrigationStartDateChooser">
               <Properties>
-                <Property name="dateFormatString" type="java.lang.String" value="MMM, dd, yyyy"/>
+                <Property name="dateFormatString" type="java.lang.String" value="MMM, dd"/>
               </Properties>
               <Events>
                 <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="irrigationStartDateChooserPropertyChange"/>
@@ -274,7 +262,7 @@
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="irrigationEndDateChooser">
               <Properties>
-                <Property name="dateFormatString" type="java.lang.String" value="MMM, dd, yyyy"/>
+                <Property name="dateFormatString" type="java.lang.String" value="MMM, dd"/>
                 <Property name="maxSelectableDate" type="java.util.Date" editor="org.netbeans.beaninfo.editors.DateEditor">
                   <SerializedValue value="-84,-19,0,5,115,114,0,14,106,97,118,97,46,117,116,105,108,46,68,97,116,101,104,106,-127,1,75,89,116,25,3,0,0,120,112,119,8,0,0,-26,112,123,-71,-109,8,120"/>
                 </Property>
