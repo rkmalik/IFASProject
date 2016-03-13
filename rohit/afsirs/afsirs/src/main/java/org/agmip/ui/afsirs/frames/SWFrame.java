@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.awt.event.ItemEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -64,10 +66,16 @@ public class SWFrame extends javax.swing.JFrame {
     private double[] WC = new double[6];
     private int NL = 0;
     private double DWT = 20.0;
-    int ir;
+    private int ir;
+    private File [] files = null;
     
     // map, saved location, file, keyboard
-    private int [] waterHoldSelectedItemIndex = {1,1,1,1};
+    private int [] waterHoldSelectedItemIndex = {1,1,1};
+    private boolean isInitializing = false;
+    private boolean prevButtonSelectedSavedLocation = false;
+    
+    
+    private int selectedSoilIndex = 0;
 
     AFSIRSUtils utils;
 
@@ -120,7 +128,7 @@ public class SWFrame extends javax.swing.JFrame {
         }
 
         //soilListBox.addItem("Enter from Keyboard");
-        toogleStateOfControls ();
+        toogleStateOfControls (null);
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/data/soil.dat")));
             String line;
@@ -198,12 +206,13 @@ public class SWFrame extends javax.swing.JFrame {
         errorLabel = new javax.swing.JLabel();
         jButtonMap = new javax.swing.JButton();
         jRadioFile = new javax.swing.JRadioButton();
-        jRadioMap = new javax.swing.JRadioButton();
         jRadioKeyboard = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jRadioButtonSavedLocation = new javax.swing.JRadioButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        soilFileListCombo = new javax.swing.JComboBox<>();
+        soilNameCombo = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -351,19 +360,11 @@ public class SWFrame extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(jRadioFile);
+        jRadioFile.setSelected(true);
         jRadioFile.setText("Soil File");
         jRadioFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioFileActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(jRadioMap);
-        jRadioMap.setSelected(true);
-        jRadioMap.setText("Map");
-        jRadioMap.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioMapActionPerformed(evt);
             }
         });
 
@@ -385,6 +386,44 @@ public class SWFrame extends javax.swing.JFrame {
         jRadioButtonSavedLocation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonSavedLocationActionPerformed(evt);
+            }
+        });
+
+        soilFileListCombo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                soilFileListComboMouseClicked(evt);
+            }
+        });
+        soilFileListCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soilFileListComboActionPerformed(evt);
+            }
+        });
+
+        soilNameCombo.setEnabled(false);
+        soilNameCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                soilNameComboItemStateChanged(evt);
+            }
+        });
+        soilNameCombo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                soilNameComboMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                soilNameComboMouseReleased(evt);
+            }
+        });
+        soilNameCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soilNameComboActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -416,22 +455,16 @@ public class SWFrame extends javax.swing.JFrame {
                                         .addComponent(wcErrorLabel))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jRadioMap)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jRadioButtonSavedLocation)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGap(54, 54, 54)
                                         .addComponent(jRadioFile)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jRadioButtonSavedLocation)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(jRadioKeyboard)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32)
-                                .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(dwtLabel)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(dwtText, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -445,24 +478,34 @@ public class SWFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(soilNameLabel)
-                                .addGap(153, 153, 153)
+                                .addGap(365, 365, 365)
                                 .addComponent(soilTextureLabel))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jButtonMap)
-                                    .addGap(46, 46, 46)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(showSoilDataButton))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(soilListBox, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel1))
-                                    .addGap(176, 176, 176)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel5)))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButtonMap)
+                                        .addGap(46, 46, 46)
+                                        .addComponent(soilFileListCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(showSoilDataButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(soilListBox, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel1))
+                                        .addGap(176, 176, 176)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel5))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton1)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(soilNameCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(54, 54, 54)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -481,10 +524,9 @@ public class SWFrame extends javax.swing.JFrame {
                     .addComponent(infoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRadioFile)
-                    .addComponent(jRadioMap)
                     .addComponent(jRadioKeyboard)
                     .addComponent(jLabel2)
                     .addComponent(jRadioButtonSavedLocation))
@@ -492,7 +534,8 @@ public class SWFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonMap)
                     .addComponent(showSoilDataButton)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(soilFileListCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -502,14 +545,15 @@ public class SWFrame extends javax.swing.JFrame {
                     .addComponent(soilListBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(soilNameLabel)
-                    .addComponent(soilTextureLabel))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(soilTextureLabel)
+                    .addComponent(soilNameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(soilNameCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(49, 49, 49)
                 .addComponent(NLLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -522,7 +566,7 @@ public class SWFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(prevButton)
                     .addComponent(nextButton))
-                .addGap(21, 21, 21))
+                .addContainerGap())
         );
 
         pack();
@@ -548,10 +592,11 @@ public class SWFrame extends javax.swing.JFrame {
                     continue;
                 }
                 vec[0] = row + 1;
-                vec[1] = DU[row];
-                vec[2] = WC[row];
+                vec[1] = Math.floor(DU[row] * 1000) / 1000;
+                vec[2] = Math.floor(WC[row] * 1000) / 1000;
+                
                 model.addRow(vec);
-                //model.addRow(new Vector(DU[row], WC[row]));
+                
                 row++;
             }
         }
@@ -573,7 +618,7 @@ public class SWFrame extends javax.swing.JFrame {
                 soilNameText.setText(SNAME);
                 soilTextureText.setText(TXT[0]);
                 NLComboBox.setSelectedIndex(NL - 1);
-                waterholdcapacityBox.setSelectedIndex(waterHoldSelectedItemIndex[2]);
+                waterholdcapacityBox.setSelectedIndex(waterHoldSelectedItemIndex[0]);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -582,107 +627,97 @@ public class SWFrame extends javax.swing.JFrame {
 
     
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        //Validation of data
+        if(soilTable.isEditing()){
+            soilTable.getCellEditor().stopCellEditing();
+        }
         
-        // Check if the data is to be read from the file or from the table.
-        // Avoid this patching and rewrite the code after imp
-        // Segregate both the logics/ Map Handline and File+Keyboard handling.
-        if (jRadioMap.isSelected()|| jRadioButtonSavedLocation.isSelected()) {
-            SoilData soilData;
-            File latestFile;
-            try {
-                if (jRadioMap.isSelected()) {
-                    latestFile = findLatestFile(0);
-                }  else {
-                    latestFile = findLatestFile (jComboBox1.getSelectedIndex());
-                }
-                soilData = readSoilDataFromJSONMap (latestFile);
-            } catch (FileNotFoundException e) {
-                    JOptionPane.showMessageDialog(null, e.getMessage());
-                    return;
-            }
-            utils.setSoilData(soilData);
+        wcErrorLabel.setVisible(false);
+        errorLabel.setVisible(false);
+        soilNameLabel.setForeground(Color.black);
+        soilTextureLabel.setForeground(Color.black);
+        dwtLabel.setForeground(Color.black);
+
+        boolean isFailed = false;
+        int ISOIL = soilListBox.getSelectedIndex();
+        if (jRadioKeyboard.isSelected()) {
             
-        } else {
-            
-            if(soilTable.isEditing()){
-                soilTable.getCellEditor().stopCellEditing();
-            }
-
-            wcErrorLabel.setVisible(false);
-            errorLabel.setVisible(false);
-            soilNameLabel.setForeground(Color.black);
-            soilTextureLabel.setForeground(Color.black);
-            dwtLabel.setForeground(Color.black);
-
-            boolean isFailed = false;
-            int ISOIL = soilListBox.getSelectedIndex();
-            if (ISOIL == 0) {
-                if (soilNameText.getText().length() < 1) {
-                    isFailed = true;
-                    soilNameLabel.setForeground(Color.red);
-                }
-
-                if (soilTextureText.getText().length() < 1) {
-                    isFailed = true;
-                    soilTextureLabel.setForeground(Color.red);
-                }
-
-                DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-                int nl = NLComboBox.getSelectedIndex() + 1;
-                if (nl != model.getRowCount()) {
-                    isFailed = true;
-                }
-            }
-
-            if (dwtText.isEnabled()) {
-                try {
-                    DWT = Double.parseDouble(dwtText.getText());
-                } catch (NumberFormatException e) {
-                    dwtLabel.setForeground(Color.red);
-                    isFailed = true;
-                }
-                if (DWT < 0.01) {
-                    dwtLabel.setForeground(Color.red);
-                    isFailed = true;
-                }
-            }
-
-            System.out.println("DWT ="  + DWT);
-            //@rohit_note: Data needs to be taken based on the selection from UI Map/File/Keyboard. For eg. If this is file/Keyboard
-            // Then Take the data from the controls/ else if it is Map then take the data from the json File. 
-            SNAME = soilNameText.getText();
-            TXT[0] = soilTextureText.getText();
-            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-            try {
-                for (int i = 0; i < NL; i++) {
-                    DU[i] = (Double) model.getValueAt(i, 1);
-                    WC[i] = (Double) model.getValueAt(i, 2);
-                    if (WC[i] < 0.01 || WC[i] > 0.9) {
-                        isFailed = true;
-                        wcErrorLabel.setVisible(true);
-                    }
-                }
-            } catch (Exception e) {
+            if (soilNameText.getText().length() < 1) {
+            //if (soilNameCombo.getItemAt(0).length() < 1) {
                 isFailed = true;
-                errorLabel.setVisible(true);
+                soilNameLabel.setForeground(Color.red);
             }
 
-            if (isFailed) {
-                return;
+            if (soilTextureText.getText().length() < 1) {
+                isFailed = true;
+                soilTextureLabel.setForeground(Color.red);
             }
 
-            //Define Lower Soil Layer Dimensions
-            utils.setDWT(DWT);
+            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+            int nl = NLComboBox.getSelectedIndex() + 1;
+            if (nl != model.getRowCount()) {
+                isFailed = true;
+            }
+        }
+
+        if (dwtText.isEnabled()) {
+            try {
+                DWT = Double.parseDouble(dwtText.getText());
+            } catch (NumberFormatException e) {
+                dwtLabel.setForeground(Color.red);
+                isFailed = true;
+            }
+            if (DWT < 0.01) {
+                dwtLabel.setForeground(Color.red);
+                isFailed = true;
+            }
+        }
+
+        System.out.println("DWT ="  + DWT);
+        //@rohit_note: Data needs to be taken based on the selection from UI Map/File/Keyboard. For eg. If this is file/Keyboard
+        // Then Take the data from the controls/ else if it is Map then take the data from the json File. 
+        SNAME = soilNameText.getText();
+        TXT[0] = soilTextureText.getText();
+        DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+        SoilData soilData = SoilData.getSoilDataInstance();
+        try {
+            
+            for (int i = 0; i < NL; i++) {
+                DU[i] = (Double) model.getValueAt(i, 1);
+                WC[i] = (Double) model.getValueAt(i, 2);
+                
+                if (jRadioButtonSavedLocation.isSelected()) {
+                    ArrayList<Soil> soilList = soilData.getSoilsFromFile((String)soilFileListCombo.getSelectedItem());
+                    soilData.setKey((String)soilFileListCombo.getSelectedItem());
+                    if (soilList!=null) {
+                        Soil soil = soilList.get(soilNameCombo.getSelectedIndex());
+                        soil.getDU()[i]=DU[i];
+                        soil.getWC()[i]=WC[i];                
+                    }             
+                } else if (WC[i] < 0.01 || WC[i] > 0.9) {
+                    isFailed = true;
+                    wcErrorLabel.setVisible(true);
+                }
+            }
+        } catch (Exception e) {
+            isFailed = true;
+            errorLabel.setVisible(true);
+        }
+
+        if (isFailed) {
+            return;
+        }
+        
+        if (jRadioKeyboard.isSelected() || jRadioFile.isSelected()) {
             Soil soil = new Soil(ISOIL, SNAME, NL);
             soil.setValues(WC, WCL, WCU, DU, TXT);
-            //soil.setSoilTypeArea(area);
-
-            SoilData soilData = new SoilData ();
-            soilData.addSoil(soil);
+            soilData.addSoil(jRadioKeyboard.isSelected()? Messages.KEYBOARD_KEY : Messages.FILE_KEY, soil);
             utils.setSoilData(soilData);
             
         }
+        
+        //Define Lower Soil Layer Dimensions
+        utils.setDWT(DWT);
+        
                 
         setVisible(false);
         if (next != null) {
@@ -710,23 +745,24 @@ public class SWFrame extends javax.swing.JFrame {
 
     private void waterholdcapacityBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_waterholdcapacityBoxActionPerformed
         // TODO add your handling code here:
+        if (isInitializing) return;
+        
         int whc = waterholdcapacityBox.getSelectedIndex();
-        boolean isMapSelected = jRadioMap.isSelected();        
         boolean isFileLocationSelected = jRadioButtonSavedLocation.isSelected();
         boolean isFileSelected = jRadioFile.isSelected();
         boolean isKeyboardEnabled = jRadioKeyboard.isSelected();
         
-        if (isMapSelected)
+        if (isFileSelected)
             waterHoldSelectedItemIndex[0] = whc;
         else if (isFileLocationSelected)
             waterHoldSelectedItemIndex[1] = whc;
-        else if (isFileSelected)
-            waterHoldSelectedItemIndex[2] = whc;
         else 
-            waterHoldSelectedItemIndex[3] = whc;
+            waterHoldSelectedItemIndex[2] = whc;
         
         
         DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+        System.out.println (model.getRowCount() + " water  " + NL);
+        
         for (int i = 0; i < NL; i++) {
             if (whc == 0) {
                 WC[i] = WCL[i];
@@ -734,35 +770,27 @@ public class SWFrame extends javax.swing.JFrame {
                 WC[i] = WCU[i];
             } else {
                 WC[i] = 0.5 * (WCL[i] + WCU[i]);
+                WC[i] = Math.floor(WC[i] * 1000) / 1000;
             }
             model.setValueAt(WC[i], i, 2);
         }
-
 
     }//GEN-LAST:event_waterholdcapacityBoxActionPerformed
 
     private void showSoilDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showSoilDataButtonActionPerformed
         // TODO add your handling code here:
-        
-        // There are two paths of this 1. if the Map is enabled 
-        boolean isMapEnabled = jRadioMap.isSelected();
+
         boolean isFileEnabled = jRadioFile.isSelected();
         boolean isFileLocationEnabled = jRadioButtonSavedLocation.isSelected();
         String str = "";
             
-        if (isMapEnabled || isFileLocationEnabled) {
-            
-           
+        if (isFileLocationEnabled) {
             SoilData soilData;
             File latestFile;
             try {
-                if (jRadioMap.isSelected()) {
-                    latestFile = findLatestFile(0);
-                }  else {
-                    latestFile = findLatestFile (jComboBox1.getSelectedIndex());
-                }
-                str = readFromMapJson(latestFile);
-                //soilData = readSoilDataFromJSONMap (latestFile);
+                latestFile = findLatestFile (soilFileListCombo.getSelectedIndex());
+                str = readFromJsonFileForSoilDetailsButton(latestFile);
+
             } catch (FileNotFoundException e) {
                     JOptionPane.showMessageDialog(null, e.getMessage());
                     return;
@@ -825,19 +853,14 @@ public class SWFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButtonMapActionPerformed
 
-    private void jRadioMapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioMapActionPerformed
-        // TODO add your handling code here:
-        toogleStateOfControls ();        
-    }//GEN-LAST:event_jRadioMapActionPerformed
-
     private void jRadioKeyboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioKeyboardActionPerformed
         // TODO add your handling code here:
-        toogleStateOfControls ();
+        toogleStateOfControls (evt);
     }//GEN-LAST:event_jRadioKeyboardActionPerformed
 
     private void jRadioFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioFileActionPerformed
         // TODO add your handling code here:
-        toogleStateOfControls ();
+        toogleStateOfControls (evt);
         if (jRadioFile.isSelected()) {
             
             try {
@@ -854,78 +877,258 @@ public class SWFrame extends javax.swing.JFrame {
 
     private void jRadioButtonSavedLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSavedLocationActionPerformed
         // TODO add your handling code here:
-        toogleStateOfControls (); 
+        toogleStateOfControls (evt); 
     }//GEN-LAST:event_jRadioButtonSavedLocationActionPerformed
 
-    private void toogleStateOfControls () {
-
-        boolean isMapSelected = jRadioMap.isSelected();        
-        boolean isFileLocationSelected = jRadioButtonSavedLocation.isSelected();
-        boolean isFileSelected = jRadioFile.isSelected();
-        boolean isKeyboardEnabled = jRadioKeyboard.isSelected();
-
-        jButtonMap.setEnabled(isMapSelected||(isKeyboardEnabled&&isFileSelected));
-        jComboBox1.setEnabled(isFileLocationSelected);
-
-        showSoilDataButton.setEnabled(isMapSelected||isFileSelected||isFileLocationSelected);
-
-        soilListBox.setEnabled(isFileSelected);
-        waterholdcapacityBox.setEnabled(isFileSelected||isMapSelected||isFileLocationSelected);
-        int index =  0;
-
-        // switch ()
-                
+    private void soilNameComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soilNameComboActionPerformed
         
-        soilNameText.setEnabled(isKeyboardEnabled);
-        soilTextureText.setEnabled(isKeyboardEnabled);
-        NLComboBox.setEnabled(isKeyboardEnabled);
-        soilTable.setEnabled(isKeyboardEnabled);
+        // TODO add your handling code here:
+        if (isInitializing) return;
         
-        while (jComboBox1.getItemCount()>0) {
-            jComboBox1.removeAllItems();
+        int index = soilNameCombo.getSelectedIndex();
+        if (index==-1) return;
+        //index = index ==-1? 0 : index;
+        SoilData soilData = utils.getSoilData();
+        String key = (String)soilFileListCombo.getSelectedItem();
+        key = key.trim();
+        ArrayList<Soil> soilList = soilData.getSoilsFromFile(key);
+        
+        if (soilList == null) {
+            System.out.println ("File selecte : "  + (String)soilFileListCombo.getSelectedItem());
         }
         
-        
-        if (isMapSelected) {
-             index = 0;
-        } else if (isFileLocationSelected) {
-            index = 1;
-        } else if (isFileSelected) {
-            index = 2;
-        } else {
-            index = 3;
-        }
-        
-         waterholdcapacityBox.setSelectedIndex(waterHoldSelectedItemIndex[index]);
-        
-        if (isFileLocationSelected) {
-            File [] files = getListOfDataFiles();
-            for (File f : files) {
-                jComboBox1.addItem(f.getName());
-            }
-        }
+        if (soilList.size()>0) {
             
-        if (!isFileSelected) {
-            soilNameText.setText("");
-            soilTextureText.setText("");
-            NLComboBox.setSelectedIndex(-1);
-           
+            if (index == -1) {
+                
+                // TODO add your handling code here:
+                DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+                int row = model.getRowCount();
+                for (int i = 0; i < row; i++) {
+                    model.removeRow(0);
+                }
+                index = 0;
+                Soil soil = soilList.get(index);
+                for (int i = 0; i < soil.getNL(); i++) {
+                    Object[] vec = new Object[3];
+                    vec[0] = i + 1;
+                    vec[1] = soil.getDU()[i];
+                    System.out.println ("Value added to the table : " + Math.floor(soil.getWC()[i] * 100) / 100 + " " + soil.getWC()[i]);
+                    vec[2] = soil.getWC()[i];
+                    model.addRow(vec);
+                    System.out.println ("SoilName : Added new Row : " + model.getRowCount());
+                }
+            } else {
+                
+                // This is to take the backup of the data so that I can 
+                
+                
+                Soil soil = soilList.get(selectedSoilIndex);
+                DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+
+                System.out.println ("soilNameComboActionPerformed :: " + model.getRowCount());
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    soil.getDU()[i] = (Double) model.getValueAt(i, 1);
+                    soil.getWC()[i] = (Double) model.getValueAt(i, 2);
+                }
+                
+                int row = model.getRowCount();
+                for (int i = 0; i < row; i++) {
+                    model.removeRow(0);
+                }
+                
+                soil = soilList.get(index);
+                
+                DU = soil.getDU();
+                WCL = soil.getWCL();
+                WCU = soil.getWCU();
+                WC = soil.getWC ();
+                NL = soil.getNL();
+                SNAME = soil.getName();
+                
+                for (int i = 0; i < soil.getNL(); i++) {
+                    Object[] vec = new Object[3];
+                    vec[0] = i + 1;
+                    vec[1] = soil.getDU()[i];
+                    vec[2] = soil.getWC()[i];
+                    model.addRow(vec);
+                    
+                }
+                
+            }
+            
+        }
+        selectedSoilIndex = index;
+    }//GEN-LAST:event_soilNameComboActionPerformed
+
+    private void updateSoilDataBaseOnSoilFileSelection (int index) {
+        try {
+            File [] files = getListOfDataFiles ();
+            readSoilDataJsonFileForUtils(files[index]);
+            utils.setSoilData(SoilData.getSoilDataInstance());
+	} catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+	}
+    }
+    
+    private void updateSoilInfoAndSoilLayerInfo(int index) {
+        
+       
+        // Update the data in the table base on the index 0
+        SoilData soilData = utils.getSoilData();
+        String key = (String)soilFileListCombo.getItemAt(index);
+        if (key==null) {
+            return ;
+//            key= (String)soilFileListCombo.getItemAt(0);
+//            key = key.trim ();
+        }
+        
+
+        System.out.println("\n\n\n soilFileListCombo" + index);
+        soilNameCombo.removeAllItems();
+        
+        ArrayList<Soil> soilList = soilData.getSoilsFromFile(key);
+        if (soilList.size()>0) {
+            
+            for (Soil soil : soilList) {
+                soilNameCombo.addItem(soil.getName());
+            }
+
             DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
             int row = model.getRowCount();
             for (int i = 0; i < row; i++) {
                 model.removeRow(0);
+                System.out.println ("Removing row " + model.getRowCount ());
             }
-            row = 0;
+            
+            int soilIndex = soilNameCombo.getSelectedIndex();
+            Soil soil = soilList.get(soilIndex==-1?0:soilIndex);
+            DU = soil.getDU();
+            WCL = soil.getWCL();
+            WCU = soil.getWCU();
+            WC = soil.getWC ();
+            NL = soil.getNL();
+            SNAME = soil.getName();
+            
+            for (int i = 0; i < soil.getNL(); i++) {
+                Object[] vec = new Object[3];
+                vec[0] = i + 1;
+                vec[1] = soil.getDU()[i];
+                vec[2] = soil.getWC()[i];
+                model.addRow(vec);
+            }
+        }
+    }
 
-        } 
+    
+    private void soilFileListComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soilFileListComboActionPerformed
+        // TODO add your handling code here:
+        if (isInitializing) return;
+        
+        
+        int index  = soilFileListCombo.getSelectedIndex();
+        index = index ==-1? 0 : index;
+        selectedSoilIndex = 0;
+        
+        System.out.println("Inserted the file name : " + index + "  " + soilFileListCombo.getSelectedItem());
+        // Read this file and update the Reference accordingly in the utils.
+        // Get the file of the selected index and update the utils
+
+        updateSoilInfoAndSoilLayerInfo (index);
+    }//GEN-LAST:event_soilFileListComboActionPerformed
+
+    private void soilFileListComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_soilFileListComboMouseClicked
+        
+    }//GEN-LAST:event_soilFileListComboMouseClicked
+
+    private void soilNameComboMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_soilNameComboMouseClicked
+
+
+    }//GEN-LAST:event_soilNameComboMouseClicked
+
+    private void soilNameComboMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_soilNameComboMouseReleased
+        
+    }//GEN-LAST:event_soilNameComboMouseReleased
+
+    private void soilNameComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_soilNameComboItemStateChanged
+
+    }//GEN-LAST:event_soilNameComboItemStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        
+        
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void toogleStateOfControls (java.awt.event.ActionEvent evt) {
+       
+        isInitializing = true;
+        boolean isFileLocationSelected = jRadioButtonSavedLocation.isSelected();
+        boolean isFileSelected = jRadioFile.isSelected();
+        boolean isKeyboardEnabled = jRadioKeyboard.isSelected();
+        
+        jButtonMap.setEnabled(isFileLocationSelected);
+        soilFileListCombo.setEnabled(isFileLocationSelected);
+        showSoilDataButton.setEnabled(isFileSelected||isFileLocationSelected);
+        soilListBox.setEnabled(isFileSelected);
+        waterholdcapacityBox.setEnabled(!isKeyboardEnabled);
+
+        soilNameCombo.setEnabled(isFileLocationSelected);
+        soilNameText.setEnabled(isKeyboardEnabled);
+        soilTextureText.setEnabled(isKeyboardEnabled);
+        NLComboBox.setEnabled(isKeyboardEnabled);
+        soilTable.setEnabled(isKeyboardEnabled||isFileLocationSelected);
+        soilNameCombo.setEditable(isKeyboardEnabled);
+
+        DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+        int row = model.getRowCount();
+        for (int i = 0; i < row; i++) {
+            model.removeRow(0);
+        }
+
+        // Update the list of soils in the soil name combo box.
+        if (jRadioButtonSavedLocation.isSelected()) {
+            
+            System.out.println("\n\n\n radionSaved Button");
+
+            if (soilFileListCombo.getItemCount()>0) {
+                soilFileListCombo.removeAllItems();
+            }
+        
+            if (isFileLocationSelected) {
+                files = getListOfDataFiles();
+                int i = 0;
+                for (File f : files) {
+                    String key = f.getName(); 
+                    key = key.trim ();
+                    
+                    soilFileListCombo.addItem(f.getName());
+                    updateSoilDataBaseOnSoilFileSelection (i++);
+                    
+                }
+            }
+            
+            //updateSoilDataBaseOnSoilFileSelection (0);
+            updateSoilInfoAndSoilLayerInfo (0);
+            prevButtonSelectedSavedLocation = true;
+        }
+        
+        int index = isFileSelected ? 0 : (isFileLocationSelected ? 1 : 2);
+        System.out.println ("\n\n ToogleSelection ---- " + index);        
+        waterholdcapacityBox.setSelectedIndex(waterHoldSelectedItemIndex[index]);
+        isInitializing = false;
+ 
     }
     
     
-    public File[] getListOfDataFiles () {
+    private File[] getListOfDataFiles () {
         
+        if (files!=null) return files;
 
         String home = System.getProperty("user.home");
-        
         File dir = new File(home+"/Downloads"); 
         
         String siteName = utils.getOutFile().replaceFirst(".txt", "");
@@ -944,6 +1147,8 @@ public class SWFrame extends javax.swing.JFrame {
 
     
     private File findLatestFile (int index) throws FileNotFoundException{
+        if (files!=null)
+            return files[index];
         
         // Get the latest file form the download folder.
         String home = System.getProperty("user.home");
@@ -951,11 +1156,12 @@ public class SWFrame extends javax.swing.JFrame {
         File theNewestFile = null;
         //File dir = new File(filePath);
         FileFilter fileFilter = new WildcardFileFilter("*." + "json");
-        File[] files = dir.listFiles(fileFilter);
+        File[] thesefiles = dir.listFiles(fileFilter);
         
-        if (files.length > 0) {
-            Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
-            theNewestFile = files[index];
+        if (thesefiles.length > 0) {
+            Arrays.sort(thesefiles, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+            files = thesefiles; 
+            theNewestFile = thesefiles[index];
         } else {
             throw new FileNotFoundException(Messages.FILE_NOT_FOUND_MESSAGE);
         }
@@ -963,9 +1169,11 @@ public class SWFrame extends javax.swing.JFrame {
     }
     
     
-    private SoilData readSoilDataFromJSONMap (File latestFile) throws FileNotFoundException{
-        
-        SoilData soilData = new SoilData ();    
+    private void readSoilDataJsonFileForUtils (File latestFile) throws FileNotFoundException{
+        SoilData soilData = SoilData.getSoilDataInstance();
+        if (soilData.getSoilsFromFile(latestFile.getName().trim())!= null) 
+            return;
+  
         String str = "";
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         str += "Data Date: " + sdf.format(latestFile.lastModified()) + "\n";
@@ -1001,6 +1209,8 @@ public class SWFrame extends javax.swing.JFrame {
         
         int whcIndex = waterholdcapacityBox.getSelectedIndex();
         
+        ArrayList<Soil> soilList = new ArrayList<Soil> ();
+        
         for (JsonNode n : soils) {
             String soilName = n.path("soilName").textValue();
             String soilTypeArea = n.path("soilArea").textValue();
@@ -1016,11 +1226,9 @@ public class SWFrame extends javax.swing.JFrame {
             
             for (JsonNode node : soilLayersNodes) {
                 wcu[NL] = node.get("sldul").asDouble()/100.00;
-                //wcu[NL] =  Math.round(wcu[NL] * 1000) / 1000;
                 du[NL] = node.get("sllb").asDouble()*0.39370;
-                
+                du[NL] = Math.floor(du[NL]*1000)/1000;
                 wcl[NL] = node.get("slll").asDouble()/100.00;
-                //wcl[NL] =  Math.round(wcl[NL] * 1000) / 1000;
                 
                 if (whcIndex == 0) {
                     wc[NL] = wcl[NL];
@@ -1029,20 +1237,22 @@ public class SWFrame extends javax.swing.JFrame {
                 } else {
                     wc[NL] = 0.5 * (wcl[NL] + wcu[NL]);
                 }
+                
+                wc[NL] = Math.floor(wc[NL]*1000)/1000;
                 NL++;
             }
         
             Soil soil = new Soil (row, soilName, NL);
             soil.setValues(wc, wcl, wcu, du, txt);
             soil.setSoilTypeArea(Double.valueOf(soilTypeArea));
-            soilData.getSoils().add(soil);
+            //soilData.addSoil(latestFile.getName(), soil);
+            soilList.add(soil);
             row++;
         }
-        
-        return soilData;
+        soilData.addSoilList(latestFile.getName(), soilList);
     }    
     
-    public String readFromMapJson (File theNewestFile) throws IOException {
+    public String readFromJsonFileForSoilDetailsButton (File theNewestFile) throws IOException {
 
         String str = "";
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -1051,12 +1261,6 @@ public class SWFrame extends javax.swing.JFrame {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(theNewestFile);
         JsonNode soils = root.path("soils");
-        DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-        int row = model.getRowCount();
-        for (int i = 0; i < row; i++) {
-            model.removeRow(0);
-        }
-        row = 0;
         
         String fileName = theNewestFile.getName();
         str+= "Data File Name: " + fileName+"\n";
@@ -1141,9 +1345,7 @@ public class SWFrame extends javax.swing.JFrame {
             DU[i] = Double.parseDouble(fields[0]);
             WCL[i] = Double.parseDouble(fields[1]) / 100.0;
             WCU[i] = Double.parseDouble(fields[2]) / 100.0;
-            
-            WC[i] =  Math.round(WCL[i] * 100) / 100;
-            //WC[i] = WCL[i];
+            WC[i] =  Math.floor(WCL[i] * 100) / 100;
             i++;
         }
 
@@ -1158,8 +1360,8 @@ public class SWFrame extends javax.swing.JFrame {
     private javax.swing.JLabel errorLabel;
     private javax.swing.JButton infoButton;
     private javax.swing.JLabel irrTypeLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonMap;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1168,14 +1370,15 @@ public class SWFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButtonSavedLocation;
     private javax.swing.JRadioButton jRadioFile;
     private javax.swing.JRadioButton jRadioKeyboard;
-    private javax.swing.JRadioButton jRadioMap;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton prevButton;
     private javax.swing.JButton showSoilDataButton;
+    private javax.swing.JComboBox<String> soilFileListCombo;
     private javax.swing.JComboBox soilListBox;
+    private javax.swing.JComboBox<String> soilNameCombo;
     private javax.swing.JLabel soilNameLabel;
     private javax.swing.JTextField soilNameText;
     private javax.swing.JTable soilTable;

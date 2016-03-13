@@ -329,15 +329,22 @@ public class AFSIRSUtils {
         }
     }
 
+
     public void setSoilData(SoilData soilData) {
         this.soil = soilData.getSoils().get(0);
         this.soilData = soilData;
         
+        
         SNAME = soil.getName();
         TXT = soil.getTXT();
         DU = soil.getDU();
-        WCL = soil.getWCL();
-        WCU = soil.getWCU();
+        
+        double WCLn[] = {.9,.9,.9,.9,.9,.9};
+        WCL = WCLn;
+        //WCL = soil.getWCL();
+        //WCU = soil.getWCU();
+        double WCUn [] = {.9,.9,.9,.9,.9,.9};
+        WCU = WCUn;
         WC = soil.getWC();
         NL = soil.getNL();
         
