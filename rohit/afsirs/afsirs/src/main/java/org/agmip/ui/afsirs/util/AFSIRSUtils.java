@@ -331,13 +331,13 @@ public class AFSIRSUtils {
 
 
     public void setSoilData(SoilData soilData) {
-        this.soil = soilData.getSoils().get(0);
+        //this.soil = soilData.getSoils().get(0);
         this.soilData = soilData;
         
         
-        SNAME = soil.getName();
-        TXT = soil.getTXT();
-        DU = soil.getDU();
+        //SNAME = soil.getName();
+        //TXT = soil.getTXT();
+        //DU = soil.getDU();
         
         double WCLn[] = {.9,.9,.9,.9,.9,.9};
         WCL = WCLn;
@@ -345,8 +345,8 @@ public class AFSIRSUtils {
         //WCU = soil.getWCU();
         double WCUn [] = {.9,.9,.9,.9,.9,.9};
         WCU = WCUn;
-        WC = soil.getWC();
-        NL = soil.getNL();
+        //WC = soil.getWC();
+        //NL = soil.getNL();
         
         
         /*SNAME = firstSoil.getName();
@@ -356,6 +356,16 @@ public class AFSIRSUtils {
         WCU = firstSoil.getWCU();
         WC = firstSoil.getWC();
         NL = firstSoil.getNL();*/
+    }
+    
+    public void setDefaultSoil (Soil soil) {
+        SNAME = soil.getName();
+        TXT = soil.getTXT();
+        DU = soil.getDU();
+        WCL = soil.getWCL();
+        WC = soil.getWC();
+        WCU = soil.getWCU();
+        NL = soil.getNL();
     }
 
     public SoilData getSoilData() {

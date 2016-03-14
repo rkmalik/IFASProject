@@ -22,12 +22,12 @@ public class SoilData {
         completeSoilData = new HashMap<String, ArrayList<Soil>>();
     }
     
-    public static SoilData getSoilDataInstance () {
+    /*public static SoilData getSoilDataInstance () {
         if (soilData == null) {
             soilData = new SoilData ();
         }
         return soilData;
-    }
+    }*/
     
     public void setKey (String key) {
         currentKey = key;

@@ -75,7 +75,8 @@ public class SWFrame extends javax.swing.JFrame {
     private boolean prevButtonSelectedSavedLocation = false;
     
     
-    private int selectedSoilIndex = 0;
+    private Soil prevSoil = null;
+    private Boolean isPreviousSelectionSavedLocation = false;
 
     AFSIRSUtils utils;
 
@@ -145,7 +146,6 @@ public class SWFrame extends javax.swing.JFrame {
             br.readLine();//Ignore Line
 
             int N = Integer.parseInt(line.substring(start, end));
-            System.out.println(N);
 
             for (int i = 0; i < N; i++) {
                 line = br.readLine();
@@ -212,7 +212,7 @@ public class SWFrame extends javax.swing.JFrame {
         jRadioButtonSavedLocation = new javax.swing.JRadioButton();
         soilFileListCombo = new javax.swing.JComboBox<>();
         soilNameCombo = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        jButtonRefresh = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -420,10 +420,10 @@ public class SWFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Refresh");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonRefresh.setText("Refresh");
+        jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonRefreshActionPerformed(evt);
             }
         });
 
@@ -432,8 +432,15 @@ public class SWFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -445,7 +452,6 @@ public class SWFrame extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(NLLabel)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addComponent(NLComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -497,7 +503,7 @@ public class SWFrame extends javax.swing.JFrame {
                                             .addComponent(waterholdcapacityBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel5))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton1)))
+                                .addComponent(jButtonRefresh)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(soilNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -506,10 +512,6 @@ public class SWFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(soilTextureText, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -535,7 +537,7 @@ public class SWFrame extends javax.swing.JFrame {
                     .addComponent(jButtonMap)
                     .addComponent(showSoilDataButton)
                     .addComponent(soilFileListCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(jButtonRefresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -672,13 +674,18 @@ public class SWFrame extends javax.swing.JFrame {
             }
         }
 
-        System.out.println("DWT ="  + DWT);
         //@rohit_note: Data needs to be taken based on the selection from UI Map/File/Keyboard. For eg. If this is file/Keyboard
         // Then Take the data from the controls/ else if it is Map then take the data from the json File. 
         SNAME = soilNameText.getText();
         TXT[0] = soilTextureText.getText();
         DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-        SoilData soilData = SoilData.getSoilDataInstance();
+        SoilData soilData = utils.getSoilData();
+        
+        if (soilData == null) {
+            soilData = new SoilData ();
+            utils.setSoilData(soilData);
+        }
+        
         try {
             
             for (int i = 0; i < NL; i++) {
@@ -691,7 +698,8 @@ public class SWFrame extends javax.swing.JFrame {
                     if (soilList!=null) {
                         Soil soil = soilList.get(soilNameCombo.getSelectedIndex());
                         soil.getDU()[i]=DU[i];
-                        soil.getWC()[i]=WC[i];                
+                        soil.getWC()[i]=WC[i];  
+                        utils.setDefaultSoil(soil);
                     }             
                 } else if (WC[i] < 0.01 || WC[i] > 0.9) {
                     isFailed = true;
@@ -712,6 +720,7 @@ public class SWFrame extends javax.swing.JFrame {
             soil.setValues(WC, WCL, WCU, DU, TXT);
             soilData.addSoil(jRadioKeyboard.isSelected()? Messages.KEYBOARD_KEY : Messages.FILE_KEY, soil);
             utils.setSoilData(soilData);
+            utils.setDefaultSoil(soil);
             
         }
         
@@ -761,7 +770,6 @@ public class SWFrame extends javax.swing.JFrame {
         
         
         DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
-        System.out.println (model.getRowCount() + " water  " + NL);
         
         for (int i = 0; i < NL; i++) {
             if (whc == 0) {
@@ -845,7 +853,6 @@ public class SWFrame extends javax.swing.JFrame {
         
         String siteName = utils.getOutFile();
         siteName = siteName.replaceFirst(".txt", "");
-        System.out.println (siteName);
         Desktop.getDesktop().browse(new URL("http://abe.ufl.edu/bmpmodel/Shivam/v3_shivam/index.html?site="+siteName+"#").toURI());
     } catch (Exception e) {
         e.printStackTrace();
@@ -855,11 +862,37 @@ public class SWFrame extends javax.swing.JFrame {
 
     private void jRadioKeyboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioKeyboardActionPerformed
         // TODO add your handling code here:
+        if (isPreviousSelectionSavedLocation) {
+            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+
+            if (prevSoil!=null) {
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    prevSoil.getDU()[i] = (Double) model.getValueAt(i, 1);
+                    prevSoil.getWC()[i] = (Double) model.getValueAt(i, 2);
+                }
+            }
+            prevSoil = null;
+            isPreviousSelectionSavedLocation = false;
+        }
         toogleStateOfControls (evt);
     }//GEN-LAST:event_jRadioKeyboardActionPerformed
 
     private void jRadioFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioFileActionPerformed
         // TODO add your handling code here:
+        
+        if (isPreviousSelectionSavedLocation) {
+            DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
+
+            if (prevSoil!=null) {
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    prevSoil.getDU()[i] = (Double) model.getValueAt(i, 1);
+                    prevSoil.getWC()[i] = (Double) model.getValueAt(i, 2);
+                }
+            }
+            prevSoil = null;
+            isPreviousSelectionSavedLocation = false;
+        }
+        
         toogleStateOfControls (evt);
         if (jRadioFile.isSelected()) {
             
@@ -873,11 +906,15 @@ public class SWFrame extends javax.swing.JFrame {
                 e.printStackTrace();
             }
         }
+        
+        
+        
     }//GEN-LAST:event_jRadioFileActionPerformed
 
     private void jRadioButtonSavedLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSavedLocationActionPerformed
         // TODO add your handling code here:
         toogleStateOfControls (evt); 
+        isPreviousSelectionSavedLocation = true;
     }//GEN-LAST:event_jRadioButtonSavedLocationActionPerformed
 
     private void soilNameComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soilNameComboActionPerformed
@@ -892,11 +929,7 @@ public class SWFrame extends javax.swing.JFrame {
         String key = (String)soilFileListCombo.getSelectedItem();
         key = key.trim();
         ArrayList<Soil> soilList = soilData.getSoilsFromFile(key);
-        
-        if (soilList == null) {
-            System.out.println ("File selecte : "  + (String)soilFileListCombo.getSelectedItem());
-        }
-        
+            
         if (soilList.size()>0) {
             
             if (index == -1) {
@@ -913,31 +946,34 @@ public class SWFrame extends javax.swing.JFrame {
                     Object[] vec = new Object[3];
                     vec[0] = i + 1;
                     vec[1] = soil.getDU()[i];
-                    System.out.println ("Value added to the table : " + Math.floor(soil.getWC()[i] * 100) / 100 + " " + soil.getWC()[i]);
+                    
                     vec[2] = soil.getWC()[i];
                     model.addRow(vec);
-                    System.out.println ("SoilName : Added new Row : " + model.getRowCount());
+                    
                 }
             } else {
                 
                 // This is to take the backup of the data so that I can 
                 
                 
-                Soil soil = soilList.get(selectedSoilIndex);
+                //Soil soil = soilList.get(selectedSoilIndex);
                 DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
 
-                System.out.println ("soilNameComboActionPerformed :: " + model.getRowCount());
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    soil.getDU()[i] = (Double) model.getValueAt(i, 1);
-                    soil.getWC()[i] = (Double) model.getValueAt(i, 2);
+                
+                if (prevSoil!=null) {
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        prevSoil.getDU()[i] = (Double) model.getValueAt(i, 1);
+                        prevSoil.getWC()[i] = (Double) model.getValueAt(i, 2);
+                    }
                 }
+                
                 
                 int row = model.getRowCount();
                 for (int i = 0; i < row; i++) {
                     model.removeRow(0);
                 }
                 
-                soil = soilList.get(index);
+                Soil soil = soilList.get(index);
                 
                 DU = soil.getDU();
                 WCL = soil.getWCL();
@@ -945,6 +981,7 @@ public class SWFrame extends javax.swing.JFrame {
                 WC = soil.getWC ();
                 NL = soil.getNL();
                 SNAME = soil.getName();
+                utils.setDefaultSoil(soil);
                 
                 for (int i = 0; i < soil.getNL(); i++) {
                     Object[] vec = new Object[3];
@@ -955,17 +992,18 @@ public class SWFrame extends javax.swing.JFrame {
                     
                 }
                 
+                prevSoil = soil;                
             }
             
         }
-        selectedSoilIndex = index;
+        //selectedSoilIndex = index;
     }//GEN-LAST:event_soilNameComboActionPerformed
 
     private void updateSoilDataBaseOnSoilFileSelection (int index) {
         try {
             File [] files = getListOfDataFiles ();
             readSoilDataJsonFileForUtils(files[index]);
-            utils.setSoilData(SoilData.getSoilDataInstance());
+            //utils.setSoilData(SoilData.getSoilDataInstance());
 	} catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
@@ -978,14 +1016,8 @@ public class SWFrame extends javax.swing.JFrame {
         // Update the data in the table base on the index 0
         SoilData soilData = utils.getSoilData();
         String key = (String)soilFileListCombo.getItemAt(index);
-        if (key==null) {
-            return ;
-//            key= (String)soilFileListCombo.getItemAt(0);
-//            key = key.trim ();
-        }
+        if (key==null) {return ;}
         
-
-        System.out.println("\n\n\n soilFileListCombo" + index);
         soilNameCombo.removeAllItems();
         
         ArrayList<Soil> soilList = soilData.getSoilsFromFile(key);
@@ -999,7 +1031,7 @@ public class SWFrame extends javax.swing.JFrame {
             int row = model.getRowCount();
             for (int i = 0; i < row; i++) {
                 model.removeRow(0);
-                System.out.println ("Removing row " + model.getRowCount ());
+                
             }
             
             int soilIndex = soilNameCombo.getSelectedIndex();
@@ -1010,6 +1042,7 @@ public class SWFrame extends javax.swing.JFrame {
             WC = soil.getWC ();
             NL = soil.getNL();
             SNAME = soil.getName();
+            utils.setDefaultSoil(soil);
             
             for (int i = 0; i < soil.getNL(); i++) {
                 Object[] vec = new Object[3];
@@ -1029,9 +1062,8 @@ public class SWFrame extends javax.swing.JFrame {
         
         int index  = soilFileListCombo.getSelectedIndex();
         index = index ==-1? 0 : index;
-        selectedSoilIndex = 0;
+        //prevSoil = 0;
         
-        System.out.println("Inserted the file name : " + index + "  " + soilFileListCombo.getSelectedItem());
         // Read this file and update the Reference accordingly in the utils.
         // Get the file of the selected index and update the utils
 
@@ -1055,13 +1087,14 @@ public class SWFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_soilNameComboItemStateChanged
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
         // TODO add your handling code here:
+        utils.setSoilData(null);
+        files = null;
+        toogleStateOfControls (evt);
+               
         
-        
-        
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonRefreshActionPerformed
 
     private void toogleStateOfControls (java.awt.event.ActionEvent evt) {
        
@@ -1082,6 +1115,7 @@ public class SWFrame extends javax.swing.JFrame {
         NLComboBox.setEnabled(isKeyboardEnabled);
         soilTable.setEnabled(isKeyboardEnabled||isFileLocationSelected);
         soilNameCombo.setEditable(isKeyboardEnabled);
+        jButtonRefresh.setEnabled(isFileLocationSelected);
 
         DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
         int row = model.getRowCount();
@@ -1092,12 +1126,17 @@ public class SWFrame extends javax.swing.JFrame {
         // Update the list of soils in the soil name combo box.
         if (jRadioButtonSavedLocation.isSelected()) {
             
-            System.out.println("\n\n\n radionSaved Button");
+          
+            if (utils.getSoilData()==null) {
+                utils.setSoilData(new SoilData ());                
+            }
 
             if (soilFileListCombo.getItemCount()>0) {
                 soilFileListCombo.removeAllItems();
             }
         
+            soilFileListCombo.removeAllItems();
+            
             if (isFileLocationSelected) {
                 files = getListOfDataFiles();
                 int i = 0;
@@ -1117,7 +1156,7 @@ public class SWFrame extends javax.swing.JFrame {
         }
         
         int index = isFileSelected ? 0 : (isFileLocationSelected ? 1 : 2);
-        System.out.println ("\n\n ToogleSelection ---- " + index);        
+        //System.out.println ("\n\n ToogleSelection ---- " + index);        
         waterholdcapacityBox.setSelectedIndex(waterHoldSelectedItemIndex[index]);
         isInitializing = false;
  
@@ -1133,7 +1172,7 @@ public class SWFrame extends javax.swing.JFrame {
         
         String siteName = utils.getOutFile().replaceFirst(".txt", "");
         String regEx = siteName+"*." + "json";
-        System.out.println (siteName);
+        //System.out.println (siteName);
         FileFilter fileFilter = new WildcardFileFilter(siteName+"*.*");
         File[] files = dir.listFiles(fileFilter);
         
@@ -1170,7 +1209,7 @@ public class SWFrame extends javax.swing.JFrame {
     
     
     private void readSoilDataJsonFileForUtils (File latestFile) throws FileNotFoundException{
-        SoilData soilData = SoilData.getSoilDataInstance();
+        SoilData soilData = utils.getSoilData();//SoilData.getSoilDataInstance();
         if (soilData.getSoilsFromFile(latestFile.getName().trim())!= null) 
             return;
   
@@ -1188,7 +1227,7 @@ public class SWFrame extends javax.swing.JFrame {
             root = mapper.readTree(fr);
                         
         } catch (FileNotFoundException e) {
-            //System.out.println (e.getMessage());
+
             throw new FileNotFoundException(Messages.FILE_NOT_FOUND_MESSAGE);
             
         } catch (IOException e) {
@@ -1249,6 +1288,7 @@ public class SWFrame extends javax.swing.JFrame {
             soilList.add(soil);
             row++;
         }
+        utils.setDefaultSoil(soilList.get(0));
         soilData.addSoilList(latestFile.getName(), soilList);
     }    
     
@@ -1293,8 +1333,6 @@ public class SWFrame extends javax.swing.JFrame {
                 double sldul_wcu = node.get("sldul").asDouble()/100.00;
 
                 wcu = String.format("%.3f", sldul_wcu);
-                System.out.println ("Rohit: " + slll_wcl + " " + sldul_wcu);
-                // strTmp +=  String.format ("%-5d%-15s%-15s%-15s\n", ++numberOfLayers, du, wcl, wcu);
                 strTmp +=  String.format ("%-5d%-25.3f%-25.3f%-25.3f\n", ++numberOfLayers, sllb_du, slll_wcl,  sldul_wcu);
             }
             
@@ -1360,8 +1398,8 @@ public class SWFrame extends javax.swing.JFrame {
     private javax.swing.JLabel errorLabel;
     private javax.swing.JButton infoButton;
     private javax.swing.JLabel irrTypeLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonMap;
+    private javax.swing.JButton jButtonRefresh;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
