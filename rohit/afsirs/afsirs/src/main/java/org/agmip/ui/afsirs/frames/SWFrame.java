@@ -12,6 +12,10 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 
+import java.util.logging.Logger;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -44,6 +48,7 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
 import org.agmip.ui.afsirs.util.Messages;
 import org.agmip.ui.afsirs.util.SoilData;
  
@@ -73,6 +78,8 @@ public class SWFrame extends javax.swing.JFrame {
     private int [] waterHoldSelectedItemIndex = {1,1,1};
     private boolean isInitializing = false;
     private boolean prevButtonSelectedSavedLocation = false;
+ 
+    //public static final Logger LOGGER = Logger.getLogger(SWFrame.class.class.getName());
     
     
     private Soil prevSoil = null;
@@ -113,6 +120,25 @@ public class SWFrame extends javax.swing.JFrame {
         
         getRootPane().setDefaultButton(nextButton);
     }
+    
+    /*private void initLogger() {
+        Handler fileHandler = null;
+        try {
+            String logdir = curdirpath + dirseprator + "log";
+            System.out.println ("Logging in the following folder : " + logdir);
+            new File(logdir).mkdir();
+            fileHandler = new FileHandler(logdir + dirseprator + "dssat.log");
+            datadir = curdirpath + dirseprator + "data";
+            new File(datadir).mkdir();
+            LOGGER.addHandler(fileHandler);
+            fileHandler.setLevel(Level.ALL);
+            LOGGER.setLevel(Level.ALL);
+            LOGGER.log(Level.ALL, "Initializing all the Components of the Application....");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
 
     public void init() {
         //Read DWT
@@ -1002,6 +1028,8 @@ public class SWFrame extends javax.swing.JFrame {
     private void updateSoilDataBaseOnSoilFileSelection (int index) {
         try {
             File [] files = getListOfDataFiles ();
+            System.out.println ("File Index to Found : " + index);
+            System.out.println ("Total Number of Files : " + files.length);
             readSoilDataJsonFileForUtils(files[index]);
             //utils.setSoilData(SoilData.getSoilDataInstance());
 	} catch (FileNotFoundException e) {
@@ -1059,6 +1087,7 @@ public class SWFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (isInitializing) return;
         
+  
         
         int index  = soilFileListCombo.getSelectedIndex();
         index = index ==-1? 0 : index;
@@ -1263,7 +1292,8 @@ public class SWFrame extends javax.swing.JFrame {
             double[] du= new double [6];
             String[] txt  = new String[3];
             
-            for (JsonNode node : soilLayersNodes) {
+            for (JsonNode node : soilLayersNodes) {                
+                System.out.println ("NL we are looking for: " + NL);
                 wcu[NL] = node.get("sldul").asDouble()/100.00;
                 du[NL] = node.get("sllb").asDouble()*0.39370;
                 du[NL] = Math.floor(du[NL]*1000)/1000;
@@ -1288,7 +1318,10 @@ public class SWFrame extends javax.swing.JFrame {
             soilList.add(soil);
             row++;
         }
-        utils.setDefaultSoil(soilList.get(0));
+        
+        if (soilList.size()>0)
+            utils.setDefaultSoil(soilList.get(0));
+        
         soilData.addSoilList(latestFile.getName(), soilList);
     }    
     

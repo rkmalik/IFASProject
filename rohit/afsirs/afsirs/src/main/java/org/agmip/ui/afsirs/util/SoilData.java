@@ -56,7 +56,6 @@ public class SoilData {
     public ArrayList<Soil> getSoilsFromFile (String fileName) {
         ArrayList<Soil> list = null;
         if (completeSoilData.containsKey(fileName)) {
-            System.out.println ("Found the file : " + fileName);
             list = completeSoilData.get(fileName);
         }
         return list;
