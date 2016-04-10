@@ -450,17 +450,22 @@ public class AFSIRSUtils {
         isNet = net;
     }
 
-    public void setIrrigationSeason(Date startDate, Date endDate) {
+    //public void setIrrigationSeason(Date startDate, Date endDate) {
+    public void setIrrigationSeason(int sMonth, int sDay, int eMonth, int eDay) {
         //J1, JN calculation and saved in 
         //J1Save and JNSave
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd");
-        String[] date = sdf.format(startDate).split(" ");
-        MO1 = Integer.parseInt(date[1]);
-        DAY1 = Integer.parseInt(date[2]);
+        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd");
+        //String[] date = sdf.format(startDate).split(" ");
+        //MO1 = Integer.parseInt(date[1]);
+        //DAY1 = Integer.parseInt(date[2]);
+        MO1 = sMonth;
+        DAY1 = sDay;
+        MON = eMonth;
+        DAYN = eDay;
 
-        date = sdf.format(endDate).split(" ");
-        MON = Integer.parseInt(date[1]);
-        DAYN = Integer.parseInt(date[2]);
+        //date = sdf.format(endDate).split(" ");
+        //MON = Integer.parseInt(date[1]);
+        //DAYN = Integer.parseInt(date[2]);
 
         J1 = DAY1;
         for (int i = 0; i < MO1 - 1; i++) {
@@ -862,8 +867,8 @@ public class AFSIRSUtils {
                 }
 
                 //Save last day's firstSoil water contents to begin first day ofnext year for perennial crops
-                SWCISV = SWCI[JN];
-                SWCNSV = SWCN[JN];
+                SWCISV = SWCI[JN-1];
+                SWCNSV = SWCN[JN-1];
             } else {
                 //For rice flood irrigation
                 for (int j = J1 - 1; j < JN; j++) {

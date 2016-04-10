@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -45,6 +46,12 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private double FIX, PIR;
     private ArrayList<String> climFileList = new ArrayList<String>();
     private ArrayList<Irrigation> irrList = new ArrayList<Irrigation>();
+    
+    final static String [][] MDAY = {
+        {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"},
+        {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"},
+        {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"}    
+    };
 
     private AFSIRSUtils utils;
     private JFrame next = null;
@@ -80,8 +87,10 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             try {
                 outFileText.setText("Sensitivity");
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM,dd,yyyy");
-                irrigationStartDateChooser.setDate(sdf.parse("Jun,15,2015"));
-                irrigationEndDateChooser.setDate(sdf.parse("Dec,15,2015"));
+                //irrigationStartDateChooser.setDate(sdf.parse("Jun,15,2015"));
+                startMonth.setSelectedIndex(5); startDay.setSelectedIndex(14);
+                //irrigationEndDateChooser.setDate(sdf.parse("Dec,15,2015"));
+                endMonth.setSelectedIndex(11); endDay.setSelectedIndex(14);
                 siteNameText.setText("UFL");
                 irrTypeBox.setSelectedIndex(1);
                 annual.setSelected(true);
@@ -223,10 +232,8 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         siteNameLabel = new javax.swing.JLabel();
         outFileLabel = new javax.swing.JLabel();
         climFileNameLabel = new javax.swing.JLabel();
-        irrigationStartDateChooser = new com.toedter.calendar.JDateChooser();
         startIrrDateLabel = new javax.swing.JLabel();
         endIrrDateLabel = new javax.swing.JLabel();
-        irrigationEndDateChooser = new com.toedter.calendar.JDateChooser();
         climateLocationBox = new javax.swing.JComboBox();
         climateLocationLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -263,6 +270,10 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         outputStyleCombo = new javax.swing.JComboBox();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        startMonth = new javax.swing.JComboBox<>();
+        startDay = new javax.swing.JComboBox<>();
+        endDay = new javax.swing.JComboBox<>();
+        endMonth = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AFSIRS");
@@ -306,24 +317,9 @@ public class SiteInfoFrame extends javax.swing.JFrame {
 
         climFileNameLabel.setForeground(new java.awt.Color(0, 0, 255));
 
-        irrigationStartDateChooser.setDateFormatString("MMM, dd");
-        irrigationStartDateChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                irrigationStartDateChooserPropertyChange(evt);
-            }
-        });
-
         startIrrDateLabel.setText("Beginning Date of Crop Irrigation Season");
 
         endIrrDateLabel.setText("Ending Date of Crop Irrigation Season");
-
-        irrigationEndDateChooser.setDateFormatString("MMM, dd");
-        irrigationEndDateChooser.setMaxSelectableDate(new java.util.Date(253370786485000L));
-        irrigationEndDateChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                irrigationEndDateChooserPropertyChange(evt);
-            }
-        });
 
         climateLocationBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -667,6 +663,34 @@ public class SiteInfoFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Farmer's Name");
 
+        startMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }));
+        startMonth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startMonthActionPerformed(evt);
+            }
+        });
+
+        startDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+        startDay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startDayActionPerformed(evt);
+            }
+        });
+
+        endDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+        endDay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endDayActionPerformed(evt);
+            }
+        });
+
+        endMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }));
+        endMonth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endMonthActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -675,26 +699,28 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(climateLocationLabel)
-                        .addComponent(siteNameLabel)
                         .addComponent(endIrrDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(irrigationEndDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(siteNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(climateLocationLabel)
+                                .addComponent(siteNameLabel)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(climateLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(climFileNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGap(10, 10, 10)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(siteNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addComponent(climateLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(60, 60, 60))))
+                                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(climFileNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(dateLabel)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(startIrrDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(irrigationStartDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(startIrrDateLabel)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(startMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(startDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel2)
                     .addComponent(outFileLabel)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -702,26 +728,23 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(todayDate, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                             .addComponent(outFileText, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                            .addComponent(jTextField1))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                            .addComponent(jTextField1)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(endMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)
+                        .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(105, 105, 105))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(156, 156, 156))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(59, 59, 59)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addComponent(outFileLabel)
@@ -738,27 +761,40 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startIrrDateLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(irrigationStartDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(startDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(startMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13)
                         .addComponent(endIrrDateLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(irrigationEndDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(siteNameLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(siteNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(climateLocationLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(endMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(122, 122, 122)
+                                .addComponent(climFileNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(siteNameLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(siteNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(climateLocationLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(climateLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(climFileNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(45, Short.MAX_VALUE))
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(59, 59, 59)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -869,14 +905,6 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             climFileNameLabel.setToolTipText(null);
         }
     }//GEN-LAST:event_climateLocationBoxActionPerformed
-
-    private void irrigationEndDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_irrigationEndDateChooserPropertyChange
-        irrigationStartDateChooser.setMaxSelectableDate(irrigationEndDateChooser.getDate());
-    }//GEN-LAST:event_irrigationEndDateChooserPropertyChange
-
-    private void irrigationStartDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_irrigationStartDateChooserPropertyChange
-        irrigationEndDateChooser.setMinSelectableDate(irrigationStartDateChooser.getDate());
-    }//GEN-LAST:event_irrigationStartDateChooserPropertyChange
 
     private void fixedDepthRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedDepthRadioButtonActionPerformed
         // TODO add your handling code here:
@@ -1026,20 +1054,31 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         irrAppEffLabel.setForeground(Color.black);
         soilSurfaceIrrLabel.setForeground(Color.black);
         exirLabel.setForeground(Color.black);
+        startIrrDateLabel.setForeground(Color.black);
+        endIrrDateLabel.setForeground(Color.black);
+        // Prepare Start date from 
+        //String startDate = ((Integer)(startMonth.getSelectedIndex()+1)).toString()+startDay.getSelectedItem();
+        //String endDate = ((Integer)(endMonth.getSelectedIndex()+1)).toString ()+endDay.getSelectedItem();
 
+        int sd = (startMonth.getSelectedIndex()+1)*10 + (startDay.getSelectedIndex()+1);
+        int ed = (endMonth.getSelectedIndex()+1)*10 + (endDay.getSelectedIndex()+1);        
         if (outFile == null || outFile.length() < 1) {
             outFileLabel.setForeground(Color.red);
             return;
         } else if (date == null) {
             dateLabel.setForeground(Color.red);
             return;
-        } else if (irrigationStartDateChooser.getDate() == null) {
-            startIrrDateLabel.setForeground(Color.red);
+        } //else if (endDate.compareToIgnoreCase(startDate)>=0) {
+        
+        
+        
+        /*else if (irrigationStartDateChooser.getDate() == null) {
+            //startIrrDateLabel.setForeground(Color.red);
             return;
         } else if (irrigationEndDateChooser.getDate() == null) {
             endIrrDateLabel.setForeground(Color.red);
             return;
-        } else if (siteName == null || siteName.length() < 1) {
+        }*/ else if (siteName == null || siteName.length() < 1) {
             siteNameLabel.setForeground(Color.red);
             return;
         } else if (outputStyleCombo.getSelectedIndex() < 0) {
@@ -1051,10 +1090,10 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         } else if (cropList.getSelectedIndex() < 0) {
             cropLabel.setForeground(Color.red);;
             return;
-        } else if (irrigationEndDateChooser.getDate().before(irrigationStartDateChooser.getDate())) {
-            endIrrDateLabel.setForeground(Color.red);
+        } /*else if (irrigationEndDateChooser.getDate().before(irrigationStartDateChooser.getDate())) {
+            //endIrrDateLabel.setForeground(Color.red);
             return;
-        }
+        }*/
 
         int ir = irrTypeBox.getSelectedIndex();
         double arzi = 0.0;
@@ -1129,8 +1168,11 @@ public class SiteInfoFrame extends javax.swing.JFrame {
 
         cropName = cropList.getSelectedItem().toString();
 
-        STARTIRRDATE = irrigationStartDateChooser.getDate().toString();
-        ENDIRRDATE = irrigationEndDateChooser.getDate().toString();
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("MM-DD");
+
+        
+        //STARTIRRDATE = //irrigationStartDateChooser.getDate().toString();
+        //ENDIRRDATE = //irrigationEndDateChooser.getDate().toString();
 
         //All entries valid : Write to File
         try {
@@ -1157,7 +1199,29 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         utils.setPerennial(perennial.isSelected());
         utils.setCodes(ICODE, IPRT);
         utils.setCropData(cropList.getSelectedIndex(), cropName);
-        utils.setIrrigationSeason(irrigationStartDateChooser.getDate(), irrigationEndDateChooser.getDate());
+        
+        // As per latest discussion If the End date less than start date then it should be considered as teh 
+        // Date in the next year.
+        if (sd >=ed) {
+            utils.setIrrigationSeason(startMonth.getSelectedIndex()+1,
+            startDay.getSelectedIndex()+1, 
+            endMonth.getSelectedIndex()+1,
+            endDay.getSelectedIndex()+1);
+            Date d = new Date(Calendar.getInstance().get(Calendar.YEAR), startMonth.getSelectedIndex()+1, startDay.getSelectedIndex()+1);
+            ENDIRRDATE = d.toString();
+            d = new Date(Calendar.getInstance().get(Calendar.YEAR), endMonth.getSelectedIndex()+1, endDay.getSelectedIndex()+1);
+            STARTIRRDATE = d.toString();
+        } else {
+            utils.setIrrigationSeason(startMonth.getSelectedIndex()+1,
+            startDay.getSelectedIndex()+1, 
+            endMonth.getSelectedIndex()+1,
+            endDay.getSelectedIndex()+1);
+            Date d = new Date(Calendar.getInstance().get(Calendar.YEAR), startMonth.getSelectedIndex()+1, startDay.getSelectedIndex()+1);
+            STARTIRRDATE = d.toString();
+            d = new Date(Calendar.getInstance().get(Calendar.YEAR), endMonth.getSelectedIndex()+1, endDay.getSelectedIndex()+1);
+            ENDIRRDATE = d.toString();
+        }
+        
         utils.setisNet(netRadio.isSelected());
         if (IDCODE == 1) {
             utils.setIDCODE(IDCODE, fix);
@@ -1250,6 +1314,92 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void startDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startDayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_startDayActionPerformed
+
+    private void endDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endDayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_endDayActionPerformed
+
+    private void endMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endMonthActionPerformed
+        // TODO add your handling code here:
+        // This can be the Min month as that of the startMonth
+        endDay.removeAllItems();
+        int index = endMonth.getSelectedIndex();
+        
+        switch (index) {
+            
+            case 0: 
+            case 2: 
+            case 4:                 
+            case 6:            
+            case 7:                
+            case 9:                                
+            case 11:
+                for (String s : MDAY[0]) {
+                    endDay.addItem(s);
+                }
+                break;
+
+            case 1: 
+                for (String s : MDAY[2]) {
+                    endDay.addItem(s);
+                }
+                break;
+                
+            case 3: 
+            case 5:                 
+            case 8:            
+           
+            case 10:
+                for (String s : MDAY[1]) {
+                    endDay.addItem(s);
+                }
+                break;
+                                 
+                                
+                
+        }
+        
+    }//GEN-LAST:event_endMonthActionPerformed
+
+    private void startMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMonthActionPerformed
+        // TODO add your handling code here:
+        startDay.removeAllItems();
+        int index = startMonth.getSelectedIndex();
+        
+        switch (index) {
+            
+            case 0: 
+            case 2: 
+            case 4:                 
+            case 6:            
+            case 7:                
+            case 9:                                
+            case 11:
+                for (String s : MDAY[0]) {
+                    startDay.addItem(s);
+                }
+                break;
+
+            case 1: 
+                for (String s : MDAY[2]) {
+                    startDay.addItem(s);
+                }
+                break;
+                
+            case 3: 
+            case 5:                 
+            case 8:  
+            case 10:
+                for (String s : MDAY[1]) {
+                    startDay.addItem(s);
+                }
+                break;  
+        }
+    }//GEN-LAST:event_startMonthActionPerformed
 
     private void setIrrgationOption(int ir) {
 
@@ -1344,7 +1494,9 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private javax.swing.ButtonGroup cropTypeGroup;
     private javax.swing.JLabel dateLabel;
     private javax.swing.JRadioButton deficitIrrRadioButton;
+    private javax.swing.JComboBox<String> endDay;
     private javax.swing.JLabel endIrrDateLabel;
+    private javax.swing.JComboBox<String> endMonth;
     private javax.swing.JLabel exirLabel;
     private javax.swing.JTextField exirText;
     private javax.swing.JRadioButton fieldCapacityRadioButton;
@@ -1358,9 +1510,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private javax.swing.ButtonGroup irrDepthRadioGroup;
     private javax.swing.JComboBox irrTypeBox;
     private javax.swing.JLabel irrTypeLabel;
-    private com.toedter.calendar.JDateChooser irrigationEndDateChooser;
     private javax.swing.ButtonGroup irrigationReqGroup;
-    private com.toedter.calendar.JDateChooser irrigationStartDateChooser;
     private javax.swing.JCheckBox iversCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1387,7 +1537,9 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private javax.swing.JTextField siteNameText;
     private javax.swing.JLabel soilSurfaceIrrLabel;
     private javax.swing.JTextField soilSurfaceIrrText;
+    private javax.swing.JComboBox<String> startDay;
     private javax.swing.JLabel startIrrDateLabel;
+    private javax.swing.JComboBox<String> startMonth;
     private javax.swing.JComboBox suppressComboBox;
     private javax.swing.JLabel suppressLabel;
     private com.toedter.calendar.JDateChooser todayDate;

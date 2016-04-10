@@ -1145,6 +1145,9 @@ public class SWFrame extends javax.swing.JFrame {
         soilTable.setEnabled(isKeyboardEnabled||isFileLocationSelected);
         soilNameCombo.setEditable(isKeyboardEnabled);
         jButtonRefresh.setEnabled(isFileLocationSelected);
+        
+        errorLabel.setVisible(false);
+        wcErrorLabel.setVisible(false);
 
         DefaultTableModel model = (DefaultTableModel) soilTable.getModel();
         int row = model.getRowCount();
