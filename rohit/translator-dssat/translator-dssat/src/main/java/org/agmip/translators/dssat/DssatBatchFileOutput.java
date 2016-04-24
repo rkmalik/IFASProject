@@ -102,6 +102,9 @@ public class DssatBatchFileOutput extends DssatCommonOutput implements DssatBtac
             sbData.append("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO\r\n");
             for (HashMap result : results) {
                 exFileName = getFileName(result, "X");
+                exFileName = arg0 + exFileName;
+                
+                System.out.println ("Hi Rohit You are here");
 //                String folderPath = getObjectOr(result, "exname", "Experiment_" + i);
 //                String folderPath = getObjectOr(expNameMap, getObjectOr(result, "exname", "Experiment_" + i), "");
 //                if (!folderPath.equals("")) {
@@ -188,6 +191,7 @@ public class DssatBatchFileOutput extends DssatCommonOutput implements DssatBtac
             HashMap dssatSeqData = getObjectOr(result, "dssat_sequence", new HashMap());
             ArrayList<HashMap> dssatSeqArr = getObjectOr(dssatSeqData, "data", new ArrayList<HashMap>());
             // If missing, set default value
+            System.out.println ("This is second place whare you can be");
             if (dssatSeqArr.isEmpty()) {
                 HashMap tmp = new HashMap();
                 tmp.put("sq", "1");

@@ -646,7 +646,7 @@ public class DssatControllerOutput extends DssatCommonOutput {
     
     public static void main (String args []){
         File jSon = null;
-        String filePath = "C:\\Users\\rohit\\Downloads\\rohit\\dssat\\data\\ACAC1602.json";
+        String filePath = "E:\\github\\IFAS\\IFASProject\\rohit\\dssat1\\data\\RKRK1602.json";
         jSon = new File(filePath);
         DssatControllerOutput translator = new DssatControllerOutput();
         ArrayList<String> inputPaths = new ArrayList<String>();

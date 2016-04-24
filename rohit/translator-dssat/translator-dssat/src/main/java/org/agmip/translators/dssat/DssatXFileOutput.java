@@ -548,21 +548,18 @@ public class DssatXFileOutput extends DssatCommonOutput {
                     sbError.append("! Warning: Incompleted record because missing data : [wst_id]\r\n");
                 }
                 String soil_id = getValueOr(secData, "soil_id", defValC);
-                
+
                 String bedWidth = String.format("%5s", formatNumStr(4, secData, "bed_w", defValR));
                 String bedHt = String.format("%5s", formatNumStr(4, secData, "bed_h", defValR));
                 String fieldName = String.format("%s", formatNumStr(4, secData, "fl_name", defValR));
                 //String pmalb = String.format("%s", formatNumStr(6, secData, "pmalb", defValR));
-                
-                
+
                 if (soil_id.equals("")) {
                     sbError.append("! Warning: Incompleted record because missing data : [soil_id]\r\n");
                 } else if (soil_id.length() > 10) {
                     sbError.append("! Warning: Oversized data : [soil_id] ").append(soil_id).append("\r\n");
                 }
-                
 
-                
                 sbData.append(String.format("%1$2s %2$-8s %3$-8s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$-5s%11$5s  %12$-10s %13$s %14$s %15$5s  %16$s\r\n", // P.S. change length definition to match current way
                         idx + 1,
                         formatStr(8, secData, "id_field", defValC),
@@ -582,9 +579,9 @@ public class DssatXFileOutput extends DssatCommonOutput {
                         bedHt,
                         getValueOr(secData, "pmalb", "None"),
                         getValueOr(secData, "fl_name", "None")
-                        //fieldName
+                //fieldName
                 ));
-                
+
                 String longitude = formatNumStr(15, secData, "fl_long", defValR);
                 double d1 = Double.valueOf(longitude);
                 DecimalFormat df2 = new DecimalFormat(".##");
@@ -592,7 +589,7 @@ public class DssatXFileOutput extends DssatCommonOutput {
                 String latitude = formatNumStr(15, secData, "fl_lat", defValR);
                 d1 = Double.valueOf(latitude);
                 latitude = df2.format(d1);
-                
+
                 eventPart2.append(String.format("%1$2s %2$15s %3$15s %4$9s %5$17s %6$5s %7$5s %8$5s %9$5s %10$5s\r\n",
                         idx + 1,
                         longitude,
@@ -767,8 +764,17 @@ public class DssatXFileOutput extends DssatCommonOutput {
                     } else {
                         subData = new HashMap();
                     }
+
+                    String irSpacing = formatNumStr(5, subData, "irspc", defValR);
+                    String irOffset = formatNumStr(5, subData, "irofs", defValR);
+                    String irDepth = formatNumStr(5, subData, "irmdp", defValR);
+
+                    System.out.println("Irrigation Spacing : " + irSpacing + "\n"
+                            + "Irrigation Offset : " + irOffset + "\n"
+                            + "Irrigation Depth : " + irDepth + "\n");
+
                     sbData.append("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRSPC IROFS IRDEP IRNAME\r\n");
-                    sbData.append(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %5$s %5$s %5$s %9$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$s %10$s %11$s %12$s\r\n",
                             idx + 1,
                             formatNumStr(5, subData, "ireff", defValR),
                             formatNumStr(5, subData, "irmdp", defValR),
@@ -777,9 +783,9 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             getValueOr(subData, "irstg", defValC),
                             getValueOr(subData, "iame", defValC),
                             formatNumStr(5, subData, "iamt", defValR),
-                            formatNumStr(5, subData, "drip_spc", defValR),
-                            formatNumStr(5, subData, "drip_ofst", defValR),
-                            formatNumStr(5, subData, "drip_dep", defValR),
+                            formatNumStr(5, subData, "irspc", defValR),
+                            formatNumStr(5, subData, "irofs", defValR),
+                            formatNumStr(5, subData, "irdep", irDepth),
                             getValueOr(subData, "ir_name", defValC)));
 
                     if (!subDataArr.isEmpty()) {
@@ -787,16 +793,29 @@ public class DssatXFileOutput extends DssatCommonOutput {
                     }
                     for (HashMap subDataArr1 : subDataArr) {
                         subData = subDataArr1;
-                        sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s %5$s %6$s %7$s %8$s\r\n",
-                                idx + 1,
-                                formatDateStr(getValueOr(subData, "date", defValD)), // P.S. idate -> date
-                                getValueOr(subData, "irop", defValC),
-                                formatNumStr(5, subData, "irval", defValR),
-                                formatNumStr(5, subData, "irstr", defValR),
-                                formatNumStr(5, subData, "irdur", defValR),
-                                formatNumStr(5, subData, "irint", defValR),
-                                formatNumStr(5, subData, "irnum", defValC)                                
-                                ));
+                        String iropCode = getValueOr(subData, "irop", defValC);
+                        if (iropCode.trim().equals("IR005")) {
+                            sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s %5$s %6$s %7$s %8$s\r\n",
+                                    idx + 1,
+                                    formatDateStr(getValueOr(subData, "date", defValD)), // P.S. idate -> date
+                                    getValueOr(subData, "irop", defValC),
+                                    formatNumStr(5, subData, "irval", defValR),
+                                    formatNumStr(5, subData, "irstr", defValR),
+                                    formatNumStr(5, subData, "irdur", defValR),
+                                    formatNumStr(5, subData, "irint", defValR),
+                                    formatNumStr(5, subData, "irnum", defValC)
+                            ));
+
+                        } else {
+                            sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s\r\n",
+                                    idx + 1,
+                                    formatDateStr(getValueOr(subData, "date", defValD)), // P.S. idate -> date
+                                    getValueOr(subData, "irop", defValC),
+                                    formatNumStr(5, subData, "irval", defValR)
+                            ));
+
+                        }
+
                     }
                 }
                 sbData.append("\r\n");
