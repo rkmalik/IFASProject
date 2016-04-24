@@ -26,6 +26,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -62,6 +64,10 @@ import javax.swing.tree.TreePath;
 import tablecell.CellComboBoxEditor;
 import tablecell.CellComboBoxRenderer;
 import javax.swing.JOptionPane;
+import java.nio.file.StandardCopyOption;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -126,11 +132,15 @@ public class DSSATMain extends javax.swing.JFrame {
         }
     }
     LinkedList<Couple> plantingMethodsList = new LinkedList<>();
+    LinkedList<Couple> irrigationMethod = new LinkedList<>();
+
+    
     LinkedList<Couple> fertmethod = new LinkedList<>();
     LinkedList<Couple> fertmaterial = new LinkedList<>();
-    LinkedList<Couple> irrigationMethod = new LinkedList<>();
-    HashMap<String, String> fertMethodVsCode = new HashMap<>();
+
     
+    HashMap<String, String> fertMethodVsCode = new HashMap<>();
+    HashMap<String, String> fertMaterialVsCode = new HashMap<String, String> ();    
 
     Action delete = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
@@ -139,6 +149,7 @@ public class DSSATMain extends javax.swing.JFrame {
             ((DefaultTableModel) table.getModel()).removeRow(modelRow);
         }
     };
+
     private String mSiteCode;
 
     /**
@@ -266,26 +277,30 @@ public class DSSATMain extends javax.swing.JFrame {
             
             while ((nextLine = reader.readNext()) != null) {
                 //cropName.add(nextLine[1]);
-                String codematerial = nextLine[2];
-                String codemethod = nextLine[1];
+                String column2 = nextLine[2];
+                String column1 = nextLine[1];
                 String plantingMethodHeader = nextLine[0];
 
                 String description = new String();
                 // Check if the code is FE/AP Then Build the descripttion till end.
-                if (codematerial.contains("FE")) {
+                if (column2.startsWith("FE")) {
                     for (int i = 3; i < nextLine.length; i++) {
                         description = description + nextLine[i];
                     }
-                    Couple c = new Couple(description, codematerial);
+                    Couple c = new Couple(description, column2);
                     fertmaterial.add(c);
-                } else if (codemethod.contains("AP")) {
+                    
+                    // This have all the values for code vs Code value
+                    fertMaterialVsCode.put(description.trim (), column2);
+                } else if (column1.startsWith("AP")) {
 
                     for (int i = 2; i < nextLine.length; i++) {
                         description = description + nextLine[i];
                     }
-                    Couple c = new Couple(description, codematerial);
+                    Couple c = new Couple(description.trim(), column2);
                     fertmethod.add(c);
-                    fertMethodVsCode.put(description, codemethod);
+                    // This have all the values for code vs Code value                    
+                    fertMethodVsCode.put(description.trim(), column1);
                 } else if (nextLine[0].contains("Methods - Irrigation and")) {
                     
                     System.out.println ("Hello Irrigation."+ nextLine[2] + nextLine[1]);
@@ -534,7 +549,11 @@ public class DSSATMain extends javax.swing.JFrame {
         // Pass the soild name to the method and get back the Soil Id
         String soilId = mycsvfile.getSoilid(countyName, soilName);
         SoilDataGenerator sdg = new SoilDataGenerator();
-        return sdg.ReadSoilData(countyName, soilId);
+        
+        String finalOutputPath = dssatPath.getText() + "\\"+jComboBoxCropList.getSelectedItem();
+        
+        return sdg.ReadSoilData(countyName, soilId, finalOutputPath);
+        
     }
 
     private void initWeatherHistoric() {
@@ -733,6 +752,7 @@ public class DSSATMain extends javax.swing.JFrame {
         pButtonPanel = new javax.swing.JPanel();
         bFinishButton = new javax.swing.JButton();
         bBackButton = new javax.swing.JButton();
+        bRunButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jProjectExplorer = new javax.swing.JTree();
@@ -1004,7 +1024,7 @@ public class DSSATMain extends javax.swing.JFrame {
                 .addGroup(SoilInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(soilSeriesCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSoilLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
                 .addComponent(jButtonDisplaySoilFile)
                 .addGap(23, 23, 23))
         );
@@ -1268,12 +1288,12 @@ public class DSSATMain extends javax.swing.JFrame {
                                 .addGroup(BedSystemInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jBedWidthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jBedWidthET, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 10, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(BedSystemInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jBedHeightLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBedHeightET, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)))
+                            .addComponent(jBedHeightET, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BedSystemInfoLayout.createSequentialGroup()
                         .addGap(44, 44, 44)
                         .addComponent(jLabel29, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -1286,7 +1306,7 @@ public class DSSATMain extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BedSystemInfoLayout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(BedSystemInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPlasticLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxPlastic, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1297,17 +1317,15 @@ public class DSSATMain extends javax.swing.JFrame {
                     .addComponent(jPlantSpaceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPlantSapceEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(BedSystemInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(BedSystemInfoLayout.createSequentialGroup()
                         .addGap(1, 1, 1)
-                        .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(124, 124, 124))
                     .addGroup(BedSystemInfoLayout.createSequentialGroup()
                         .addGroup(BedSystemInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(BedSystemInfoLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jPlantingDepthEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPlantingDepthEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(BedSystemInfoLayout.createSequentialGroup()
                                 .addGap(15, 15, 15)
                                 .addComponent(jPlantSpaceLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1403,12 +1421,12 @@ public class DSSATMain extends javax.swing.JFrame {
                         .addComponent(messageDisplayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(8, 8, 8)))
                 .addGroup(FieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SoilInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
-                    .addComponent(WeatherInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
-                .addGap(53, 53, 53)
+                    .addComponent(SoilInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(WeatherInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                .addGap(56, 56, 56)
                 .addGroup(FieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BedSystemInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
-                    .addComponent(CropInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE))
+                    .addComponent(BedSystemInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                    .addComponent(CropInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jNextButton))
         );
@@ -1763,6 +1781,14 @@ public class DSSATMain extends javax.swing.JFrame {
             }
         });
 
+        bRunButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        bRunButton.setText("Run");
+        bRunButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bRunButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pButtonPanelLayout = new javax.swing.GroupLayout(pButtonPanel);
         pButtonPanel.setLayout(pButtonPanelLayout);
         pButtonPanelLayout.setHorizontalGroup(
@@ -1770,9 +1796,11 @@ public class DSSATMain extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bBackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(bFinishButton)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bRunButton)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         pButtonPanelLayout.setVerticalGroup(
             pButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1780,7 +1808,8 @@ public class DSSATMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bBackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bFinishButton))
+                    .addComponent(bFinishButton)
+                    .addComponent(bRunButton))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -1791,11 +1820,11 @@ public class DSSATMain extends javax.swing.JFrame {
             .addGroup(IrrigationFertilizerPanelLayout.createSequentialGroup()
                 .addGroup(IrrigationFertilizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(IrrigationFertilizerPanelLayout.createSequentialGroup()
-                        .addGap(743, 743, 743)
-                        .addComponent(pButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(IrrigationFertilizerPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(pIrrigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(pIrrigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(IrrigationFertilizerPanelLayout.createSequentialGroup()
+                        .addGap(645, 645, 645)
+                        .addComponent(pButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(68, 68, 68)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
@@ -2049,6 +2078,11 @@ public class DSSATMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jNextButtonActionPerformed
 
     private void jNextButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jNextButtonMouseClicked
+        
+        createWeatherFile();
+        String filePath = GenerateSoilData();
+
+        
         messageDisplayLabel.setText("");
         try {
             double rowSpacing = Double.parseDouble(jRowSpaceEdit.getText());
@@ -2206,7 +2240,7 @@ public class DSSATMain extends javax.swing.JFrame {
             // Validation
             if (dripperEmitterOffset > 8 || dripperEmitterOffset > bedWidth) {
                 jMsgLabelIrrigation.setText("Valid DRIPPER EMITTER OFFSET is 0-8 inches or less than half of BED WIDTH.");
-                return;
+                    return;
             }
             
             
@@ -2331,22 +2365,35 @@ public class DSSATMain extends javax.swing.JFrame {
             j++;
             String mat = model.getValueAt(i, j).toString();
             String matCode = null;
-            for (Couple cu : fertmaterial) {
+            
+            // Check if the material value is null or not {
+            if (mat!=null && fertMaterialVsCode.containsKey(mat)) {
+                matCode = fertMaterialVsCode.get(mat);
+            }
+            
+            
+            
+            /*for (Couple cu : fertmaterial) {
                 if (cu.method.equals(mat)) {
                     matCode = cu.code;
                     break;
                 }
-            }
+            }*/
 
             j++;
             String meth = model.getValueAt(i, j).toString();
             String methCode = null;
-            for (Couple cu : fertmethod) {
+            
+            if (meth!=null && fertMethodVsCode.containsKey(meth)) {
+                methCode = fertMethodVsCode.get(meth);
+            }
+            
+            /*for (Couple cu : fertmethod) {
                 if (cu.method.equals(meth)) {
                     methCode = cu.code;
                     break;
                 }
-            }
+            }*/
 
             j++;
             String rate = model.getValueAt(i, j).toString();
@@ -2358,6 +2405,8 @@ public class DSSATMain extends javax.swing.JFrame {
 
         }
 
+        wthfile.writeAttribute("ireff", dripEfficiency.getText());
+        
         // Update cache with irrigation data
         model = (DefaultTableModel) irrigationTable.getModel();
         wthfile.writeAttribute("irr_row_count", "" + model.getRowCount());
@@ -2405,14 +2454,14 @@ public class DSSATMain extends javax.swing.JFrame {
             wthfile.writeAttribute("irdate" + i, date_S);
             wthfile.writeAttribute("irop" + i, irrCode);
             wthfile.writeAttribute("irval" + i, dripRateET.getText());
-            wthfile.writeAttribute("ireff", dripEfficiency.getText());
+
             wthfile.writeAttribute("irstr" + i, start_time);
             wthfile.writeAttribute("irdur" + i, duration);
             wthfile.writeAttribute("irint" + i, interval);
             wthfile.writeAttribute("irnum" + i, event_time);
-            wthfile.writeAttribute("drip_sp", dripSpacingET.getText());
-            wthfile.writeAttribute("drip_dep", dripDepthET1.getText());
-            wthfile.writeAttribute("drip_ofst", dripOffsetET.getText());
+            wthfile.writeAttribute("irspc", dripSpacingET.getText());
+            wthfile.writeAttribute("irdep", dripDepthET1.getText());
+            wthfile.writeAttribute("irofs", dripOffsetET.getText());
 
         }
         return isSuccess;
@@ -2672,18 +2721,26 @@ public class DSSATMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jSplitPane1MouseDragged
 
     private void jButtonOpenWeatherFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenWeatherFileActionPerformed
+        String filepath = createWeatherFile();
+        OpenTxtFileEditor(filepath);
+    }//GEN-LAST:event_jButtonOpenWeatherFileActionPerformed
+
+    private String createWeatherFile() {
         // TODO add your handling code here:
         String watherstation = (String) weatherStComboBox.getSelectedItem();
         if (wthfile == null) {
             wthfile = WeatherFileSystem.getInstance();
             wthfile.initFertilizerMap(fertMethodVsCode);
         }
+        wthfile.writeAttribute("DssatFolder", mDSSATInstallation);
+        wthfile.writeAttribute("Crop", (String)jComboBoxCropList.getSelectedItem());
         wthfile.writeAttribute("StationLocationId", mycsvfile.getWeatherStationId_GlobalDB(watherstation));
         setFileName();
-        wthfile.WriteToFile(mSiteCode + ".WTH");
-        String filepath = mSiteCode + ".WTH";
-        OpenTxtFileEditor(filepath);
-    }//GEN-LAST:event_jButtonOpenWeatherFileActionPerformed
+        String filepath = wthfile.WriteToFile(mSiteCode + ".WTH");
+        System.out.println ("Full weather file path" + filepath);
+        //String filepath = mSiteCode + ".WTH";
+        return filepath;
+    }
 
     private void jButtonDisplaySoilFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDisplaySoilFileActionPerformed
         // TODO add your handling code here:
@@ -2874,6 +2931,61 @@ public class DSSATMain extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, str); 
     }//GEN-LAST:event_infoButtonField1ActionPerformed
 
+    private void bRunButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRunButtonActionPerformed
+        // TODO add your handling code here:
+        File batchFile = new File ("RunDSSAT2D.bat");
+        PrintWriter fileWriter = null;
+        
+        
+        try {
+            if (!batchFile.exists()) {
+                batchFile.createNewFile();
+            }
+
+            String dssatFolderPath = dssatPath.getText();
+ 
+            fileWriter = new PrintWriter(batchFile);
+            // Build crop absolute path 
+            String cropFolderPath = dssatFolderPath + "\\" + jComboBoxCropList.getSelectedItem();
+            String batchFilePath = cropFolderPath   + "\\" + "DSS40.v45";
+            String exeFilePath = dssatFolderPath + "\\" + "DSSAT_2D.exe";
+            String runCommand = exeFilePath + " b " + batchFilePath;
+            
+            // C:\DSSAT45\dscsm045.exe b C:\DSSAT45\potato\DSS40.v45            
+            // Validate if the exe file is available in the exeFilePath or not. If it is not 
+            // available then we need to copy this from the current folder into the DSSAT folder.
+            
+            if (!(new File(exeFilePath).exists())) {
+                Files.copy(Paths.get("DSSAT_2D.exe"), Paths.get(exeFilePath), StandardCopyOption.COPY_ATTRIBUTES);
+            }
+            
+            String drive = dssatFolderPath.substring(0, 2);
+            fileWriter.println(drive);
+            fileWriter.println("cd " + dssatFolderPath);
+            fileWriter.println(runCommand);
+            fileWriter.println("@echo off");            
+            fileWriter.println("pause");            
+            fileWriter.println("exit");
+        } catch (IOException e) {
+            
+        } finally {
+            fileWriter.close();
+        }
+        
+        // Batch File execution
+        List cmdAndArgs = Arrays.asList("cmd", "/c", "RunDSSAT2D.bat");
+        File dir = new File(".");
+
+        ProcessBuilder pb = new ProcessBuilder(cmdAndArgs);
+        pb.directory(dir);
+        
+        try {
+            Process p = pb.start();
+        } catch (IOException e) {
+            
+        }       
+    }//GEN-LAST:event_bRunButtonActionPerformed
+
     private void OpenTxtFileEditor(String filepath) {
 
         try {
@@ -3020,6 +3132,10 @@ public class DSSATMain extends javax.swing.JFrame {
         weatherdata.append("Cultivar,");
         str = jComboBoxCultivar.getSelectedItem().toString();
         weatherdata.append(str + ",");
+        
+        weatherdata.append("DssatFolder,");
+        str = dssatPath.getText();
+        weatherdata.append(str + ",");
 
         weatherdata.append("Bed Width,");
         str = jBedWidthET.getText();
@@ -3087,6 +3203,7 @@ public class DSSATMain extends javax.swing.JFrame {
         double inRowSpace = 0.0;
         try {
             inRowSpace = Double.parseDouble(str);
+            //inRowSpace.
             inRowSpace = inRowSpace * 0.0254 * 10;
             jRowSpacingLabel.setForeground(Color.BLACK);
             weatherdata.append((int) inRowSpace + " ,");
@@ -3101,9 +3218,9 @@ public class DSSATMain extends javax.swing.JFrame {
         double rowSpace = 0.0;
         try {
             rowSpace = Double.parseDouble(str);
-            rowSpace = rowSpace * 0.0254 * 10;
+            rowSpace = rowSpace * 30.48;
             jRowSpacingLabel.setForeground(Color.BLACK);
-            weatherdata.append((int) rowSpace + " ,");
+            weatherdata.append(rowSpace + " ,");
         } catch (NumberFormatException e) {
             jRowSpacingLabel.setForeground(Color.red);
             isSuccess = false;
@@ -3233,6 +3350,7 @@ public class DSSATMain extends javax.swing.JFrame {
     private javax.swing.JPanel WeatherInfo;
     private javax.swing.JButton bBackButton;
     private javax.swing.JButton bFinishButton;
+    private javax.swing.JButton bRunButton;
     private javax.swing.JButton browse;
     private javax.swing.JComboBox countyNameGlobal;
     private javax.swing.JTextField dripDepthET1;

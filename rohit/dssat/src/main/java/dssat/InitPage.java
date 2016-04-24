@@ -7,7 +7,7 @@ package dssat;
 
 /**
  *
- * @author Piyush
+ * @author Rohit
  */
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -16,7 +16,7 @@ import javax.swing.table.TableCellEditor;
 
 /**
  *
- * @author Piyush
+ * @author Rohit
  */
 public class CellTimeEditor extends AbstractCellEditor implements TableCellEditor {
     JSpinner timeSpinner = new JSpinner();

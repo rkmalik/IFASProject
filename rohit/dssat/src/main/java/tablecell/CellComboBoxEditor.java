@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 
 /**
  *
- * @author Piyush
+ * @author Rohit
  */
 public class CellComboBoxEditor extends DefaultCellEditor{
     public CellComboBoxEditor(String[] items){

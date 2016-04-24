@@ -320,13 +320,13 @@
                               </Group>
                           </Group>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="SoilInfo" alignment="0" pref="195" max="32767" attributes="0"/>
-                              <Component id="WeatherInfo" alignment="0" pref="195" max="32767" attributes="0"/>
+                              <Component id="SoilInfo" alignment="0" pref="200" max="32767" attributes="0"/>
+                              <Component id="WeatherInfo" alignment="0" pref="200" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="BedSystemInfo" pref="488" max="32767" attributes="0"/>
-                              <Component id="CropInfo" pref="488" max="32767" attributes="0"/>
+                              <Component id="BedSystemInfo" pref="480" max="32767" attributes="0"/>
+                              <Component id="CropInfo" pref="480" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jNextButton" min="-2" max="-2" attributes="0"/>
@@ -707,7 +707,7 @@
                                   <Component id="soilSeriesCombobox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jSoilLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="94" max="32767" attributes="0"/>
+                              <EmptySpace pref="16" max="32767" attributes="0"/>
                               <Component id="jButtonDisplaySoilFile" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                           </Group>
@@ -1012,7 +1012,7 @@
                                   <Component id="jPlantSapceEdit" linkSize="11" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
                                   <Component id="jLabel19" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="7" max="32767" attributes="0"/>
+                              <EmptySpace pref="15" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
@@ -1409,12 +1409,12 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="743" max="-2" attributes="0"/>
-                                  <Component id="pButtonPanel" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="pIrrigationPanel" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="645" max="-2" attributes="0"/>
+                                  <Component id="pButtonPanel" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
@@ -2108,9 +2108,11 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="bBackButton" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="bFinishButton" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="bRunButton" max="-2" attributes="0"/>
+                              <EmptySpace pref="22" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -2121,6 +2123,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="bBackButton" alignment="3" max="-2" attributes="0"/>
                                   <Component id="bFinishButton" alignment="3" max="-2" attributes="0"/>
+                                  <Component id="bRunButton" alignment="3" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace pref="20" max="32767" attributes="0"/>
                           </Group>
@@ -2157,6 +2160,17 @@
                       </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bBackButtonMouseClicked"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="bRunButton">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Run"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bRunButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

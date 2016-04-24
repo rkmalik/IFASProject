@@ -7,13 +7,14 @@ package dssat;
 
 /**
  *
- * @author Piyush
+ * @author Rohit
  */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -43,7 +44,8 @@ public class InitPage extends JFrame {
         setAlwaysOnTop(true);
 
         setLayout(new BorderLayout());
-        background = new JLabel(new ImageIcon(getClass().getResource("/images/InterfaceTitle.jpg")));
+        URL url = getClass().getResource("/images/InterfaceTitle.jpg");
+        background = new JLabel(new ImageIcon(url));
         add(background);
         background.setLayout(null);
         inputPanel = new JPanel();

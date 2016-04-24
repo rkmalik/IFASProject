@@ -2,9 +2,9 @@ $BATCH(POTATO)
 !
 ! Command Line : C:\DSSAT46\DSCS0M46.EXE B DSSBatch.v46
 ! Crop         : Potato
-! Experiment   : JUJU1601.PTX
+! Experiment   : RFRF1601.PTX
 ! ExpNo        : 1
 ! Debug        : C:\DSSAT46\DSCSM046.EXE " B DSSBatch.v46"
 !
 @FILEX                                                                                        TRTNO     RP     SQ     OP     CO
-JUJU1601.PTX                                                                                      1      1      1      1      0
+RFRF1601.PTX                                                                                      1      1      1      1      0

@@ -21,18 +21,27 @@ import java.io.InputStreamReader;
  */
 public class SoilDataGenerator {   
     
-    public String ReadSoilData (String countyName, String soilid) {        
+    public String ReadSoilData (String countyName, String soilid, String outputPath) {        
 
         String filepath = datadir+dirseprator+soilid+".SOL";
         System.out.println ("Soil File = " + filepath);
         String datastring = "*" + soilid;
         System.out.println(filepath);
         boolean isdatablock = false;
+        
+        outputPath += dirseprator+soilid+".SOL";
+                
+        /*String finalOutputPath = readAttribute("DssatFolder");
+        finalOutputPath = finalOutputPath + "\\" + readAttribute("Crop");*/
+        
+        
         try {
             
 	    BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/properties/csv/FL.sol")));
             // Open  the file to write the data to the file 
-            File outputfile = new File (filepath);
+            File outputfile = new File (outputPath);
+            
+            System.out.println ("Rohit Created File : " + outputPath);
             if (!outputfile.exists()) {
                 outputfile.createNewFile();
             }
@@ -65,6 +74,6 @@ public class SoilDataGenerator {
 	} catch (Exception e) {
             e.printStackTrace();		
 	}
-        return filepath;
+        return outputPath;
     }    
 }

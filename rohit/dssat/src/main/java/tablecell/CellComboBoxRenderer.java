@@ -12,7 +12,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  *
- * @author Piyush
+ * @author Rohit
  */
 public class CellComboBoxRenderer extends JComboBox implements TableCellRenderer {
 

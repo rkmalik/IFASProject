@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
+import jdk.nashorn.internal.objects.NativeString;
 import org.agmip.acmo.util.AcmoUtil;
 import org.agmip.functions.DataCombinationHelper;
 import org.agmip.translators.dssat.DssatControllerOutput;
@@ -87,7 +88,8 @@ public class WeatherFileSystem {
     }
 
     public String readAttribute(String key) {
-        return incache.get(key);
+        String ret =  incache.get(key);
+        return ret;
     }
 
     // This method is called on the Finish Button to create the weather file. 
@@ -111,16 +113,21 @@ public class WeatherFileSystem {
         return wthFileName;
     }
 
-    public void WriteToFile(String wthFileName) {
+    public String WriteToFile(String wthFileName) {
 
         // prepare the file name from the organization name and the site index number and then write to that file
         String orgName = incache.get("Farm");
         String siteIndex = incache.get("SiteIndex");
-        File file = new File(datadir + dirseprator + wthFileName);
+        String finalOutputPath = readAttribute("DssatFolder");
+        finalOutputPath = finalOutputPath + "\\" + readAttribute("Crop");
+        
+        File file = new File(finalOutputPath + dirseprator + wthFileName);
+        
         String writeBuffer = null;
 
         PrintWriter pr = null;
         try {
+            file.createNewFile();
             pr = new PrintWriter(file);
             writeBuffer = new String("*WEATHER : \n");
             pr.println(writeBuffer);
@@ -228,48 +235,7 @@ public class WeatherFileSystem {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            /*DBConnect weather_historic_daily = new DBConnect (ServerDetails.SERVER_NUM_RONLY, ServerDetails.weather_historic_daily_dbname);
-             
-
-             System.out.println (query);
-             ResultSet result = weather_historic_daily.Execute (ServerDetails.weather_historic_daily_dbname, query.toString());
-             
-             try {
-             while (result.next()) {      
-             String julian = result.getString("yyyy");
-             julian = julian.substring(2);                   
-
-             int yr = Integer.parseInt(julian);
-             int day = Integer.parseInt(result.getString("doy"));
-             julian = String.format("%02d%03d", yr, day);
-                    
-
-             if (result.getString("Tmin") != null)
-             tmin = Double.parseDouble(result.getString("Tmin"));
-             else 
-             tmin = -99.0;
-                    
-             if (result.getString("Tmax") != null)
-             tmax = Double.parseDouble(result.getString("Tmax"));
-             else 
-             tmax = -99.0;
-                    
-             if (result.getString("Tavg") != null)
-             tavg = Double.parseDouble(result.getString("Tavg"));
-             else 
-             tavg = -99.0;
-
-                    
-             //writeBuffer = String.format("%5d%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f",  julianday, " ", solarrad, " ", tmax, " ", tmin, " ", rain, " ", dewp, " ", wind, " ", par);
-             writeBuffer = String.format("%.5s%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f%.1s%5.1f",  julian, " ", solarrad, " ", tmax, " ", tmin, " ", rain, " ", dewp, " ", wind, " ", par);
-             pr.println(writeBuffer);
-             }                
-                 
-             } catch (SQLException e) {                 
-             e.printStackTrace();
-             }*/
-
-        } catch (Exception e) {
+         } catch (Exception e) {
             e.printStackTrace();
         } finally {
 
@@ -282,11 +248,17 @@ public class WeatherFileSystem {
         for (int i = 0; i < incache.size(); i++) {
 
         }
+        return file.getAbsolutePath();
     }
 
     public void copyWeatherFile(String localFile, String dssatPath) throws IOException {
+        
+        String finalOutputPath = readAttribute("DssatFolder");
+        finalOutputPath = finalOutputPath + "\\" + readAttribute("Crop");
+        
         File fout = new File(dssatPath + dirseprator + localFile);
-        File fin = new File(datadir + dirseprator + localFile);
+        
+        File fin = new File(finalOutputPath + dirseprator + localFile);
 
         BufferedReader br = null;
         try {
@@ -316,7 +288,7 @@ public class WeatherFileSystem {
 
     }
 
-    public void saveFile() throws IOException {
+    /*public void saveFile() throws IOException {
         File f = new File("Sample.txt");
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         for (String key : incache.keySet()) {
@@ -324,7 +296,7 @@ public class WeatherFileSystem {
             bw.append(key + " : " + value + "\n");
         }
         bw.close();
-    }
+    }*/
 
     public void createJson() throws IOException {
         String[] date = readAttribute("Planting Date").split("/");
@@ -372,7 +344,7 @@ public class WeatherFileSystem {
             event1.put("crid", readAttribute("crid"));
             event1.put("plma", readAttribute("plma"));
             event1.put("plpop", readAttribute("plpop"));
-            event1.put("plrs", readAttribute("plrs"));
+            event1.put("plrs", readAttribute("plrs").trim());
             event1.put("date", (year + j) + "" + date[0] + date[1]);
             event1.put("pldp", readAttribute("pldp"));
             events.put(event1);
@@ -412,9 +384,9 @@ public class WeatherFileSystem {
                 event.put("irdur", readAttribute("irdur" + i));
                 event.put("irint", readAttribute("irint" + i));
                 event.put("irnum", readAttribute("irnum" + i));
-                event.put("drip_sp", readAttribute("drip_sp"));
-                event.put("drip_dep", readAttribute("drip_dep"));
-                event.put("drip_ofst", readAttribute("drip_ofst" + i));
+                event.put("irspc", readAttribute("irspc"));
+                event.put("irdep", readAttribute("irdep"));
+                event.put("irofs", readAttribute("irofs"));
                 String date_i = (year + j) + readAttribute("irdate" + i).substring(4);
                 event.put("date", date_i);
                 events.put(event);
@@ -437,15 +409,23 @@ public class WeatherFileSystem {
     }
 
     public void createXFileOutput() throws IOException {
+        
+        System.out.println("Calling DSSATControllerOutput Class to Create X File.");
         DssatControllerOutput translator = new DssatControllerOutput();
         ArrayList<String> inputPaths = new ArrayList<>();
         inputPaths.add(jSon.getPath());
-        String outputPath = "";
+        String defaultOutputPath = "";
         HashMap data = DataCombinationHelper.combine(inputPaths);
         DataCombinationHelper.fixData(data);
         
-        translator.writeFile(outputPath, data);
-        AcmoUtil.writeAcmo(outputPath, data, "dssat", new HashMap());
+        String finalOutputPath = readAttribute("DssatFolder");
+        finalOutputPath = finalOutputPath + "\\" + readAttribute("Crop");
+        
+        System.out.println ("Output Path : " + defaultOutputPath);
+        System.out.println ("Output Path : " + finalOutputPath);
+        
+        translator.writeFile(finalOutputPath, data);
+        AcmoUtil.writeAcmo(defaultOutputPath, data, "dssat", new HashMap());
     }
 
 }
