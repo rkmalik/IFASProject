@@ -71,5 +71,5 @@
             <version>20140107</version>
         </dependency>
     </dependencies>
-    
+    <name>dssat1.0</name>
 </project>
