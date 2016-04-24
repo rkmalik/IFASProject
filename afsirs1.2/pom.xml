@@ -91,4 +91,5 @@
             <version>1.7.5</version>
         </dependency>
     </dependencies>
+    <name>AFSIRS1.2</name>
 </project>

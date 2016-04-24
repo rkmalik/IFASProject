@@ -1,0 +1,19 @@
+SOIL TEXTURES AND TYPICAL AVAILABLE WATER CAPACITIES    
+   8   NUMBER OF SOIL TYPES                             
+                                                        
+  1 SANDY SOILS          FS   S                         
+1  96.04.10                                             
+  2 SANDY LOAM SOILS     SL                             
+1  96.09.15                                             
+  3 LOAM SOILS           L    LS   LFS                  
+1  96.14.20                                             
+  4 CLAY LOAM SOILS      CL   SCL                       
+1  96.16.22                                             
+  5 SILTY CLAY SOILS     SiC                            
+1  96.18.24                                             
+  6 CLAY SOILS           C                              
+1  96.20.26                                             
+  7 MUCK SOILS           MK   MKS                       
+1  96.20.50                                             
+  8 PEAT SOILS           PT   SPT                       
+1  96.20.50                                             
