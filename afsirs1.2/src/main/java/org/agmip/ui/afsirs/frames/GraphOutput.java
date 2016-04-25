@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import javax.swing.JFrame;
 import org.agmip.ui.afsirs.util.AFSIRSUtils;
+import org.agmip.ui.afsirs.util.FrameTracker;
 import org.agmip.ui.afsirs.util.SoilSpecificPeriodData;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -280,6 +281,7 @@ public class GraphOutput extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jButton1 = new javax.swing.JButton();
         outputButton = new javax.swing.JButton();
+        rerunsimulation = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RESULT");
@@ -300,6 +302,8 @@ public class GraphOutput extends javax.swing.JFrame {
             }
         });
 
+        rerunsimulation.setText("Re-Run Simulation");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -308,11 +312,13 @@ public class GraphOutput extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1332, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 1165, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(outputButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
+                        .addComponent(rerunsimulation)
+                        .addGap(30, 30, 30)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -322,7 +328,8 @@ public class GraphOutput extends javax.swing.JFrame {
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(outputButton))
+                    .addComponent(outputButton)
+                    .addComponent(rerunsimulation))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 537, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(35, Short.MAX_VALUE))
@@ -334,7 +341,9 @@ public class GraphOutput extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         AFSIRSUtils.resetData();
+        FrameTracker.resetFrames();
         JFrame startFrame = new SiteInfoFrame();
+        FrameTracker.siteInfoFrame = startFrame;
         this.setVisible(false);
         
         startFrame.setVisible(true);
@@ -355,5 +364,6 @@ public class GraphOutput extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton outputButton;
+    private javax.swing.JButton rerunsimulation;
     // End of variables declaration//GEN-END:variables
 }

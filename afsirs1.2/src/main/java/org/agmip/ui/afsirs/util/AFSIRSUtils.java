@@ -108,7 +108,8 @@ public class AFSIRSUtils {
     double[] DU, WCL, WCU, WC;
     int NL;
 
-    String OUTFIL, SITE, CTYPE, CLIMFIL, ALOC, IRNAME;
+    String OUTFIL, CTYPE, CLIMFIL, ALOC, IRNAME;
+    String SITE, UNIT, OWNER;
 
     boolean isPerennial, IVERS, isNet = false;
     int[] NKC = {15, 45, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349};
@@ -166,6 +167,21 @@ public class AFSIRSUtils {
         SITE = site;
     }
 
+    public String getUNIT() {
+        return UNIT;
+    }
+
+    public void setUNIT(String UNIT) {
+        this.UNIT = UNIT;
+    }
+
+    public String getOWNER() {
+        return OWNER;
+    }
+
+    public void setOWNER(String OWNER) {
+        this.OWNER = OWNER;
+    }
     public void setCodes(int code, int print) {
         ICODE = code;
         IPRT = print;
@@ -1934,7 +1950,7 @@ public class AFSIRSUtils {
         DECOEF();
 
         initOutputFile();
-        writeOutput("Location =                        " + SITE + "     DATE = " + MONTH + "-" + IIDAY + "-" + IYEAR + "" + EOL);
+        writeOutput("SITE = " + SITE + "     UNIT = "+ UNIT + "     OWNER = "+ OWNER+"     DATE = " + MONTH + "-" + IIDAY + "-" + IYEAR + "" + EOL);
         writeOutput(EOL + "                      CROP TYPE = " + CTYPE + EOL);
         writeOutput(EOL + " IRRIGATION SEASON = " + MO1 + "-" + DAY1 + " TO " + MON + "-" + DAYN + "                LENGTH = " + NDAYS + " DAYS" + EOL);
         writeOutput(EOL + " CLIMATE DATA BASE: LOCATION = " + ALOC + " LENGTH = " + NYR + " YEARS" + EOL);
