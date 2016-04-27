@@ -163,9 +163,15 @@ public class AFSIRSUtils {
         IIDAY = Integer.parseInt(date[2]);
     }
 
-    public void setLocation(String site) {
+    public void setSiteName(String site) {
         SITE = site;
     }
+
+    public String getSITE() {
+        return SITE;
+    }
+    
+    
 
     public String getUNIT() {
         return UNIT;
@@ -2093,18 +2099,21 @@ public class AFSIRSUtils {
             e.printStackTrace();
         }
         
-        for (PDAT p : allSoilInfo) {
+        /*for (PDAT p : allSoilInfo) {
             
             System.out.println("Soil");
             //System.out.println ( + "\n" + 
-            for (double d: p.PDATBW) System.out.print (d + " ");
+            for (int i = 0; i < p.PDATBW.length; i++) {                
+                double d = p.PDATBW[i];
+                System.out.print (d + " ");
+            }
             System.out.println ("\n");
             for (double d: p.PDATM) System.out.print (d + " ");
             System.out.println ("\n");
             for (double d: p.PDATW) System.out.print (d + " ");
             System.out.println ("\n");
 
-        }
+        }*/
         
         
 //

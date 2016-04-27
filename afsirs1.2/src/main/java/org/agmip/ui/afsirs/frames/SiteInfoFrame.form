@@ -154,7 +154,7 @@
                                           <EmptySpace min="-2" pref="138" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="outFileText" min="-2" pref="210" max="-2" attributes="0"/>
+                                          <Component id="siteNameTextBox" min="-2" pref="210" max="-2" attributes="0"/>
                                           <Component id="siteUnitName" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -189,7 +189,7 @@
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="outFileLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="outFileText" min="-2" max="-2" attributes="0"/>
+                              <Component id="siteNameTextBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="unitNameLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -255,9 +255,9 @@
             </Component>
             <Component class="javax.swing.JTextField" name="siteUnitName">
             </Component>
-            <Component class="javax.swing.JTextField" name="outFileText">
+            <Component class="javax.swing.JTextField" name="siteNameTextBox">
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="outFileTextActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="siteNameTextBoxActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="unitNameLabel">

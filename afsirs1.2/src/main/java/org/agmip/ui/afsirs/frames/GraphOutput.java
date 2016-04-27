@@ -303,6 +303,11 @@ public class GraphOutput extends javax.swing.JFrame {
         });
 
         rerunsimulation.setText("Re-Run Simulation");
+        rerunsimulation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rerunsimulationActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -358,6 +363,14 @@ public class GraphOutput extends javax.swing.JFrame {
             System.out.println("Error Opening the outpt file !!");
         }
     }//GEN-LAST:event_outputButtonActionPerformed
+
+    private void rerunsimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rerunsimulationActionPerformed
+        AFSIRSUtils.resetData();
+        this.setVisible(false);
+        FrameTracker.soilData=null;
+        ((SiteInfoFrame)(FrameTracker.siteInfoFrame)).initializeUtilities();
+        FrameTracker.siteInfoFrame.setVisible(true);
+    }//GEN-LAST:event_rerunsimulationActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

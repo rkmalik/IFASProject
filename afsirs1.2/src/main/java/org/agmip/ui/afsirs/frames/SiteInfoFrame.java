@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import org.agmip.ui.afsirs.util.AFSIRSUtils;
+import org.agmip.ui.afsirs.util.FrameTracker;
 import org.agmip.ui.afsirs.util.Irrigation;
 
 /**
@@ -54,7 +55,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     };
 
     private AFSIRSUtils utils;
-    private JFrame next = null;
+    //private JFrame next = null;
     private boolean fileChecked = false;
     private int IDCODE;
     private InputStreamReader climIR;
@@ -79,11 +80,11 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         }
         setLocation(400, 50);
         setResizable(false);
-        utils = AFSIRSUtils.getInstance();
+        initializeUtilities();
 
         if (AFSIRSUtils.defaultMode) {
             try {
-                outFileText.setText("Sensitivity");
+                siteNameTextBox.setText("Sensitivity");
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM,dd,yyyy");
                 //siteUnitName.setText("Unit1");
                 irrTypeBox.setSelectedIndex(1);
@@ -96,6 +97,10 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         }
 
         getRootPane().setDefaultButton(nextButton);
+    }
+
+    public void initializeUtilities() {
+        utils = AFSIRSUtils.getInstance();
     }
 
     public void cropListInit() {
@@ -196,7 +201,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         nextButton = new javax.swing.JButton();
         siteUnitName = new javax.swing.JTextField();
-        outFileText = new javax.swing.JTextField();
+        siteNameTextBox = new javax.swing.JTextField();
         unitNameLabel = new javax.swing.JLabel();
         outFileLabel = new javax.swing.JLabel();
         climFileNameLabel = new javax.swing.JLabel();
@@ -269,9 +274,9 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             }
         });
 
-        outFileText.addActionListener(new java.awt.event.ActionListener() {
+        siteNameTextBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                outFileTextActionPerformed(evt);
+                siteNameTextBoxActionPerformed(evt);
             }
         });
 
@@ -696,7 +701,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                                     .addComponent(jLabel2)
                                     .addGap(138, 138, 138))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(outFileText, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(siteNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(siteUnitName, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -720,7 +725,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                         .addGap(21, 21, 21)
                         .addComponent(outFileLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(outFileText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(siteNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(unitNameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -897,7 +902,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
 
         int icrop = cropList.getSelectedIndex();
 
-        next = null;
+        FrameTracker.soilData = null;
         setIrrgationOption(ir);
 
         if (ir == AFSIRSUtils.IRCRFL && icrop != AFSIRSUtils.ICIT) {
@@ -941,10 +946,10 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         //Check the details entered
 
-        String outFile = outFileText.getText()+"-"+siteUnitName.getText();
+        String outFile = siteNameTextBox.getText()+"-"+siteUnitName.getText();
 
         Date date = new Date();
-        String siteName = outFileText.getText();
+        String siteName = siteNameTextBox.getText();
         String unitName = siteUnitName.getText();
         String ownerSName = ownersName.getText();
         String cropName, climateFile = null;
@@ -1102,7 +1107,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         utils.setUNIT(unitName);
         utils.setOWNER(ownerSName);
         utils.setTodayDate(date);
-        utils.setLocation(siteName);
+        utils.setSiteName(siteName);
         utils.setPerennial(perennial.isSelected());
         utils.setCodes(ICODE, IPRT);
         utils.setCropData(cropList.getSelectedIndex(), cropName);
@@ -1147,11 +1152,12 @@ public class SiteInfoFrame extends javax.swing.JFrame {
 
         utils.setIrrigationSystem(ir, arzi, exir, eff, irrTypeBox.getSelectedItem().toString());
 
-        if (next == null) {
-            next = new SWFrame(this);
+        if (FrameTracker.soilData == null) {
+            FrameTracker.soilData = new SWFrame(this);
         }
-        setVisible(false);
-        next.setVisible(true);
+        FrameTracker.siteInfoFrame = this;
+        FrameTracker.siteInfoFrame.setVisible(false);
+        FrameTracker.soilData.setVisible(true);
 
     }//GEN-LAST:event_nextButtonActionPerformed
 
@@ -1168,7 +1174,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private void iversCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iversCheckBoxActionPerformed
         // TODO add your handling code here:
         setIrrgationOption(irrTypeBox.getSelectedIndex());
-        next = null;
+        FrameTracker.soilData = null;
     }//GEN-LAST:event_iversCheckBoxActionPerformed
 
     private void soilSurfaceIrrTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_soilSurfaceIrrTextKeyReleased
@@ -1198,10 +1204,10 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         idcodeText.setEnabled(false);
     }//GEN-LAST:event_noneRadioButtonActionPerformed
 
-    private void outFileTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outFileTextActionPerformed
+    private void siteNameTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_siteNameTextBoxActionPerformed
         // TODO add your handling code here:
         nextButtonActionPerformed(evt);
-    }//GEN-LAST:event_outFileTextActionPerformed
+    }//GEN-LAST:event_siteNameTextBoxActionPerformed
 
     private void irrAppEffTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irrAppEffTextActionPerformed
         // TODO add your handling code here:
@@ -1339,7 +1345,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
 
-        next = null;
+        FrameTracker.soilData = null;
     }//GEN-LAST:event_annualActionPerformed
 
     private void perennialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_perennialActionPerformed
@@ -1378,12 +1384,12 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
 
-        next = null;
+        FrameTracker.soilData = null;
     }//GEN-LAST:event_perennialActionPerformed
 
     private void cropListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cropListActionPerformed
         // TODO add your handling code here:
-        next = null;
+        FrameTracker.soilData = null;
     }//GEN-LAST:event_cropListActionPerformed
 
     private void setIrrgationOption(int ir) {
@@ -1510,11 +1516,11 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private javax.swing.JButton nextButton;
     private javax.swing.JRadioButton noneRadioButton;
     private javax.swing.JLabel outFileLabel;
-    private javax.swing.JTextField outFileText;
     private javax.swing.JLabel outStyleLabel;
     private javax.swing.JComboBox outputStyleCombo;
     private javax.swing.JTextField ownersName;
     private javax.swing.JRadioButton perennial;
+    private javax.swing.JTextField siteNameTextBox;
     private javax.swing.JTextField siteUnitName;
     private javax.swing.JLabel soilSurfaceIrrLabel;
     private javax.swing.JTextField soilSurfaceIrrText;

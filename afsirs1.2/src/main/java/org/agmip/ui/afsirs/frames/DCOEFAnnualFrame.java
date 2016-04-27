@@ -7,6 +7,7 @@ package org.agmip.ui.afsirs.frames;
 
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -25,13 +26,14 @@ public class DCOEFAnnualFrame extends javax.swing.JFrame {
     double[] F = new double[4];
     double AKC3, AKC4, DZN, DZX, DWT = 20.0;
     private JFrame prev, next = null;
-    AFSIRSUtils utils = AFSIRSUtils.getInstance();
+    AFSIRSUtils utils = null;
     int ir, icrop;
     boolean ivers;
 
     public DCOEFAnnualFrame(JFrame prev) {
         initComponents();
         setLocation(400, 50);
+        utils = AFSIRSUtils.getInstance();
         ir = utils.getIrrigationSystem();
         ivers = utils.getIVERS();
         icrop = utils.getICROP();
@@ -49,8 +51,9 @@ public class DCOEFAnnualFrame extends javax.swing.JFrame {
     }
 
     public void readCropData() {
+        BufferedReader br = null;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/data/crop.dat")));
+            br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/data/crop.dat")));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.contains(utils.getCropName())) {
@@ -100,6 +103,14 @@ public class DCOEFAnnualFrame extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                        
+            }
+            
         }
     }
 

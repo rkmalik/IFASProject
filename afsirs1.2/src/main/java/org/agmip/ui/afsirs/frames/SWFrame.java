@@ -63,6 +63,7 @@ public class SWFrame extends javax.swing.JFrame {
      * Creates new form SWFrame
      */
     private String SNAME;
+    private String SOILSERIESNAME;
     private String[] TXT = new String[3];
     private double[] DU = new double[6];
     private double[] DL = new double[6];
@@ -1170,6 +1171,7 @@ public class SWFrame extends javax.swing.JFrame {
             soilFileListCombo.removeAllItems();
             
             if (isFileLocationSelected) {
+                files = null;
                 files = getListOfDataFiles();
                 int i = 0;
                 for (File f : files) {
@@ -1202,8 +1204,8 @@ public class SWFrame extends javax.swing.JFrame {
         String home = System.getProperty("user.home");
         File dir = new File(home+"/Downloads"); 
         
-        String siteName = utils.getOutFile().replaceFirst(".txt", "");
-        String regEx = siteName+"*." + "json";
+        String siteName = utils.getSITE();
+
         //System.out.println (siteName);
         FileFilter fileFilter = new WildcardFileFilter(siteName+"*.*");
         File[] files = dir.listFiles(fileFilter);

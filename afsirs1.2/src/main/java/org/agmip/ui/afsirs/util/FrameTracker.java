@@ -15,16 +15,10 @@ public class FrameTracker {
     
     public static JFrame siteInfoFrame = null;
     public static JFrame soilData = null;
-    public static JFrame parennial = null;
-    public static JFrame annual = null;    
-    public static JFrame graphFrame = null;        
-    
+   
     
     public static void resetFrames () {
         siteInfoFrame = null;
         soilData = null;
-        parennial = null;
-        annual = null;
-        graphFrame = null;
     }
 }

@@ -89,6 +89,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Re-Run Simulation"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rerunsimulationActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
