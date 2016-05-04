@@ -368,6 +368,7 @@ public class GraphOutput extends javax.swing.JFrame {
         AFSIRSUtils.resetData();
         this.setVisible(false);
         FrameTracker.soilData=null;
+        FrameTracker.soilDataNext=null;
         ((SiteInfoFrame)(FrameTracker.siteInfoFrame)).initializeUtilities();
         FrameTracker.siteInfoFrame.setVisible(true);
     }//GEN-LAST:event_rerunsimulationActionPerformed

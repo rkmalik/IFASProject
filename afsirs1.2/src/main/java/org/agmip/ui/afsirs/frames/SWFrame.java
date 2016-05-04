@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.FileHandler;
+import static org.agmip.ui.afsirs.util.FrameTracker.soilDataNext;
 import org.agmip.ui.afsirs.util.Messages;
 import org.agmip.ui.afsirs.util.SoilData;
  
@@ -756,17 +757,17 @@ public class SWFrame extends javax.swing.JFrame {
         
                 
         setVisible(false);
-        if (next != null) {
-            next.setVisible(true);
+        if (soilDataNext != null) {
+            soilDataNext.setVisible(true);
         } else {
             if (utils.getPerennial()) {
                 DCOEFPerennialFrame nextFrame = new DCOEFPerennialFrame(this);
                 nextFrame.setVisible(true);
-                next = nextFrame;
+                soilDataNext = nextFrame;
             } else {
                 DCOEFAnnualFrame nextFrame = new DCOEFAnnualFrame(this);
                 nextFrame.setVisible(true);
-                next = nextFrame;
+                soilDataNext = nextFrame;
             }
         }
 
