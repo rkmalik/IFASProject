@@ -128,7 +128,21 @@
                                               <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
-                                              <Component id="jPanel4" max="32767" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="jPanel4" max="32767" attributes="0"/>
+                                                  <Component id="endIrrDateLabel" alignment="0" max="32767" attributes="0"/>
+                                                  <Component id="startIrrDateLabel" min="-2" max="-2" attributes="0"/>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="startMonth" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
+                                                      <Component id="startDay" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="endMonth" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                                      <Component id="endDay" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -144,27 +158,11 @@
                                           <Component id="siteUnitName" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="endIrrDateLabel" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="outFileLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="unitNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                                              <Component id="plantedAreaText" min="-2" pref="206" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Component id="plantedAreaLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="startIrrDateLabel" min="-2" max="-2" attributes="0"/>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="startMonth" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
-                                              <Component id="startDay" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="endMonth" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                                              <Component id="endDay" min="-2" max="-2" attributes="0"/>
-                                          </Group>
+                                          <Component id="jPanel5" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
@@ -186,7 +184,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="outFileLabel" min="-2" max="-2" attributes="0"/>
@@ -204,35 +202,33 @@
                               <Component id="climateLocationLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="climateLocationBox" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="185" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="216" max="-2" attributes="0"/>
                                       <Component id="climFileNameLabel" min="-2" pref="22" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="plantedAreaLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="plantedAreaText" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                                       <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Component id="startIrrDateLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="startDay" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="startMonth" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="endIrrDateLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="endDay" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="endMonth" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="startIrrDateLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="startDay" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="startMonth" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                              <Component id="endIrrDateLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="endDay" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="endMonth" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
@@ -707,6 +703,90 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Container class="javax.swing.JPanel" name="jPanel5">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder title="Output Style"/>
+                  </Border>
+                </Property>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="suppressLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="outStyleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="outputStyleCombo" min="-2" pref="264" max="-2" attributes="0"/>
+                                      <Component id="suppressComboBox" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <EmptySpace pref="23" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="outStyleLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="outputStyleCombo" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="suppressLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="suppressComboBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JComboBox" name="suppressComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="2">
+                        <StringItem index="0" value="Yes"/>
+                        <StringItem index="1" value="No"/>
+                      </StringArray>
+                    </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="suppressLabel">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Suppress data summaries when Irrigation is 0"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="outStyleLabel">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Output Style"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="outputStyleCombo">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="4">
+                        <StringItem index="0" value="Basic (Minimal) Output"/>
+                        <StringItem index="1" value="Basic plus Bi-Weekly &amp; Weekly Summaries"/>
+                        <StringItem index="2" value="Output of Intermediate parameters"/>
+                        <StringItem index="3" value="Extensive Output (Normally for debugging only) "/>
+                      </StringArray>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="outputStyleComboActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
             <Component class="javax.swing.JTextField" name="ownersName">
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ownersNameActionPerformed"/>
@@ -862,16 +942,6 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
-            </Component>
-            <Component class="javax.swing.JTextField" name="plantedAreaText">
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="plantedAreaTextActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="plantedAreaLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Planted Area (Acres) :"/>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>

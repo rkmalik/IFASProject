@@ -49,6 +49,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.FileHandler;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import static org.agmip.ui.afsirs.util.FrameTracker.soilDataNext;
 import org.agmip.ui.afsirs.util.Messages;
 import org.agmip.ui.afsirs.util.SoilData;
@@ -744,7 +746,8 @@ public class SWFrame extends javax.swing.JFrame {
         }
         
         if (jRadioKeyboard.isSelected() || jRadioFile.isSelected()) {
-            Soil soil = new Soil(ISOIL, SNAME, NL);
+            // The Soil name will be Empty
+            Soil soil = new Soil(ISOIL, SNAME, SNAME, NL);
             soil.setValues(WC, WCL, WCU, DU, TXT);
             soilData.addSoil(jRadioKeyboard.isSelected()? Messages.KEYBOARD_KEY : Messages.FILE_KEY, soil);
             utils.setSoilData(soilData);
@@ -842,7 +845,19 @@ public class SWFrame extends javax.swing.JFrame {
                 str += (i + 1) + "  " + DU[i] + "       " + WCL[i] + "       " + WCU[i] + "\n";
             }
         }
-        JOptionPane.showMessageDialog(null, str);            
+        
+        JTextArea textArea = new JTextArea(str);
+        JScrollPane scrollPane = new JScrollPane(textArea);  
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+        textArea.setWrapStyleWord(true); 
+        scrollPane.setPreferredSize( new Dimension( 500, 300 ) );
+        JOptionPane.showMessageDialog(null, scrollPane, "Soil Info",  
+                                       JOptionPane.NO_OPTION);
+        
+        
+        
+        //JOptionPane.showMessageDialog(null, str);            
         
     }//GEN-LAST:event_showSoilDataButtonActionPerformed
 
@@ -878,10 +893,10 @@ public class SWFrame extends javax.swing.JFrame {
     private void jButtonMapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMapActionPerformed
         // TODO add your handling code here:
     try {
-        
-        String siteName = utils.getOutFile();
-        siteName = siteName.replaceFirst(".txt", "");
-        Desktop.getDesktop().browse(new URL("http://abe.ufl.edu/bmpmodel/Shivam/v3_shivam/index.html?site="+siteName+"#").toURI());
+       
+        String siteName = utils.getSITE();
+        //siteName = siteName.replaceFirst(".txt", "");
+        Desktop.getDesktop().browse(new URL("http://abe.ufl.edu/bmpmodel/Shivam/v3_shivam/index.html?site="+siteName+"&unit="+utils.getUNIT()+"#").toURI());
     } catch (Exception e) {
         e.printStackTrace();
     }
@@ -1208,7 +1223,7 @@ public class SWFrame extends javax.swing.JFrame {
         String siteName = utils.getSITE();
 
         //System.out.println (siteName);
-        FileFilter fileFilter = new WildcardFileFilter(siteName+"*.*");
+        FileFilter fileFilter = new WildcardFileFilter("*.json*");
         File[] files = dir.listFiles(fileFilter);
         
         if (files.length > 0) {
@@ -1287,7 +1302,8 @@ public class SWFrame extends javax.swing.JFrame {
         
         for (JsonNode n : soils) {
             String soilName = n.path("soilName").textValue();
-            String soilTypeArea = n.path("soilArea").textValue();
+            String soilSeriesName = n.path("mukeyName").textValue();
+            String soilTypeArea = n.path("compArea").textValue();
             JsonNode soilLayersNodes = n.path("soilLayer");
             
             int NL = 0;
@@ -1317,9 +1333,13 @@ public class SWFrame extends javax.swing.JFrame {
                 NL++;
             }
         
-            Soil soil = new Soil (row, soilName, NL);
+            Soil soil = new Soil (row, soilName, soilSeriesName, NL);
             soil.setValues(wc, wcl, wcu, du, txt);
-            soil.setSoilTypeArea(Double.valueOf(soilTypeArea));
+            
+            if (soilTypeArea!=null)
+                soil.setSoilTypeArea(Double.valueOf(soilTypeArea));
+            else 
+                soil.setSoilTypeArea(0.0);
             //soilData.addSoil(latestFile.getName(), soil);
             soilList.add(soil);
             row++;
@@ -1348,8 +1368,10 @@ public class SWFrame extends javax.swing.JFrame {
             //Soil soil = new Soil ();
             
             String soilName = n.path("soilName").textValue();
-            String soilTypeArea = n.path("soilArea").textValue();
+            String soilTypeArea = n.path("compArea").textValue();
+            String soilSeriesName = n.path("mukeyName").textValue();
             
+            str += "Soil Seires Name = " + soilSeriesName + "\n";
             str += "Soil Name = " + soilName + "\n";
             str += "Soil Area= " + soilTypeArea + " (acres)\n";
             

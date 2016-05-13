@@ -32,10 +32,12 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="outputButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="rerunsimulation" min="-2" max="-2" attributes="0"/>
+                      <Component id="summaryButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="outputButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="rerunsimulation" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -51,6 +53,7 @@
                   <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="outputButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="rerunsimulation" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="summaryButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jTabbedPane1" min="-2" pref="537" max="-2" attributes="0"/>
@@ -91,6 +94,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rerunsimulationActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="summaryButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Summary"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="summaryButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

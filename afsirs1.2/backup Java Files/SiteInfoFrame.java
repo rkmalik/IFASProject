@@ -90,7 +90,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                 versionLable.setText("AFSIRS INTERACTIVE VERSION "+Messages.MAX_VERSION+"."+Messages.MIN_VERSION);
                 irrTypeBox.setSelectedIndex(1);
                 annual.setSelected(true);
-                //outputStyleCombo.setSelectedIndex(3);
+                outputStyleCombo.setSelectedIndex(3);
                 climateLocationBox.setSelectedIndex(5);
             } catch (Exception e) {
 
@@ -237,14 +237,17 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         perennial = new javax.swing.JRadioButton();
         annual = new javax.swing.JRadioButton();
+        jPanel5 = new javax.swing.JPanel();
+        suppressComboBox = new javax.swing.JComboBox();
+        suppressLabel = new javax.swing.JLabel();
+        outStyleLabel = new javax.swing.JLabel();
+        outputStyleCombo = new javax.swing.JComboBox();
         ownersName = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         startMonth = new javax.swing.JComboBox<>();
         startDay = new javax.swing.JComboBox<>();
         endDay = new javax.swing.JComboBox<>();
         endMonth = new javax.swing.JComboBox<>();
-        plantedAreaText = new javax.swing.JTextField();
-        plantedAreaLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AFSIRS");
@@ -576,6 +579,52 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Style"));
+
+        suppressComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
+        suppressComboBox.setEnabled(false);
+
+        suppressLabel.setText("Suppress data summaries when Irrigation is 0");
+
+        outStyleLabel.setText("Output Style");
+
+        outputStyleCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Basic (Minimal) Output", "Basic plus Bi-Weekly & Weekly Summaries", "Output of Intermediate parameters", "Extensive Output (Normally for debugging only) " }));
+        outputStyleCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputStyleComboActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(suppressLabel)
+                    .addComponent(outStyleLabel)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(outputStyleCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(suppressComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(outStyleLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outputStyleCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(suppressLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(suppressComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         ownersName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ownersNameActionPerformed(evt);
@@ -612,14 +661,6 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             }
         });
 
-        plantedAreaText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                plantedAreaTextActionPerformed(evt);
-            }
-        });
-
-        plantedAreaLabel.setText("Planted Area (Acres) :");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -643,7 +684,18 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                                                 .addComponent(climateLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGap(65, 65, 65))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(endIrrDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(startIrrDateLabel)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(startMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(40, 40, 40)
+                                                .addComponent(startDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(endMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(38, 38, 38)
+                                                .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                                 .addComponent(climFileNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -653,24 +705,11 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(siteNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(siteUnitName, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(endIrrDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(outFileLabel)
                                     .addComponent(unitNameLabel)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(10, 10, 10)
-                                        .addComponent(plantedAreaText, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(plantedAreaLabel)
-                                    .addComponent(startIrrDateLabel)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(startMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(40, 40, 40)
-                                        .addComponent(startDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(endMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(38, 38, 38)
-                                        .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -683,7 +722,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addComponent(outFileLabel)
@@ -701,30 +740,28 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                         .addComponent(climateLocationLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(climateLocationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(185, 185, 185)
+                                .addGap(216, 216, 216)
                                 .addComponent(climFileNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(23, 23, 23))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(plantedAreaLabel)
+                                .addGap(26, 26, 26)
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(startIrrDateLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(plantedAreaText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(startIrrDateLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(startDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(startMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(13, 13, 13)
-                        .addComponent(endIrrDateLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(endMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(startDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(startMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(13, 13, 13)
+                                .addComponent(endIrrDateLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(endMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)))
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(59, 59, 59)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -912,7 +949,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         //Check the details entered
 
         String outFile = siteNameTextBox.getText()+"-"+siteUnitName.getText();
-        String outFileSummary = siteNameTextBox.getText()+"-"+siteUnitName.getText()+"-Summary.pdf";
+        String outFileSummary = siteNameTextBox.getText()+"-"+siteUnitName.getText()+"-Summary.txt";
 
         Date date = new Date();
         String siteName = siteNameTextBox.getText();
@@ -925,9 +962,8 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         endIrrDateLabel.setForeground(Color.black);
 
         unitNameLabel.setForeground(Color.black);
-        //outStyleLabel.setForeground(Color.black);
-        //suppressLabel.setForeground(Color.black);
-        plantedAreaLabel.setForeground(Color.black);
+        outStyleLabel.setForeground(Color.black);
+        suppressLabel.setForeground(Color.black);
         cropLabel.setForeground(Color.black);
         idcodeLabel.setForeground(Color.black);
         irrAppEffLabel.setForeground(Color.black);
@@ -940,7 +976,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         
         int sd = (startMonth.getSelectedIndex()) * 10 + (startDay.getSelectedIndex());
         int ed = (endMonth.getSelectedIndex()) * 10 + (endDay.getSelectedIndex());
-        double plantedArea = 0.0;
+        
         
         if (siteName == null || siteName.length() < 1) {
             outFileLabel.setForeground(Color.red);
@@ -948,14 +984,13 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         } else if (unitName == null || unitName.length() < 1) {
             unitNameLabel.setForeground(Color.red);
             return;
-        }
-        /*else if (outputStyleCombo.getSelectedIndex() < 0) {
+        } else if (outputStyleCombo.getSelectedIndex() < 0) {
             outStyleLabel.setForeground(Color.red);
             return;
         } else if (suppressComboBox.getSelectedIndex() < 0) {
             suppressLabel.setForeground(Color.red);
             return;
-        }*/ else if (cropList.getSelectedIndex() < 0) {
+        } else if (cropList.getSelectedIndex() < 0) {
             cropLabel.setForeground(Color.red);;
             return;
         } else if (annual.isSelected()) {            
@@ -968,7 +1003,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
                 endIrrDateLabel.setForeground(Color.red);            
                 return;
             }            
-        } 
+        }
         
         
         /*else if (irrigationEndDateChooser.getDate().before(irrigationStartDateChooser.getDate())) {
@@ -1013,18 +1048,6 @@ public class SiteInfoFrame extends javax.swing.JFrame {
             return;
         }
 
-        try {
-            plantedArea = Double.parseDouble(plantedAreaText.getText());
-        } catch (Exception e) {
-            plantedAreaLabel.setForeground(Color.red);
-            return;
-        }
-        
-        if (plantedArea <= 0) {
-            plantedAreaLabel.setForeground(Color.red);
-            return;
-        }
-
         outFile += ".txt";
         
         double fix = 15;
@@ -1057,14 +1080,9 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         endIrrDateLabel.setForeground(Color.black);
 
         PDATE = date.toString();
-        //ICODE = outputStyleCombo.getSelectedIndex() - 1;
-        //IPRT = suppressComboBox.getSelectedIndex();
+        ICODE = outputStyleCombo.getSelectedIndex() - 1;
+        IPRT = suppressComboBox.getSelectedIndex();
 
-        ICODE = 2;
-        IPRT = 0;
-        
-
-        
         cropName = cropList.getSelectedItem().toString();
 
         //SimpleDateFormat dateFormat = new SimpleDateFormat("MM-DD");
@@ -1098,32 +1116,27 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         utils.setPerennial(perennial.isSelected());
         utils.setCodes(ICODE, IPRT);
         utils.setCropData(cropList.getSelectedIndex(), cropName);
-        utils.setPLANTEDACRES(plantedArea);
 
         // As per latest discussion If the End date less than start date then it should be considered as teh 
         // Date in the next year.
-        if (perennial.isSelected()) {
-            utils.setIrrigationSeason(1, 1, 12, 31);
+        if (sd >= ed) {
+            utils.setIrrigationSeason(startMonth.getSelectedIndex(),
+                    startDay.getSelectedIndex(),
+                    endMonth.getSelectedIndex(),
+                    endDay.getSelectedIndex());
+            Date d = new Date(Calendar.getInstance().get(Calendar.YEAR), startMonth.getSelectedIndex(), startDay.getSelectedIndex());
+            ENDIRRDATE = d.toString();
+            d = new Date(Calendar.getInstance().get(Calendar.YEAR), endMonth.getSelectedIndex(), endDay.getSelectedIndex());
+            STARTIRRDATE = d.toString();
         } else {
-            if (sd >= ed) {
-                utils.setIrrigationSeason(startMonth.getSelectedIndex(),
-                        startDay.getSelectedIndex(),
-                        endMonth.getSelectedIndex(),
-                        endDay.getSelectedIndex());
-                Date d = new Date(Calendar.getInstance().get(Calendar.YEAR), startMonth.getSelectedIndex(), startDay.getSelectedIndex());
-                ENDIRRDATE = d.toString();
-                d = new Date(Calendar.getInstance().get(Calendar.YEAR), endMonth.getSelectedIndex(), endDay.getSelectedIndex());
-                STARTIRRDATE = d.toString();
-            } else {
-                utils.setIrrigationSeason(startMonth.getSelectedIndex(),
-                        startDay.getSelectedIndex(),
-                        endMonth.getSelectedIndex(),
-                        endDay.getSelectedIndex());
-                Date d = new Date(Calendar.getInstance().get(Calendar.YEAR), startMonth.getSelectedIndex(), startDay.getSelectedIndex());
-                STARTIRRDATE = d.toString();
-                d = new Date(Calendar.getInstance().get(Calendar.YEAR), endMonth.getSelectedIndex(), endDay.getSelectedIndex());
-                ENDIRRDATE = d.toString();
-            }
+            utils.setIrrigationSeason(startMonth.getSelectedIndex(),
+                    startDay.getSelectedIndex(),
+                    endMonth.getSelectedIndex(),
+                    endDay.getSelectedIndex());
+            Date d = new Date(Calendar.getInstance().get(Calendar.YEAR), startMonth.getSelectedIndex(), startDay.getSelectedIndex());
+            STARTIRRDATE = d.toString();
+            d = new Date(Calendar.getInstance().get(Calendar.YEAR), endMonth.getSelectedIndex(), endDay.getSelectedIndex());
+            ENDIRRDATE = d.toString();
         }
 
         utils.setisNet(netRadio.isSelected());
@@ -1152,6 +1165,11 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         FrameTracker.soilData.setVisible(true);
 
     }//GEN-LAST:event_nextButtonActionPerformed
+
+    private void outputStyleComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputStyleComboActionPerformed
+        // TODO add your handling code here:
+        suppressComboBox.setEnabled(outputStyleCombo.getSelectedIndex() != 0);
+    }//GEN-LAST:event_outputStyleComboActionPerformed
 
     private void idcodeTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idcodeTextActionPerformed
         // TODO add your handling code here:
@@ -1379,10 +1397,6 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         FrameTracker.soilData = null;
     }//GEN-LAST:event_cropListActionPerformed
 
-    private void plantedAreaTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plantedAreaTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_plantedAreaTextActionPerformed
-
     private void setIrrgationOption(int ir) {
 
         soilSurfaceIrrText.setEnabled(true);
@@ -1500,15 +1514,16 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton netRadio;
     private javax.swing.JButton nextButton;
     private javax.swing.JRadioButton noneRadioButton;
     private javax.swing.JLabel outFileLabel;
+    private javax.swing.JLabel outStyleLabel;
+    private javax.swing.JComboBox outputStyleCombo;
     private javax.swing.JTextField ownersName;
     private javax.swing.JRadioButton perennial;
-    private javax.swing.JLabel plantedAreaLabel;
-    private javax.swing.JTextField plantedAreaText;
     private javax.swing.JTextField siteNameTextBox;
     private javax.swing.JTextField siteUnitName;
     private javax.swing.JLabel soilSurfaceIrrLabel;
@@ -1516,6 +1531,8 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> startDay;
     private javax.swing.JLabel startIrrDateLabel;
     private javax.swing.JComboBox<String> startMonth;
+    private javax.swing.JComboBox suppressComboBox;
+    private javax.swing.JLabel suppressLabel;
     private javax.swing.JLabel unitNameLabel;
     private javax.swing.JLabel versionLable;
     // End of variables declaration//GEN-END:variables
