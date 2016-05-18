@@ -14,12 +14,15 @@ import java.util.HashMap;
  */
 public class SoilData {
 
+    // This map was not giving the proper details of the soils when there were multiple soils with same name. 
     public HashMap<String, ArrayList<Soil>> completeSoilData;
+
     private static String currentKey = "";
     public static SoilData soilData;
  
     public SoilData () {
         completeSoilData = new HashMap<String, ArrayList<Soil>>();
+
     }
     
     /*public static SoilData getSoilDataInstance () {
@@ -47,12 +50,14 @@ public class SoilData {
     }
     
     public void addSoilList (String key, ArrayList<Soil> soilList) {
-        //if (completeSoilData.containsKey(key)==false) {
             currentKey = key;
             completeSoilData.put(key, soilList);
-        //}
     }
-
+    
+    public boolean containSoilList(String key) {
+        return completeSoilData.containsKey(key);
+    }
+    
     public ArrayList<Soil> getSoilsFromFile (String fileName) {
         ArrayList<Soil> list = null;
         if (completeSoilData.containsKey(fileName)) {

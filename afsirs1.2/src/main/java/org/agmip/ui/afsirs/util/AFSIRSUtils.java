@@ -61,8 +61,8 @@ public class AFSIRSUtils {
     public static final Font BLACK_NORMAL = new Font(FontFamily.HELVETICA, 7, Font.NORMAL, BaseColor.BLACK);
     public static final Font BLACK_BOLD = new Font(FontFamily.HELVETICA, 7, Font.BOLD, BaseColor.BLACK);
     //public static final Font BLACK_NORMAL = new Font(FontFamily.HELVETICA, 7, Font.NORMAL, BaseColor.RED);
-    public static final Font BLUE_NORMAL = new Font(FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.BLUE);
-    public static final Font GREEN_ITALIC = new Font(FontFamily.HELVETICA, 12, Font.ITALIC, BaseColor.GREEN);
+    public static final Font BLUE_NORMAL = new Font(FontFamily.HELVETICA, 7, Font.NORMAL, BaseColor.BLUE);
+    public static final Font GREEN_ITALIC = new Font(FontFamily.HELVETICA, 7, Font.ITALIC, BaseColor.GREEN);
     
     int IR, ISIM, J1REP, JNREP, J1SAVE, JNSAVE, ICODE, IPRT;
 
@@ -86,8 +86,8 @@ public class AFSIRSUtils {
     double DRZIRR, DRZTOT;
     double DWT;
     double PLANTEDACRES = 0.0;
-    double[][] RAIN = new double[25][365];
-    double[][] IRR = new double[25][365];
+    double[][] RAIN = new double[64][365];
+    double[][] IRR = new double[64][365];
     double[] SDR = new double[365];
     double[] SET = new double[365];
     double[] SETP = new double[365];
@@ -100,7 +100,7 @@ public class AFSIRSUtils {
     double[] SWMAX = new double[365];
     double[] SWCIX = new double[365];
     double[] SWCNX = new double[365];
-    double[][] ETP = new double[25][365];
+    double[][] ETP = new double[64][365];
     double[] AWD = new double[365];
     double[] AKC = new double[12];
     double[] ALDP = new double[12];
@@ -474,15 +474,15 @@ public class AFSIRSUtils {
     public ArrayList<SoilSpecificPeriodData> getGraphData(int type) {
         
         ArrayList<SoilSpecificPeriodData> data = new ArrayList<> ();
+        int index = 1;
         
         switch (type) {
             case 0:
                 
                 for (PDAT i : allSoilInfo) {
-                    
                     SoilSpecificPeriodData d = new SoilSpecificPeriodData ();
                     d.setSoilDataPoints(i.PDATM);
-                    d.setSoilName(i.soilName);
+                    d.setSoilName(i.soilName+"-"+(index++));
                     data.add(d);
                 }
                 return data;
@@ -492,7 +492,7 @@ public class AFSIRSUtils {
                     SoilSpecificPeriodData d = new SoilSpecificPeriodData ();
 
                     d.setSoilDataPoints(i.PDATBW);
-                    d.setSoilName(i.soilName);
+                    d.setSoilName(i.soilName+"-"+(index++));
                      data.add(d);
                 }
                 return data;
@@ -500,7 +500,7 @@ public class AFSIRSUtils {
                 for (PDAT i : allSoilInfo) {
                     SoilSpecificPeriodData d = new SoilSpecificPeriodData ();
                     d.setSoilDataPoints(i.PDATW);
-                    d.setSoilName(i.soilName);
+                    d.setSoilName(i.soilName+"-"+(index++));
                     data.add(d);
                 }
                 return data;
@@ -599,13 +599,21 @@ public class AFSIRSUtils {
             }
             br.readLine();
             for (int j = 0; j < NYR; j++) {
-                int IYEAR = Integer.parseInt(br.readLine());
+                String line1 = br.readLine();
+                int IYEAR = Integer.parseInt(line1);
 
                 int k = 0;
                 while (k < 365) {
-                    String[] parts = br.readLine().split(" ");
+                    String curLine = br.readLine();
+                    String[] parts = curLine.split(" ");
+                    
+                    if (IYEAR == 1973) {
+                        System.out.println (curLine);
+                    }
+                    
                     for (String x : parts) {
                         if (x.length() > 0) {
+                            //System.out.print (" "  + x);
                             RAIN[j][k] = Double.parseDouble(x);
                             k++;
                         }
@@ -1038,8 +1046,8 @@ public class AFSIRSUtils {
      TYPE I rpobability distribution
      */
     public PROBResult PROBX(double[] AI, int NYR, double[] PROB, double XMEAN) {
-        double[] W = new double[25];
-        double[] ALIRR = new double[25];
+        double[] W = new double[64];
+        double[] ALIRR = new double[64];
 
         PROBResult result = new PROBResult();
 
@@ -1621,15 +1629,15 @@ public class AFSIRSUtils {
     }
 
     public void SUMX() {
-        double[][] AETP = new double[25][52];
-        double[][] ARAIN = new double[25][52];
-        double[][] AIRR = new double[25][52];
+        double[][] AETP = new double[64][52];
+        double[][] ARAIN = new double[64][52];
+        double[][] AIRR = new double[64][52];
         double[] TET = new double[52];
         double[] TETP = new double[52];
         double[] TDR = new double[52];
         double[] TRAIN = new double[52];
-        double[] AI = new double[52];
-        double[] PROB = new double[25];
+        double[] AI = new double[NYR];
+        double[] PROB = new double[NYR];
 
         int IS = 0;
         for (int IY = 0; IY < NYR; IY++) {
@@ -2487,7 +2495,7 @@ public class AFSIRSUtils {
             
             
             
-            str+=EOL+"                                  ---------------------------------INCHES---------------------------------"+EOL+EOL;
+            str+=EOL+"                                  ---------------------------------Details in Inches---------------------------------"+EOL+EOL;
             str+=EOL+"                                  Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec     Total";
 
             str+= EOL+"Mean Rainfall                   ";
@@ -2549,7 +2557,7 @@ public class AFSIRSUtils {
             str+=EOL+EOL+EOL;
 
 
-           str+="                                  ---------------------------------GALLONS---------------------------------"+EOL+EOL;
+           str+="                                  ---------------------------------Details in Gallons---------------------------------"+EOL+EOL;
            str+="                                        Jan           Feb           Mar           Apr           May           Jun           Jul           Aug           Sep           Oct           Nov           Dec";
            str+=EOL+"Avg  Irrigation Requirement     ";
             for (int i = 1; i <=12; i++) {
@@ -2633,7 +2641,7 @@ class PROBResult {
 
 class STATResult {
 
-    double[] PROB = new double[25];
+    double[] PROB = new double[64];
     double XMEAN, XVAR, XSDEV, XMAX, XMIN, XMED, XCV;
 
     public STATResult(int N) {

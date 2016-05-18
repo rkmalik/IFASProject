@@ -896,7 +896,7 @@ public class SWFrame extends javax.swing.JFrame {
        
         String siteName = utils.getSITE();
         //siteName = siteName.replaceFirst(".txt", "");
-        Desktop.getDesktop().browse(new URL("http://abe.ufl.edu/bmpmodel/Shivam/v3_shivam/index.html?site="+siteName+"&unit="+utils.getUNIT()+"#").toURI());
+        Desktop.getDesktop().browse(new URL("http://abe.ufl.edu/bmpmodel/Shivam/v3_shivam_jin/index.html?site="+siteName+"&unit="+utils.getUNIT()+"#").toURI());
     } catch (Exception e) {
         e.printStackTrace();
     }
@@ -1193,10 +1193,8 @@ public class SWFrame extends javax.swing.JFrame {
                 for (File f : files) {
                     String key = f.getName(); 
                     key = key.trim ();
-                    
                     soilFileListCombo.addItem(f.getName());
                     updateSoilDataBaseOnSoilFileSelection (i++);
-                    
                 }
             }
             
@@ -1347,7 +1345,8 @@ public class SWFrame extends javax.swing.JFrame {
         
         if (soilList.size()>0)
             utils.setDefaultSoil(soilList.get(0));
-        
+
+        // Here we prepare teh
         soilData.addSoilList(latestFile.getName(), soilList);
     }    
     
