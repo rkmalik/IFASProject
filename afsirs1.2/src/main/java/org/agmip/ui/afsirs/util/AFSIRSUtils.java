@@ -613,20 +613,16 @@ public class AFSIRSUtils {
                     String curLine = br.readLine();
                     String[] parts = curLine.split(" ");
                     
-                    if (IYEAR == 1973) {
-                        System.out.println (curLine);
-                    }
-                    
                     for (String x : parts) {
                         if (x.length() > 0) {
-                            //System.out.print (" "  + x);
                             RAIN[j][k] = Double.parseDouble(x);
                             k++;
                         }
                     }
                 }
             }
-            //System.out.println("J1SAVE = " + J1SAVE + ",JNSAVE = " + JNSAVE);
+
+            
             for (int k = 0; k < 365; k++) {
                 JDAY[k] = k + 1;
             }
@@ -664,14 +660,7 @@ public class AFSIRSUtils {
             e.printStackTrace();
         }
     }
-    
-    public void writeSummaryOutput(String str) {
-        /*try {
-            bwOutputSummaryFile.append(str);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-    }
+
 
     public void MAIN() {
         // Iterate Simulations ..
@@ -1188,16 +1177,13 @@ public class AFSIRSUtils {
 
             //Calculate available firstSoil water in irrigated root zone
             int IS1 = IS - 1;
-            //System.out.println(IS1);
             double SWI = 0.0;
             if (IS != 0) {
                 for (int I = 0; I <= IS1; I++) {
                     SWI += (DU[I] - DL[I]) * WC[I];
-                   //System.out.println("SWI = " + SWI);
                 }
             }
             SWI += (DRZI[J1 - 1] - DL[IS]) * WC[IS];
-            //System.out.println("SWI = " + SWI);
             // For Total Root Zone
             // Check for high water table limiting root eexpansion
             if (DRZ[J1 - 1] >= DWT) {
@@ -1246,7 +1232,6 @@ public class AFSIRSUtils {
 
             //Correct for irrigation of only a fraction of the root zone
             SWI = ARZI * SWI;
-            //System.out.println("ARZI, SWI = " + ARZI + "," + SWI);
             SWN = SWX - SWI;
 
             //Correct for nonirrigated zone in container nurseries
@@ -1810,7 +1795,7 @@ public class AFSIRSUtils {
                     statResult.XMEAN, statResult.XMED, statResult.XCV, statResult.XMAX, statResult.XMIN, probResult.X00, probResult.RSQ,
                     probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[imo], TETP[imo], TET[imo], TDR[imo]);
             
-            System.out.println (str+EOL);
+            System.out.println (str);
             writeOutput(str + EOL);
 
             summaryReport.reset ();
@@ -2164,8 +2149,6 @@ public class AFSIRSUtils {
                 soilFractions[i]+=soil.getSoilTypeArea();
                 soilArea [i] = soil.getSoilTypeArea();
                 
-                //System.out.println ("Soil Area : " + soilArea[i]);
-                
                 SNAME = soil.getName();
                 TXT = soil.getTXT();
                 DU = soil.getDU();
@@ -2187,217 +2170,20 @@ public class AFSIRSUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        
-
-        
         bwOutputSummaryFile.close();
-       
-        
-        /*for (PDAT p : allSoilInfo) {
-            
-            //System.out.println("Soil");
-            //System.out.println ( + "\n" + 
-            for (int i = 0; i < p.PDATBW.length; i++) {                
-                double d = p.PDATBW[i];
-                System.out.print (d + " ");
-            }
-            //System.out.println ("\n");
-            for (double d: p.PDATM) System.out.print (d + " ");
-            //System.out.println ("\n");
-            for (double d: p.PDATW) System.out.print (d + " ");
-            System.out.println ("\n");
-
-        }*/
-        
-        
-//
-//        File file = new File(OUTFIL);
-//        try {
-//            Desktop.getDesktop().open(file);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
-
-
-
     }
 
-    /*public void initSummaryOutputFile() {
-  
-            //BufferedWriter bw = new BufferedWriter(new FileWriter(fName));
-            String str1 = EOL;
-            for (int i = 0; i < 70; i++) {
-                str1 += '*';
-            }
-            String newStr = "                          AGRICULTURAL" + EOL
-                    + "                          FIELD" + EOL
-                    + "                          SCALE" + EOL
-                    + "                          IRRIGATION" + EOL
-                    + "                          REQUIREMENTS" + EOL
-                    + "                          SIMULATION" + EOL
-                    + EOL
-                    + "                             MODEL" + EOL
-                    + EOL
-                    + EOL
-                    + "              AFSIRS MODEL: INTERACTIVE VERSION "+Messages.MAX_VERSION+"."+Messages.MIN_VERSION + EOL
-                    + EOL
-                    + EOL
-                    + "           THIS MODEL SIMULATES IRRIGATION REQUIREMENTS" + EOL
-                    + "         FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS." + EOL
-                    + EOL
-                    + "      PROBABILITIES OF OCCURRENCE OF IRRIGATION REQUIREMENTS" + EOL
-                    + "        ARE CALCULATED USING HISTORICAL WEATHER DATA BASES" + EOL
-                    + "                   FOR NINE FLORIDA LOCATIONS." + EOL;
+    private void addParagraphToTable(PdfPTable table, String str) {
 
-            str1 += EOL + EOL;
-            str1 += newStr;
-            str1 += EOL + EOL;
-            newStr = "          INSTRUCTIONS FOR THE USE OF THIS MODEL ARE GIVEN" + EOL
-                    + "                 IN THE AFSIRS MODEL USER'S GUIDE." + EOL
-                    + "" + EOL
-                    + "       DETAILS OF THE OPERATION OF THIS MODEL, ITS APPLICATIONS" + EOL
-                    + "    AND LIMITATIONS ARE GIVEN IN THE AFSIRS MODEL TECHNICAL MANUAL." + EOL;
-
-            str1 += newStr;
-            str1 += EOL + EOL;
-
-            newStr = "              AFSIRS MODEL: INTERACTIVE VERSION "+Messages.MAX_VERSION+"."+Messages.MIN_VERSION + EOL
-                    + EOL
-                    + EOL
-                    + "           THIS MODEL SIMULATES IRRIGATION REQUIREMENTS" + EOL
-                    + "         FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS." + EOL;
-            str1+=newStr;
-            str1 += EOL + EOL;
-            
-        
-        try {
-            Chunk redChunk = new Chunk (str1, BLACK_NORMAL);
-            bwOutputSummaryFile.add(new Paragraph(redChunk));
-        } catch (DocumentException ex) {
-            Logger.getLogger(AFSIRSUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-    }
-    
-    private void finalSummaryOutput() {
-        String str ="";
-        str+=EOL+"OWNER: " + getOWNER()+"      SITE: "+ getSITE() + "      UNIT: "+getUNIT()+EOL+EOL;
-        str+="CROP: " + getCropName()+"      IRRIGATION METHOD: "+ getIrrigationSystemName()+"      PLANTING DATE: "+ EOL+EOL;
-        str+="HARVEST DATE: ";
-        
-        double area = PLANTEDACRES;
-
-        str+="      AREA (ACRES): "+ area + EOL+EOL;
-        str+=EOL+"                                  ---------------------------------INCHES---------------------------------"+EOL+EOL+EOL+EOL;
-        str+=EOL+"                                  JAN     FEB     MAR     APR     MAY     JUN     JUL     AUG     SEP     OCT     NOV     DEC     TOTAL";
-
-        str+= EOL+"MEAN RAINFALL                   ";
-        double totalVal = 0.0;
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTotalRainFallByMonth(i)/NYR;
-            totalVal += val;
-            str+=String.format("%6.2f  ",val);
-        }
-        
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        
-        str+=(EOL+"MEAN EVAPORATION TRANSPIRATION  ");
-
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTotalEvaporationByMonth(i)/NYR;
-            totalVal += val;
-            str+=String.format("%6.2f  ",val);
-        }
-
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"PEAK EVAPORATION TRANSPIRATION  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getPeakEvaporationByMonth(i);
-            str+=String.format("%6.2f  ",val);
-        }
-
-        str+=String.format("%8s","---");
-        totalVal = 0.0;
-        str+=(EOL+"AVG  IRRIGATION REQUIREMENT     ");
-        
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getAverageIrrigationRequired(i);
-            totalVal+= val;
-            str+=String.format("%6.2f  ",val);
-        }
-
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"2 IN 10 IRRIGATION REQUIREMENT  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTwoin10IrrigationRequired(i);
-            totalVal+=val;
-            str+=String.format("%6.2f  ",val);
-        }
-
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"1 IN 10 IRRIGATION REQUIREMENT  "); 
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getOnein10IrrigationRequired(i);
-            totalVal+=val;
-            str+=String.format("%6.2f  ",val);
-        }
-
-        str+=String.format("%8.2f",totalVal);
-        str+=EOL+EOL+EOL;
-        
-        
-       str+="                                  ---------------------------------GALLONS---------------------------------"+EOL+EOL;
-       str+="                                        JAN           FEB           MAR           APR           MAY           JUN           JUL           AUG           SEP           OCT           NOV           DEC";
-       str+=EOL+"AVG  IRRIGATION REQUIREMENT     ";
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getAverageIrrigationRequired(i);
-            val= (val*area*27154);
-            str+=String.format("%12.2f  ", val);
-        }
-
-        str+=(EOL+"2 IN 10 IRRIGATION REQUIREMENT  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTwoin10IrrigationRequired(i);
-            val= (val*area*27154);
-            str+=String.format("%12.2f  ", val);
-        }
-
-        str+=(EOL+"1 IN 10 IRRIGATION REQUIREMENT  "); 
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getOnein10IrrigationRequired(i);
-            val= (val*area*27154);
-            str+=String.format("%12.2f  ", val);
-        }
-
-        str+=EOL+EOL+EOL+EOL;
-        
-        try {
-            Chunk redChunk = new Chunk (str, BLACK_NORMAL);
-            bwOutputSummaryFile.add(new Paragraph(redChunk));
-        } catch (DocumentException ex) {
-            Logger.getLogger(AFSIRSUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-
-    
-    private void addParagraphToTable (PdfPTable table, String str) {
-        
         Paragraph p = new Paragraph(str, BLUE_NORMAL);
         p.setAlignment(Element.ALIGN_CENTER);
-        
+
         PdfPCell c = new PdfPCell();
         c.addElement(p);
         c.setBorder(0);
         table.addCell(c);
     }
-    
+
     private void addParagraphToTableSoilName(PdfPTable t, String key, String value) {
         PdfPCell c;
         Paragraph p = new Paragraph();
@@ -2407,15 +2193,14 @@ public class AFSIRSUtils {
 
         p.add(keyChunk);
         p.add(valChunk);
-               
 
         c = new PdfPCell(p);
         c.setHorizontalAlignment(Element.ALIGN_CENTER);
         c.setBorder(0);
         t.addCell(c);
     }
-    
-    private void addUserDetails (PdfPTable t, String key, String value) {
+
+    private void addUserDetails(PdfPTable t, String key, String value) {
         PdfPCell c;
         Paragraph p = new Paragraph();
 
@@ -2424,33 +2209,30 @@ public class AFSIRSUtils {
 
         p.add(keyChunk);
         p.add(valChunk);
-               
 
         c = new PdfPCell(p);
         c.setHorizontalAlignment(Element.ALIGN_LEFT);
         c.setBorder(0);
         t.addCell(c);
     }
-    
-    
-    public void formatSummaryOutputFile () {
+
+    public void formatSummaryOutputFile() {
         try {
             PdfPTable t = new PdfPTable(1);
             for (String s : DOC_HEADER) {
-                addParagraphToTable(t, s);    
+                addParagraphToTable(t, s);
             }
             bwOutputSummaryFile.add(t);
-            
-            t = new PdfPTable (3);
+
+            t = new PdfPTable(3);
             addUserDetails(t, USER_DETAILS[0], getOWNER());
             addUserDetails(t, USER_DETAILS[1], getSITE());
             addUserDetails(t, USER_DETAILS[2], getUNIT());
-  
+
             addUserDetails(t, USER_DETAILS[3], getCropName());
             addUserDetails(t, USER_DETAILS[4], getIrrigationSystemName());
             addUserDetails(t, USER_DETAILS[5], "");
-            
-            
+
             addUserDetails(t, USER_DETAILS[6], "");
             addUserDetails(t, USER_DETAILS[7], String.valueOf(PLANTEDACRES));
             addUserDetails(t, USER_DETAILS[8], "");
@@ -2458,318 +2240,122 @@ public class AFSIRSUtils {
             bwOutputSummaryFile.add(t);
 
         } catch (DocumentException ex) {
-            
+
         }
     }
-    
-    public void initSummaryOutputFile() {
-  
-            //BufferedWriter bw = new BufferedWriter(new FileWriter(fName));
-            String str1 = EOL;
-            for (int i = 0; i < 70; i++) {
-                str1 += '*';
-            }
-            String newStr = 
-                      "                          AGRICULTURAL" + EOL
-                    + "                          FIELD" + EOL
-                    + "                          SCALE" + EOL
-                    + "                          IRRIGATION" + EOL
-                    + "                          REQUIREMENTS" + EOL
-                    + "                          SIMULATION" + EOL
-                    + EOL
-                    + "                             MODEL" + EOL
-                    + EOL
-                    + EOL
-                    + "              AFSIRS MODEL: INTERACTIVE VERSION "+Messages.MAX_VERSION+"."+Messages.MIN_VERSION + EOL
-                    + EOL
-                    + EOL
-                    + "           THIS MODEL SIMULATES IRRIGATION REQUIREMENTS" + EOL
-                    + "         FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS." + EOL
-                    + EOL
-                    + "      PROBABILITIES OF OCCURRENCE OF IRRIGATION REQUIREMENTS" + EOL
-                    + "        ARE CALCULATED USING HISTORICAL WEATHER DATA BASES" + EOL
-                    + "                   FOR NINE FLORIDA LOCATIONS." + EOL;
 
-            str1 += EOL + EOL;
-            str1 += newStr;
-            str1 += EOL + EOL;
-            newStr = "          INSTRUCTIONS FOR THE USE OF THIS MODEL ARE GIVEN" + EOL
-                    + "                 IN THE AFSIRS MODEL USER'S GUIDE." + EOL
-                    + "" + EOL
-                    + "       DETAILS OF THE OPERATION OF THIS MODEL, ITS APPLICATIONS" + EOL
-                    + "    AND LIMITATIONS ARE GIVEN IN THE AFSIRS MODEL TECHNICAL MANUAL." + EOL;
-
-            str1 += newStr;
-            str1 += EOL + EOL;
-
-            newStr = "              AFSIRS MODEL: INTERACTIVE VERSION "+Messages.MAX_VERSION+"."+Messages.MIN_VERSION + EOL
-                    + EOL
-                    + EOL
-                    + "           THIS MODEL SIMULATES IRRIGATION REQUIREMENTS" + EOL
-                    + "         FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS." + EOL;
-            str1+=newStr;
-            str1 += EOL + EOL;
-            
-            Paragraph infoP = new Paragraph ();
-            String str2 = "";
-            String str3 = "";
-            str2 += (EOL+"OWNER: ");
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            infoP.add(new Chunk(getOWNER(), BLACK_BOLD));
-            
-            str2 = "      SITE: ";
-            str3 = getSITE();
-            
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            infoP.add(new Chunk(str3, BLACK_BOLD));
-            
-            str2 = "      UNIT: ";
-            str3 = getUNIT()+EOL+EOL;
-            
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            infoP.add(new Chunk(str3, BLACK_BOLD));
-            
-            str2 = EOL+"CROP: ";
-            str3= getCropName();
-            
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            infoP.add(new Chunk(str3, BLACK_BOLD));
-            
-            str2 = "      IRRIGATION METHOD: ";
-            str3 = getIrrigationSystemName();
-            
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            infoP.add(new Chunk(str3, BLACK_BOLD));
-            
-            str2 = "      PLANTING DATE: "+ EOL+EOL;
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            str2 ="HARVEST DATE: ";
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            
-            double area = PLANTEDACRES;
-
-            str2 = "      AREA (ACRES): ";
-            str3 = area + EOL+EOL;
-            
-            infoP.add(new Chunk(str2, BLACK_NORMAL));
-            infoP.add(new Chunk(str3, BLACK_BOLD));
-
-            
-            
-        
-        try {
-            Chunk redChunk = new Chunk (str1, BLUE_NORMAL);
-            bwOutputSummaryFile.add(new Paragraph(redChunk));
-            bwOutputSummaryFile.add(infoP);
-        } catch (DocumentException ex) {
-            Logger.getLogger(AFSIRSUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-    }
-    
     private void finalSummaryOutput() {
         try {
-            String str ="";
-            String str1="";
-            //Paragraph infoP = new Paragraph ();
-            
+            String str = "";
+            String str1 = "";
+
             double area = PLANTEDACRES;
 
             PdfPTable t = new PdfPTable(1);
             addParagraphToTableSoilName(t, " ", " ");
             addParagraphToTableSoilName(t, " ", " ");
             addParagraphToTableSoilName(t, "Soil Series Name : ", SNAME);
-            
+
             bwOutputSummaryFile.add(t);
-            //printAllInfoAtOnce(area);
-            
+
             generalInformation(summaryReport, bwOutputSummaryFile);
             infoInInches(bwOutputSummaryFile, summaryReport);
             probablityInfoInGallons(bwOutputSummaryFile, summaryReport, area);
-            
+
         } catch (DocumentException ex) {
             Logger.getLogger(AFSIRSUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void printAllInfoAtOnce(double area) throws DocumentException {
-        String str;
-        str=EOL+"                                  ---------------------------------Details in Inches---------------------------------"+EOL+EOL;
-        str+=EOL+"                                  Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec     Total";
-        str+= EOL+"Mean Rainfall                   ";
-        double totalVal = 0.0;
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTotalRainFallByMonth(i);
-            totalVal += val;
-            str+=String.format("%6.2f  ",val);
-        }
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"Mean Evaporation Transpiration  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTotalEvaporationByMonth(i);
-            totalVal += val;
-            str+=String.format("%6.2f  ",val);
-        }
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"Peak Evaporation Transpiration  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getPeakEvaporationByMonth(i);
-            str+=String.format("%6.2f  ",val);
-        }
-        str+=String.format("%8s","---");
-        totalVal = 0.0;
-        str+=(EOL+"Avg  Irrigation Requirement     ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getAverageIrrigationRequired(i);
-            totalVal+= val;
-            str+=String.format("%6.2f  ",val);
-        }
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"2-in-10 Irrigation Requirement  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTwoin10IrrigationRequired(i);
-            totalVal+=val;
-            str+=String.format("%6.2f  ",val);
-        }
-        str+=String.format("%8.2f",totalVal);
-        totalVal = 0.0;
-        str+=(EOL+"1-in-10 Irrigation Requirement  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getOnein10IrrigationRequired(i);
-            totalVal+=val;
-            str+=String.format("%6.2f  ",val);
-        }
-        str+=String.format("%8.2f",totalVal);
-        str+=EOL+EOL+EOL;
-        str+="                                  ---------------------------------Details in Million Gallons---------------------------------"+EOL+EOL;
-        str+="                                        Jan           Feb           Mar           Apr           May           Jun           Jul           Aug           Sep           Oct           Nov           Dec";
-        str+=EOL+"Avg  Irrigation Requirement     ";
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getAverageIrrigationRequired(i);
-            if (val>=0){
-                val= (val*area*27154);
-                val =(val/1000000);
-                str+=String.format("%12.2f  ", val);
-            } else {
-                str+=String.format("%12.2f  ", val);
-            }
-            
-        }
-        str+=(EOL+"2-in-10 Irrigation Requirement  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getTwoin10IrrigationRequired(i);
-            if (val>=0){
-                val= (val*area*27154);
-                val =(val/1000000);
-                str+=String.format("%12.2f  ", val);
-            } else {
-                str+=String.format("%12.2f  ", val);
-            }
-        }
-        str+=(EOL+"1-in-10 Irrigation Requirement  ");
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport.getOnein10IrrigationRequired(i);
-            if (val>=0){
-                val= (val*area*27154);
-                val =(val/1000000);
-                str+=String.format("%12.2f  ", val);
-            } else {
-                str+=String.format("%12.2f  ", val);
-            }
-        }
-        str+=EOL+EOL+EOL+EOL;
-        Chunk redChunk = new Chunk (str, BLACK_NORMAL);
-        bwOutputSummaryFile.add(new Paragraph(redChunk));
-    }
-
-    
     private void designTableTitleCell(PdfPTable table, String str) {
         PdfPCell cell;
         // we add a c with colspan 3
         cell = new PdfPCell(new Phrase(str, BLUE_NORMAL));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBackgroundColor(BaseColor.ORANGE); 
+        cell.setBackgroundColor(BaseColor.ORANGE);
         cell.setColspan(14);
         table.addCell(cell);
     }
-    
+
     private void designRowTitleCell(PdfPTable table, String str) {
         PdfPCell cell;
         // we add a c with colspan 3
         cell = new PdfPCell(new Phrase(str, BLUE_NORMAL));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBackgroundColor(BaseColor.ORANGE); 
+        cell.setBackgroundColor(BaseColor.ORANGE);
         //cell.setColspan(14);
         table.addCell(cell);
     }
-    
+
     private void designTableHeaderRowCell(PdfPTable table, String str) {
         PdfPCell cell;
         // we add a c with colspan 3
         cell = new PdfPCell(new Phrase(str, BLUE_NORMAL));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBackgroundColor(BaseColor.ORANGE); 
+        cell.setBackgroundColor(BaseColor.ORANGE);
         //cell.setColspan(14);
         table.addCell(cell);
     }
-    
-    private void designDataCell (PdfPTable table, String str) {
-         PdfPCell cell;
+
+    private void designDataCell(PdfPTable table, String str) {
+        PdfPCell cell;
         // we add a c with colspan 3
         cell = new PdfPCell(new Phrase(str, BLACK_NORMAL));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBackgroundColor(BaseColor.CYAN); 
+        cell.setBackgroundColor(BaseColor.CYAN);
         //cell.setColspan(14);
         table.addCell(cell);
     }
-    
-    
+
     private void generalInformation(SummaryReport summaryReport1, Document bwOutputSummaryFile1) throws DocumentException {
         // a table with three columns
         PdfPTable table = new PdfPTable(14);
-        
-        table.setTotalWidth(new float[]{ 190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120 });
+
+        table.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
         designTableTitleCell(table, "Details in Inches");
         createTableHeader(table);
-        /***************Mean Rainfall Details******************/
-        
+        /**
+         * *************Mean Rainfall Details*****************
+         */
+
         designRowTitleCell(table, "Mean Rainfall");
         double totalVal = 0.0;
         String str = "";
-        for (int i = 1; i <=12; i++) {
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTotalRainFallByMonth(i);
             totalVal += val;
-            str=String.format("%6.2f",val);
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
-        str=String.format("%6.2f",totalVal);
+        str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
-        /***************Mean Evaporation******************/
+        /**
+         * *************Mean Evaporation*****************
+         */
         designRowTitleCell(table, "Mean Evaporation");
         totalVal = 0.0;
         str = "";
-        for (int i = 1; i <=12; i++) {
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTotalEvaporationByMonth(i);
             totalVal += val;
-            str=String.format("%6.2f",val);
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
-        str=String.format("%6.2f",totalVal);
+        str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
-        /***********Peak Evaporation Details*************/
+        /**
+         * *********Peak Evaporation Details************
+         */
         designRowTitleCell(table, "Peak Evaporation");
         totalVal = 0.0;
         str = "";
-        for (int i = 1; i <=12; i++) {
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getPeakEvaporationByMonth(i);
-            str=String.format("%6.2f",val);
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         designDataCell(table, "-");
-        
+
         bwOutputSummaryFile1.add(table);
     }
 
@@ -2781,44 +2367,50 @@ public class AFSIRSUtils {
         bwOutputSummaryFile1.add(new Paragraph("\r\n"));
         table = new PdfPTable(14);
         table.setHorizontalAlignment(Element.ALIGN_CENTER);
-        
-        table.setTotalWidth(new float[]{ 190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120 });
-        
+
+        table.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
+
         designTableTitleCell(table, "Details in Inches");
         createTableHeader(table);
-        
-        /***********Peak Evaporation Details*************/
+
+        /**
+         * *********Peak Evaporation Details************
+         */
         designRowTitleCell(table, "Avg Irr Req");
-        totalVal=0.0;
-        for (int i = 1; i <=12; i++) {
+        totalVal = 0.0;
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getAverageIrrigationRequired(i);
-            totalVal+= val;
-            str=String.format("%6.2f",val);            
+            totalVal += val;
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
-        str=String.format("%6.2f",totalVal);
+        str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
-        /***********2-in-10 Irrigation Required*************/
+        /**
+         * *********2-in-10 Irrigation Required************
+         */
         designRowTitleCell(table, "2-in-10 Irr Req");
         totalVal = 0.0;
-        for (int i = 1; i <=12; i++) {
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTwoin10IrrigationRequired(i);
-            totalVal+=val;
-            str=String.format("%6.2f",val);
-            designDataCell(table, str);            
-        }
-        str=String.format("%6.2f",totalVal);
-        designDataCell(table, str);
-        /***********1-in-10 Irrigation Required*************/
-        designRowTitleCell(table, "1-in-10 Irr Req");
-        totalVal = 0.0;
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport1.getOnein10IrrigationRequired(i);
-            totalVal+=val;
-            str=String.format("%6.2f",val);
+            totalVal += val;
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
-        str=String.format("%6.2f",totalVal);
+        str = String.format("%6.2f", totalVal);
+        designDataCell(table, str);
+        /**
+         * *********1-in-10 Irrigation Required************
+         */
+        designRowTitleCell(table, "1-in-10 Irr Req");
+        totalVal = 0.0;
+        for (int i = 1; i <= 12; i++) {
+            double val = summaryReport1.getOnein10IrrigationRequired(i);
+            totalVal += val;
+            str = String.format("%6.2f", val);
+            designDataCell(table, str);
+        }
+        str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
         bwOutputSummaryFile1.add(table);
     }
@@ -2836,239 +2428,76 @@ public class AFSIRSUtils {
         String str;
         bwOutputSummaryFile1.add(new Paragraph("\r\n"));
         table = new PdfPTable(14);
-        
-        
-        table.setTotalWidth(new float[]{ 190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120 });
+
+        table.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
         designTableTitleCell(table, "Details in Million Gallons");
         createTableHeader(table);
-        
-        
-        /***********Peak Evaporation Details*************/
+
+        /**
+         * *********Peak Evaporation Details************
+         */
         designRowTitleCell(table, "Avg Irr Req");
-        totalVal=0.0;
-        for (int i = 1; i <=12; i++) {
+        totalVal = 0.0;
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getAverageIrrigationRequired(i);
-            if (val>=0){
-                val= (val*area*27154);
-                val =(val/1000000);
-                str=String.format("%12.2f", val);
+            if (val >= 0) {
+                val = (val * area * 27154);
+                val = (val / 1000000);
+                str = String.format("%12.2f", val);
             } else {
-                str=String.format("%12.2f", val);
+                str = String.format("%12.2f", val);
             }
-            totalVal+= val;
-            str=String.format("%6.2f",val);            
+            totalVal += val;
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
-            
+
         }
-        str=String.format("%6.2f",totalVal);
+        str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
-        
-        
-        /***********2-in-10 Irrigation Required*************/
+
+        /**
+         * *********2-in-10 Irrigation Required************
+         */
         designRowTitleCell(table, "2-in-10 Irr Req");
         totalVal = 0.0;
-        for (int i = 1; i <=12; i++) {
+        for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTwoin10IrrigationRequired(i);
-            if (val>=0){
-                val= (val*area*27154);
-                val =(val/1000000);
-                str=String.format("%12.2f", val);
+            if (val >= 0) {
+                val = (val * area * 27154);
+                val = (val / 1000000);
+                str = String.format("%12.2f", val);
             } else {
-                str=String.format("%12.2f", val);
+                str = String.format("%12.2f", val);
             }
-            totalVal+=val;
-            str=String.format("%6.2f",val);
-            designDataCell(table, str);           
-        }
-        str=String.format("%6.2f",totalVal);
-        designDataCell(table, str);
-        /***********1-in-10 Irrigation Required*************/
-        designRowTitleCell(table, "1-in-10 Irr Req");
-        totalVal = 0.0;
-        for (int i = 1; i <=12; i++) {
-            double val = summaryReport1.getOnein10IrrigationRequired(i);
-            if (val>=0){
-                val= (val*area*27154);
-                val =(val/1000000);
-                str=String.format("%12.2f", val);
-            } else {
-                str=String.format("%12.2f", val);
-            }
-            totalVal+=val;
-            str=String.format("%6.2f",val);
+            totalVal += val;
+            str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
-        str=String.format("%6.2f",totalVal);
+        str = String.format("%6.2f", totalVal);
+        designDataCell(table, str);
+        /**
+         * *********1-in-10 Irrigation Required************
+         */
+        designRowTitleCell(table, "1-in-10 Irr Req");
+        totalVal = 0.0;
+        for (int i = 1; i <= 12; i++) {
+            double val = summaryReport1.getOnein10IrrigationRequired(i);
+            if (val >= 0) {
+                val = (val * area * 27154);
+                val = (val / 1000000);
+                str = String.format("%12.2f", val);
+            } else {
+                str = String.format("%12.2f", val);
+            }
+            totalVal += val;
+            str = String.format("%6.2f", val);
+            designDataCell(table, str);
+        }
+        str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
         bwOutputSummaryFile1.add(table);
         return table;
     }
-    
-    
-    /*private void finalSummaryOutput() {
-        try {
-            
-            
-            String str ="";
-            String str1="";
-            Paragraph infoP = new Paragraph ();
-            //str = EOL+"OWNER: ";
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            //infoP.add(new Chunk(getOWNER(), BLACK_BOLD));
-            
-            //str = "      SITE: ";
-            //str1 = getSITE();
-            
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            //infoP.add(new Chunk(str1, BLACK_BOLD));
-            
-            //str = "      UNIT: ";
-            //str1 = getUNIT()+EOL+EOL;
-            
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            //infoP.add(new Chunk(str1, BLACK_BOLD));
-            
-            //str = EOL+"CROP: ";
-            //str1= getCropName();
-            
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            //infoP.add(new Chunk(str1, BLACK_BOLD));
-
-            
-            //str = "      IRRIGATION METHOD: ";
-            //str1 = getIrrigationSystemName();
-            
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            //infoP.add(new Chunk(str1, BLACK_BOLD));
-
-            
-            //str = "      PLANTING DATE: "+ EOL+EOL;
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            //str ="HARVEST DATE: ";
-            //infoP.add(new Chunk(str, BLACK_NORMAL));
-            
-            double area = PLANTEDACRES;
-
-            str = "      SOIL SERIES NAME : ";
-            str1 = SNAME + EOL+EOL;
-            
-            infoP.add(new Chunk(str, BLACK_NORMAL));
-            infoP.add(new Chunk(str1, BLACK_BOLD));
-            
-            bwOutputSummaryFile.add(infoP);
-            
-            
-            
-            str=EOL+"                                  ---------------------------------Details in Inches---------------------------------"+EOL+EOL;
-            str+=EOL+"                                  Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec     Total";
-
-            str+= EOL+"Mean Rainfall                   ";
-            double totalVal = 0.0;
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getTotalRainFallByMonth(i);
-                totalVal += val;
-                str+=String.format("%6.2f  ",val);
-            }
-
-            str+=String.format("%8.2f",totalVal);
-            totalVal = 0.0;
-
-            str+=(EOL+"Mean Evaporation Transpiration  ");
-
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getTotalEvaporationByMonth(i);
-                totalVal += val;
-                str+=String.format("%6.2f  ",val);
-            }
-
-            str+=String.format("%8.2f",totalVal);
-            totalVal = 0.0;
-            str+=(EOL+"Peak Evaporation Transpiration  ");
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getPeakEvaporationByMonth(i);
-                str+=String.format("%6.2f  ",val);
-            }
-
-            str+=String.format("%8s","---");
-            totalVal = 0.0;
-            str+=(EOL+"Avg  Irrigation Requirement     ");
-
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getAverageIrrigationRequired(i);
-                totalVal+= val;
-                str+=String.format("%6.2f  ",val);
-            }
-
-            str+=String.format("%8.2f",totalVal);
-            totalVal = 0.0;
-            str+=(EOL+"2-in-10 Irrigation Requirement  ");
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getTwoin10IrrigationRequired(i);
-                totalVal+=val;
-                str+=String.format("%6.2f  ",val);
-            }
-
-            str+=String.format("%8.2f",totalVal);
-            totalVal = 0.0;
-            str+=(EOL+"1-in-10 Irrigation Requirement  "); 
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getOnein10IrrigationRequired(i);
-                totalVal+=val;
-                str+=String.format("%6.2f  ",val);
-            }
-
-            str+=String.format("%8.2f",totalVal);
-            str+=EOL+EOL+EOL;
-
-
-           str+="                                  ---------------------------------Details in Million Gallons---------------------------------"+EOL+EOL;
-           str+="                                        Jan           Feb           Mar           Apr           May           Jun           Jul           Aug           Sep           Oct           Nov           Dec";
-           str+=EOL+"Avg  Irrigation Requirement     ";
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getAverageIrrigationRequired(i);
-                if (val>=0){
-                    val= (val*area*27154);
-                    val =(val/1000000);
-                    str+=String.format("%12.2f  ", val);
-                } else {
-                    str+=String.format("%12.2f  ", val);
-                }
-                
-            }
-
-            str+=(EOL+"2-in-10 Irrigation Requirement  ");
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getTwoin10IrrigationRequired(i);
-                if (val>=0){
-                    val= (val*area*27154);
-                    val =(val/1000000);
-                    str+=String.format("%12.2f  ", val);
-                } else {
-                    str+=String.format("%12.2f  ", val);
-                }
-            }
-
-            str+=(EOL+"1-in-10 Irrigation Requirement  "); 
-            for (int i = 1; i <=12; i++) {
-                double val = summaryReport.getOnein10IrrigationRequired(i);
-                if (val>=0){
-                    val= (val*area*27154);
-                    val =(val/1000000);
-                    str+=String.format("%12.2f  ", val);
-                } else {
-                    str+=String.format("%12.2f  ", val);
-                }
-            }
-
-            str+=EOL+EOL+EOL+EOL;
-        
-        
-            Chunk redChunk = new Chunk (str, BLACK_NORMAL);
-            bwOutputSummaryFile.add(new Paragraph(redChunk));
-        } catch (DocumentException ex) {
-            Logger.getLogger(AFSIRSUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
 
     public String appendSpace(int n, String str) {
         StringBuffer str1 = new StringBuffer();
