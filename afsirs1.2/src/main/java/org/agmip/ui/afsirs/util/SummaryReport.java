@@ -51,6 +51,22 @@ public class SummaryReport {
         }
         
     }
+    
+    public void reset() {
+        for (int i = 0; i < 12; i++) {
+
+            this.totalRainFall.add(0.0);
+            this.totalEvaporation.add(0.0);
+
+            this.peakMonthlyEvaporation.add(0.0);
+            
+            
+            this.totalIrrigationRequired.add(0.0);
+            this.averageIrrigationRequired.add(0.0);
+            this.twoin10IrrigationRequired.add(0.0);
+            this.onein10IrrigationRequired.add(0.0);
+        }
+    }
 
     public int getCurMonth() {
         return curMonth;
@@ -67,12 +83,12 @@ public class SummaryReport {
         return totalRainFall.get(month-1);
     }
 
-    public void addToTotalRainFall(int month, double rainFall) throws IllegalArgumentException {
+    public void setTotalRainFall(int month, double rainFall) throws IllegalArgumentException {
         
         if (month <1|| month>12) {
             throw new IllegalArgumentException ("Month "+ month + " is not in the valid range. It should be 1-12.");
         }
-        this.totalRainFall.set(month-1, this.totalRainFall.get(month-1)+rainFall);
+        this.totalRainFall.set(month-1, rainFall);
     }
 
     public Double getTotalEvaporationByMonth(int month) {
@@ -82,11 +98,11 @@ public class SummaryReport {
         return this.totalEvaporation.get(month-1);
     }
 
-    public void addTotalEvaporation(int month, double evaporation) throws IllegalArgumentException {
+    public void setTotalEvaporation(int month, double evaporation) throws IllegalArgumentException {
         if (month <1|| month>12) {
             throw new IllegalArgumentException ("Month "+ month + " is not in the valid range. It should be 1-12.");
         }
-        this.totalEvaporation.set(month-1, this.totalEvaporation.get(month-1)+evaporation);
+        this.totalEvaporation.set(month-1, evaporation);
     }
 
     public Double getPeakEvaporationByMonth(int month){
