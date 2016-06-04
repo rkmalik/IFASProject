@@ -1045,8 +1045,8 @@ public class SWFrame extends javax.swing.JFrame {
     private void updateSoilDataBaseOnSoilFileSelection (int index) {
         try {
             File [] files = getListOfDataFiles ();
-            System.out.println ("File Index to Found : " + index);
-            System.out.println ("Total Number of Files : " + files.length);
+            //System.out.println ("File Index to Found : " + index);
+            //System.out.println ("Total Number of Files : " + files.length);
             readSoilDataJsonFileForUtils(files[index]);
             //utils.setSoilData(SoilData.getSoilDataInstance());
 	} catch (FileNotFoundException e) {
@@ -1313,7 +1313,7 @@ public class SWFrame extends javax.swing.JFrame {
             String[] txt  = new String[3];
             
             for (JsonNode node : soilLayersNodes) {                
-                System.out.println ("NL we are looking for: " + NL);
+                //System.out.println ("NL we are looking for: " + NL);
                 wcu[NL] = node.get("sldul").asDouble()/100.00;
                 du[NL] = node.get("sllb").asDouble()*0.39370;
                 du[NL] = Math.floor(du[NL]*1000)/1000;

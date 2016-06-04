@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.logging.Level;
@@ -93,7 +94,19 @@ public class AFSIRSUtils {
     double DWT;
     double PLANTEDACRES = 0.0;
     double[][] RAIN = new double[64][365];
-    double[][] IRR = new double[64][365];
+    double[][] ETP = new double[64][365];    
+    double[][] IRR = new double[64][365]; 
+    
+    
+    
+    double[][] RAIN_1 = new double[64][365];
+    double[][] ETP_1 = new double[64][365];    
+    double[] DRZ_1 = new double[365];
+    double[] DRZI_1 = new double[365];
+    double[] AWD_1 = new double[365];
+    double[] RKC_1 = new double[365];
+    int[] NF_1 = new int[4];
+    
     double[] SDR = new double[365];
     double[] SET = new double[365];
     double[] SETP = new double[365];
@@ -106,7 +119,7 @@ public class AFSIRSUtils {
     double[] SWMAX = new double[365];
     double[] SWCIX = new double[365];
     double[] SWCNX = new double[365];
-    double[][] ETP = new double[64][365];
+
     double[] AWD = new double[365];
     double[] AKC = new double[12];
     double[] ALDP = new double[12];
@@ -151,6 +164,7 @@ public class AFSIRSUtils {
     BufferedWriter bwOutputFile;
     //BufferedWriter bwOutputSummaryFile;
     Document bwOutputSummaryFile;
+    ArrayList<PdfPTable> summaryTables;
     private double[] soilFractions;
     private double[] soilArea;
     private Soil soil;
@@ -158,6 +172,51 @@ public class AFSIRSUtils {
 
     private AFSIRSUtils() {
 
+    }
+    
+    private void getDataCopy () {
+        
+        RAIN_1=Arrays.copyOf(RAIN, RAIN.length);
+        ETP_1=Arrays.copyOf(ETP, ETP.length);
+        
+        DRZ_1=Arrays.copyOf(DRZ, DRZ.length);
+        DRZI_1=Arrays.copyOf(DRZI, DRZI.length);
+        AWD_1=Arrays.copyOf(AWD, AWD.length);
+        RKC_1=Arrays.copyOf(RKC, RKC.length);
+        NF_1=Arrays.copyOf(NF, NF.length);
+    }
+    
+    private void resetAllocate () {
+        SDR = new double[365];
+        SET = new double[365];
+        SETP = new double[365];
+        SRAIN = new double[365];
+        IRR = new double[64][365];
+
+
+        
+
+        SWMAX = new double[365];
+        SWCIX = new double[365];
+        SWCNX = new double[365];
+        
+        
+        SWCI1 = SWCN1 = 0.0;  
+        SWIRR = new double[365];
+
+        //RKC = new double[365];
+        //AWD = new double[365];
+        //NF = new int[4];
+        //DRZ = new double[365];
+        //DRZI = new double[365];
+        
+        RAIN=Arrays.copyOf(RAIN_1, RAIN_1.length);
+        ETP=Arrays.copyOf(ETP_1, ETP_1.length);
+        DRZ=Arrays.copyOf(DRZ_1, DRZ_1.length);
+        DRZI=Arrays.copyOf(DRZI_1, DRZI_1.length);
+        AWD=Arrays.copyOf(AWD_1, AWD_1.length);
+        RKC=Arrays.copyOf(RKC_1, RKC_1.length);
+        NF=Arrays.copyOf(NF_1, NF_1.length);
     }
 
     public static AFSIRSUtils getInstance() {
@@ -676,6 +735,7 @@ public class AFSIRSUtils {
 
     //BAL.for
     public void calculateBalance() {
+        
         //Initialize parameters
         double SWCISV = 0.0, SWCNSV = 0.0, WCISAVE, WCNSAVE;
         int NYX = NYR;
@@ -970,6 +1030,8 @@ public class AFSIRSUtils {
                 }
             }
 
+            
+            
             //Sum parameters for each day of the irrigation season
             for (int j = J1 - 1; j < JN; j++) {
                 SDR[j] += DR[j];
@@ -1074,6 +1136,7 @@ public class AFSIRSUtils {
         //Calculating pllotting positions for PROBs and IRRs
         result.RSQ = -9.99;
         if (IPOS < 2) {
+             result.setAll(-99.0, -99.0);
             return result;
         }
 
@@ -1087,6 +1150,7 @@ public class AFSIRSUtils {
         LSQResult l = LSQ(W, ALIRR, IPOS + 1);
         result.RSQ = l.RSQ;
         if (l.RSQ < 0.500) {
+            result.setAll(-99.0, result.RSQ);
             return result;
         }
         if ((IPOS + 1) >= NYR) {
@@ -1555,6 +1619,14 @@ public class AFSIRSUtils {
         }
     }
 
+    private void displayArray (double [] a) {
+        
+        for (double v : a) {
+            System.out.print (v + " ");
+        }
+        System.out.println("");
+        System.out.println(a);
+    }
     /*
      This subroutine orders the irrigation requirements data base from
      largest to smallest and it calculates the plotting positions for
@@ -1682,9 +1754,14 @@ public class AFSIRSUtils {
         }
 
         writeOutput(EOL + "   MEAN  MED.  CV  XMAX  XMIN ZERO  RSQ  50%  80%  90% 95% RAIN  ETP  ET   DR" + EOL);
+        
+        //displayArray(AI);
         STATResult statResult = STATX(AI, NYR);
+        //displayArray(AI);
         PROBResult probResult = PROBX(AI, NYR, statResult.PROB, statResult.XMEAN);
-
+        //displayArray(AI);
+        System.out.println ("");
+        
         double XIRR = TET[0] / IEFF;
         probResult.X50 = Math.min(probResult.X50, XIRR);
         probResult.X80 = Math.min(probResult.X80, XIRR);
@@ -1783,6 +1860,9 @@ public class AFSIRSUtils {
             if (ICODE >= 1 || (ICODE < 1 && imo == 0)) {
                 writeOutput(EOL + " MO  MEAN  MED.  CV XMAX XMIN ZERO  RSQ  50%  80%  90%  95% RAIN  ETP   ET   DR" + EOL);
             }
+            
+            //System.out.println ("---------------Month : " + (imo+1)+"------------------");
+            
             statResult = STATX(AI, NYR);
             probResult = PROBX(AI, NYR, statResult.PROB, statResult.XMEAN);
             XIRR = TET[imo] / IEFF;
@@ -1795,7 +1875,7 @@ public class AFSIRSUtils {
                     statResult.XMEAN, statResult.XMED, statResult.XCV, statResult.XMAX, statResult.XMIN, probResult.X00, probResult.RSQ,
                     probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[imo], TETP[imo], TET[imo], TDR[imo]);
             
-            System.out.println (str);
+            //System.out.println (str);
             writeOutput(str + EOL);
 
             summaryReport.reset ();
@@ -2107,6 +2187,9 @@ public class AFSIRSUtils {
                 writeOutput(row + EOL);
             }
         }
+        
+        //Don't Delete the below commented code. This is very important for reference
+        
         /*SW();
         String txt = "";
         for (String t : TXT) {
@@ -2135,6 +2218,8 @@ public class AFSIRSUtils {
         }
         calculateBalance();
         SUMX();*/
+        getDataCopy ();
+        summaryTables = new ArrayList<PdfPTable> ();
         try {
    
             ArrayList<Soil> soils = soilData.getSoils();
@@ -2157,13 +2242,28 @@ public class AFSIRSUtils {
                 WC = soil.getWC();
                 NL = soil.getNL();
             
-                
+                resetAllocate();
                 SW();
                 calculateBalance();
                 SUMX();
                 finalSummaryOutput();
                 
                 i++;
+            }
+            setIrrigationWeightedAverage ();
+            bwOutputSummaryFile.add(new Paragraph("\r\n"));
+            if (summaryTables.size()>=2) {
+                bwOutputSummaryFile.add(summaryTables.get(0));
+                bwOutputSummaryFile.add(new Paragraph("\r\n"));
+                
+                // This is for the weighted Average of the irrigation
+                bwOutputSummaryFile.add(summaryTables.get(1));
+                bwOutputSummaryFile.add(new Paragraph("\r\n"));
+
+            }
+            for(int inx = 2; inx <summaryTables.size(); inx++) {
+                PdfPTable t =summaryTables.get(inx);
+                bwOutputSummaryFile.add(t);
             }
             
             bwOutputFile.close();
@@ -2244,6 +2344,65 @@ public class AFSIRSUtils {
         }
     }
 
+    private void prepareWeightedAverageTable () throws DocumentException {
+        PdfPTable table = new PdfPTable(14);
+
+        table.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
+        designTableTitleCell(table, "Irrigation Weighted Average");
+        createTableHeader(table);
+        summaryTables.add(table);
+    }
+    
+    private void  setIrrigationWeightedAverage () throws DocumentException {
+        PdfPTable t = summaryTables.get(1);
+
+        designRowTitleCell(t, "Avg Irr Req");
+
+        double totalVal = 0.0;
+        String str = "";
+        
+        // Find the weighted average of the irrigation
+        for ( int i = 1; i <=12; i++) {            
+            double irr = summaryReport.getWeightedAvgIrrRequired(i);
+            str =  String.format("%6.2f", irr);;
+            designDataCell(t, String.valueOf(str));
+            if (irr>=0){
+                totalVal += irr;
+            }
+        }
+        str = String.format("%6.2f", totalVal);
+        designDataCell(t, str);
+
+        designRowTitleCell(t, "2-In-10 Irr Req");
+        totalVal=0.0;
+        // Find the weighted average of the irrigation
+        for ( int i = 1; i <=12; i++) {            
+            double irr = summaryReport.getWeighted2In10IrrRequired(i);
+            str =  String.format("%6.2f", irr);;
+            designDataCell(t, String.valueOf(str));
+            
+            if (irr>=0){
+                totalVal += irr;
+            }
+        }
+        str = String.format("%6.2f", totalVal);
+        designDataCell(t, str);
+
+        designRowTitleCell(t, "1-In-10 Irr Req");
+        totalVal=0.0;
+        // Find the weighted average of the irrigation
+        for ( int i = 1; i <=12; i++) {            
+            double irr = summaryReport.getWeighted1In10IrrRequired(i);
+            str =  String.format("%6.2f", irr);
+            designDataCell(t, String.valueOf(str));
+            if (irr>=0){
+                totalVal += irr;
+            }
+        }
+        str = String.format("%6.2f", totalVal);
+        designDataCell(t, str);
+    }
+    
     private void finalSummaryOutput() {
         try {
             String str = "";
@@ -2251,14 +2410,18 @@ public class AFSIRSUtils {
 
             double area = PLANTEDACRES;
 
+            if (summaryTables.size()<2) {
+                generalInformation(summaryReport, bwOutputSummaryFile);
+                prepareWeightedAverageTable ();
+            }
+            
             PdfPTable t = new PdfPTable(1);
             addParagraphToTableSoilName(t, " ", " ");
             addParagraphToTableSoilName(t, " ", " ");
             addParagraphToTableSoilName(t, "Soil Series Name : ", SNAME);
-
-            bwOutputSummaryFile.add(t);
-
-            generalInformation(summaryReport, bwOutputSummaryFile);
+            summaryTables.add(t);
+            //bwOutputSummaryFile.add(t);
+            
             infoInInches(bwOutputSummaryFile, summaryReport);
             probablityInfoInGallons(bwOutputSummaryFile, summaryReport, area);
 
@@ -2323,7 +2486,8 @@ public class AFSIRSUtils {
         String str = "";
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTotalRainFallByMonth(i);
-            totalVal += val;
+            if (val>=0)
+                totalVal += val;
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
@@ -2332,12 +2496,13 @@ public class AFSIRSUtils {
         /**
          * *************Mean Evaporation*****************
          */
-        designRowTitleCell(table, "Mean Evaporation");
+        designRowTitleCell(table, "Mean ET");
         totalVal = 0.0;
         str = "";
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTotalEvaporationByMonth(i);
-            totalVal += val;
+            if (val>=0)
+                totalVal += val;
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
@@ -2346,17 +2511,23 @@ public class AFSIRSUtils {
         /**
          * *********Peak Evaporation Details************
          */
-        designRowTitleCell(table, "Peak Evaporation");
+        designRowTitleCell(table, "Peak ET");
         totalVal = 0.0;
         str = "";
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getPeakEvaporationByMonth(i);
+            
+            if (val>=0)
+                totalVal += val;
+            
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
+        str = String.format("%6.2f", totalVal);
+        designDataCell(table, str);
         designDataCell(table, "-");
-
-        bwOutputSummaryFile1.add(table);
+        summaryTables.add(table);
+        //bwOutputSummaryFile1.add(table);
     }
 
     private void infoInInches(Document bwOutputSummaryFile1, SummaryReport summaryReport1) throws DocumentException {
@@ -2364,7 +2535,7 @@ public class AFSIRSUtils {
         PdfPCell cell;
         double totalVal;
         String str;
-        bwOutputSummaryFile1.add(new Paragraph("\r\n"));
+        //bwOutputSummaryFile1.add(new Paragraph("\r\n"));
         table = new PdfPTable(14);
         table.setHorizontalAlignment(Element.ALIGN_CENTER);
 
@@ -2372,6 +2543,14 @@ public class AFSIRSUtils {
 
         designTableTitleCell(table, "Details in Inches");
         createTableHeader(table);
+        
+        
+        double [] soilArea = getSoilArea();
+        double areaSum=0.0;
+        
+        for (double a: soilArea){
+             areaSum+=a;
+        }
 
         /**
          * *********Peak Evaporation Details************
@@ -2380,11 +2559,18 @@ public class AFSIRSUtils {
         totalVal = 0.0;
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getAverageIrrigationRequired(i);
-            totalVal += val;
+            if (val>=0) {
+                double wIrr = (val * this.soil.getSoilTypeArea())/areaSum;
+                summaryReport.setWeightedAvgIrrRequired(i, wIrr);                
+                totalVal += val;
+            }
+
+            
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
+        //str = "-";
         designDataCell(table, str);
         /**
          * *********2-in-10 Irrigation Required************
@@ -2393,11 +2579,17 @@ public class AFSIRSUtils {
         totalVal = 0.0;
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getTwoin10IrrigationRequired(i);
-            totalVal += val;
+            if (val>=0) {
+                double wIrr = (val * this.soil.getSoilTypeArea())/areaSum;
+                summaryReport.setWeighted2In10IrrRequired(i, wIrr);
+                totalVal += val;
+            }
+
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
+        //str = "-";
         designDataCell(table, str);
         /**
          * *********1-in-10 Irrigation Required************
@@ -2406,13 +2598,20 @@ public class AFSIRSUtils {
         totalVal = 0.0;
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getOnein10IrrigationRequired(i);
-            totalVal += val;
+            if (val>=0) {
+                double wIrr = (val * this.soil.getSoilTypeArea())/areaSum;
+                summaryReport.setWeighted1In10IrrRequired(i, wIrr);                
+                totalVal += val;
+            }
+        
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
+        //str = "-";
         designDataCell(table, str);
-        bwOutputSummaryFile1.add(table);
+        summaryTables.add(table);
+        // bwOutputSummaryFile1.add(table);
     }
 
     private void createTableHeader(PdfPTable table) {
@@ -2426,7 +2625,7 @@ public class AFSIRSUtils {
         PdfPCell cell;
         double totalVal;
         String str;
-        bwOutputSummaryFile1.add(new Paragraph("\r\n"));
+        //bwOutputSummaryFile1.add(new Paragraph("\r\n"));
         table = new PdfPTable(14);
 
         table.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
@@ -2444,15 +2643,17 @@ public class AFSIRSUtils {
                 val = (val * area * 27154);
                 val = (val / 1000000);
                 str = String.format("%12.2f", val);
+                totalVal += val;
             } else {
                 str = String.format("%12.2f", val);
             }
-            totalVal += val;
+            
             str = String.format("%6.2f", val);
             designDataCell(table, str);
 
         }
         str = String.format("%6.2f", totalVal);
+        //str = "-";
         designDataCell(table, str);
 
         /**
@@ -2466,14 +2667,16 @@ public class AFSIRSUtils {
                 val = (val * area * 27154);
                 val = (val / 1000000);
                 str = String.format("%12.2f", val);
+                totalVal += val;
             } else {
                 str = String.format("%12.2f", val);
             }
-            totalVal += val;
+
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
+        //str = "-";
         designDataCell(table, str);
         /**
          * *********1-in-10 Irrigation Required************
@@ -2486,16 +2689,19 @@ public class AFSIRSUtils {
                 val = (val * area * 27154);
                 val = (val / 1000000);
                 str = String.format("%12.2f", val);
+                totalVal += val;
             } else {
                 str = String.format("%12.2f", val);
             }
-            totalVal += val;
+            
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
+        //str = "-";
         designDataCell(table, str);
-        bwOutputSummaryFile1.add(table);
+        summaryTables.add(table);
+        //bwOutputSummaryFile1.add(table);
         return table;
     }
 
