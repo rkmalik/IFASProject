@@ -747,7 +747,7 @@ public class SWFrame extends javax.swing.JFrame {
         
         if (jRadioKeyboard.isSelected() || jRadioFile.isSelected()) {
             // The Soil name will be Empty
-            Soil soil = new Soil(ISOIL, SNAME, SNAME, NL);
+            Soil soil = new Soil(ISOIL, SNAME, "", "", SNAME, NL);
             soil.setValues(WC, WCL, WCU, DU, TXT);
             soilData.addSoil(jRadioKeyboard.isSelected()? Messages.KEYBOARD_KEY : Messages.FILE_KEY, soil);
             utils.setSoilData(soilData);
@@ -1300,6 +1300,8 @@ public class SWFrame extends javax.swing.JFrame {
         
         for (JsonNode n : soils) {
             String soilName = n.path("soilName").textValue();
+            String soilSeriesKey=n.path("mukey").textValue();
+            String compKey=n.path("cokey").textValue();
             String soilSeriesName = n.path("mukeyName").textValue();
             String soilTypeArea = n.path("compArea").textValue();
             JsonNode soilLayersNodes = n.path("soilLayer");
@@ -1330,8 +1332,8 @@ public class SWFrame extends javax.swing.JFrame {
                 wc[NL] = Math.floor(wc[NL]*1000)/1000;
                 NL++;
             }
-        
-            Soil soil = new Soil (row, soilName, soilSeriesName, NL);
+            // soilSeriesKey
+            Soil soil = new Soil (row, soilName, soilSeriesKey, compKey, soilSeriesName, NL);
             soil.setValues(wc, wcl, wcu, du, txt);
             
             if (soilTypeArea!=null)
@@ -1361,18 +1363,22 @@ public class SWFrame extends javax.swing.JFrame {
         JsonNode soils = root.path("soils");
         
         String fileName = theNewestFile.getName();
-        str+= "Data File Name: " + fileName+"\n";
+        str+= "Data File Name: " + fileName+"\n\n";
         for (JsonNode n : soils) {
             
             //Soil soil = new Soil ();
             
             String soilName = n.path("soilName").textValue();
+            String soilSeriesKey=n.path("mukey").textValue();
+            String compKey=n.path("cokey").textValue();
             String soilTypeArea = n.path("compArea").textValue();
             String soilSeriesName = n.path("mukeyName").textValue();
             
-            str += "Soil Seires Name = " + soilSeriesName + "\n";
+            str += "Soil Series Code = " + soilSeriesKey + "\n";
+            str += "Soil Series Name = " + soilSeriesName + "\n";
             str += "Soil Name = " + soilName + "\n";
-            str += "Soil Area= " + soilTypeArea + " (acres)\n";
+            str += "Soil Comp Code = " + compKey + "\n";
+            str += "Soil Comp Area = " + soilTypeArea + " (acres)\n";
             
             int numberOfLayers = 0;
             //String layerDetails = "";

@@ -12,6 +12,10 @@ package org.agmip.ui.afsirs.util;
 public class Soil {
         int ID;
         String SNAME;
+        String SOILSERIESKEY;
+
+
+        String COMPKEY;
         String SERIESNAME;
         String[] TXT = new String[3];
         int NL;
@@ -22,9 +26,11 @@ public class Soil {
         double soilTypeArea;
 
 
-        public Soil(int id, String name, String seriesName, int nl){
+        public Soil(int id, String name, String soilSeriesKey, String compKey, String seriesName, int nl){
             ID = id;
             SNAME = name;
+            SOILSERIESKEY = soilSeriesKey;
+            COMPKEY = compKey;
             SERIESNAME = seriesName;
             NL = nl;
         }
@@ -63,7 +69,14 @@ public class Soil {
         public int getNL(){
             return NL;
         }
+        
+        public String getSOILSERIESKEY() {
+            return SOILSERIESKEY;
+        }
 
+        public String getCOMPKEY() {
+            return COMPKEY;
+        }
 
         public void setSoilTypeArea (double soilTypeArea) {
             this.soilTypeArea = soilTypeArea;

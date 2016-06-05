@@ -80,6 +80,10 @@ public class SummaryReport {
             this.averageIrrigationRequired.add(0.0);
             this.twoin10IrrigationRequired.add(0.0);
             this.onein10IrrigationRequired.add(0.0);
+            
+            this.weightedAverageIrrRequired.add(0.0);
+            this.weighted2In10IrrRequired.add(0.0);
+            this.weighted1In10IrrRequired.add(0.0);
         }
     }
 
@@ -190,13 +194,13 @@ public class SummaryReport {
     }
      
     public void setWeightedAvgIrrRequired (int month, double val) {
-        this.weightedAverageIrrRequired.set(month-1, this.weightedAverageIrrRequired.get(month-1)+val);
+        this.weightedAverageIrrRequired.set(month-1, weightedAverageIrrRequired.get(month-1) + val);
     }
     public void setWeighted2In10IrrRequired (int month, double val) {
-        this.weighted2In10IrrRequired.set(month-1, this.weighted2In10IrrRequired.get(month-1)+val);
+        this.weighted2In10IrrRequired.set(month-1, weighted2In10IrrRequired.get(month-1) + val);
     }
     public void setWeighted1In10IrrRequired (int month, double val) {
-        this.weighted1In10IrrRequired.set(month-1, this.weighted1In10IrrRequired.get(month-1)+val);
+        this.weighted1In10IrrRequired.set(month-1, weighted1In10IrrRequired.get(month-1) + val);
     }
     
     public double getWeightedAvgIrrRequired (int month) {

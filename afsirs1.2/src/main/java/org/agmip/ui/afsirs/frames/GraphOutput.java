@@ -95,9 +95,9 @@ public class GraphOutput extends javax.swing.JFrame {
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
-        jTabbedPane1.addTab("Month-Graph", chartPanel);
+        jTabbedPane1.addTab("Irrigation Requirement", chartPanel);
         
-        if (utils.getICODE() >= 0) {
+        /*if (utils.getICODE() >= 0) {
 
             JFreeChart chart1 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "BI-WEEK", "IRR", createDataset(1), PlotOrientation.VERTICAL, true, true, false);
             JFreeChart chart2 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "WEEK", "IRR", createDataset(2), PlotOrientation.VERTICAL, true, true, false);
@@ -121,7 +121,7 @@ public class GraphOutput extends javax.swing.JFrame {
             ChartPanel chartPanel2 = new ChartPanel(chart2);
             chartPanel2.setPreferredSize(new java.awt.Dimension(600, 270));
             jTabbedPane1.addTab("Weekly Graph", chartPanel2);
-        }
+        }*/
     }
     
     public void addRain () {

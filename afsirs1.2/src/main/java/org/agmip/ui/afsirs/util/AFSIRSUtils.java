@@ -1744,7 +1744,7 @@ public class AFSIRSUtils {
                 String row = String.format("                 %4d%-16.2f%8.2f%8.2f" + EOL, i + 1, AETP[i][0], ARAIN[i][0], AIRR[i][0]);
                 writeOutput(row);
                 AI[i] = AIRR[i][0];
-                
+             
                 
             }
         } else {
@@ -1875,7 +1875,7 @@ public class AFSIRSUtils {
                     statResult.XMEAN, statResult.XMED, statResult.XCV, statResult.XMAX, statResult.XMIN, probResult.X00, probResult.RSQ,
                     probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[imo], TETP[imo], TET[imo], TDR[imo]);
             
-            //System.out.println (str);
+            System.out.println (str);
             writeOutput(str + EOL);
 
             summaryReport.reset ();
@@ -1895,7 +1895,9 @@ public class AFSIRSUtils {
                 for (int i = 0; i < NYR; i++) {
                     String row = String.format("                 %4d%8.2f%8.2f%8.2f" + EOL, i + 1, AETP[i][imo], ARAIN[i][imo], AIRR[i][imo]);
                     writeOutput(row);
-                    summaryReport.setPeakMonthlyEvaporation(imo+1, AETP[i][imo]);
+                    if (imo+1 >= MO1 && imo+1 <=MON) {
+                        summaryReport.setPeakMonthlyEvaporation(imo+1, AETP[i][imo]);
+                    }
                     summaryReport.addTotalIrrigationRequiredByMonth(imo+1, AIRR[i][imo]);  
                     
                 }
@@ -2188,13 +2190,13 @@ public class AFSIRSUtils {
             }
         }
         
-        //Don't Delete the below commented code. This is very important for reference
+        //Don'tIn Delete the below commented code. This is very important for reference
         
         /*SW();
         String txt = "";
-        for (String t : TXT) {
-            if (t != null) {
-                txt += t + " ";
+        for (String tIn : TXT) {
+            if (tIn != null) {
+                txt += tIn + " ";
             }
         }
         writeOutput(EOL + EOL + "     SOIL :  SERIES = " + SNAME + "         TEXTURE = " + txt + EOL + EOL);
@@ -2223,16 +2225,24 @@ public class AFSIRSUtils {
         try {
    
             ArrayList<Soil> soils = soilData.getSoils();
+
+            
             soilFractions = new double[soils.size()];
             soilArea = new double[soils.size()];
+            
             int i = 0;
+            for (Soil soil : soils) {
+                soilArea [i] = soil.getSoilTypeArea();
+                i++;
+            }
+            
+            i = 0;
             for (Soil soil : soils) {
                 //setSoilData(soil);
                 this.soil = soil;
                 if(i>0)
                     soilFractions[i] = soilFractions[i-1];
-                soilFractions[i]+=soil.getSoilTypeArea();
-                soilArea [i] = soil.getSoilTypeArea();
+                soilFractions[i]+=soil.getSoilTypeArea();                
                 
                 SNAME = soil.getName();
                 TXT = soil.getTXT();
@@ -2259,13 +2269,16 @@ public class AFSIRSUtils {
                 // This is for the weighted Average of the irrigation
                 bwOutputSummaryFile.add(summaryTables.get(1));
                 bwOutputSummaryFile.add(new Paragraph("\r\n"));
-
+                
+                // This is for the weighted Average of the irrigation
+                bwOutputSummaryFile.add(summaryTables.get(2));
+                bwOutputSummaryFile.add(new Paragraph("\r\n"));
             }
-            for(int inx = 2; inx <summaryTables.size(); inx++) {
+            for(int inx = 3; inx <summaryTables.size(); inx++) {
                 PdfPTable t =summaryTables.get(inx);
                 bwOutputSummaryFile.add(t);
             }
-            
+
             bwOutputFile.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -2345,62 +2358,117 @@ public class AFSIRSUtils {
     }
 
     private void prepareWeightedAverageTable () throws DocumentException {
-        PdfPTable table = new PdfPTable(14);
+        PdfPTable tableWeightedInches = new PdfPTable(14);
 
-        table.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
-        designTableTitleCell(table, "Irrigation Weighted Average");
-        createTableHeader(table);
-        summaryTables.add(table);
+        tableWeightedInches.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
+        designTableTitleCell(tableWeightedInches, "Irrigation Weighted Average (Inches)");
+        createTableHeader(tableWeightedInches);
+        summaryTables.add(tableWeightedInches);
+        
+        PdfPTable tableWeightedGallon = new PdfPTable(14);
+        tableWeightedGallon.setTotalWidth(new float[]{190, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 120});
+        designTableTitleCell(tableWeightedGallon, "Irrigation Weighted Average (Gallons)");
+        createTableHeader(tableWeightedGallon);
+        summaryTables.add(tableWeightedGallon);
     }
     
     private void  setIrrigationWeightedAverage () throws DocumentException {
-        PdfPTable t = summaryTables.get(1);
+        PdfPTable tIn = summaryTables.get(1);
+        PdfPTable tGa = summaryTables.get(2);
 
-        designRowTitleCell(t, "Avg Irr Req");
+        designRowTitleCell(tIn, "Avg Irr Req");
+        designRowTitleCell(tGa, "Avg Irr Req");
 
         double totalVal = 0.0;
+        double totalValGa = 0.0;
         String str = "";
         
         // Find the weighted average of the irrigation
-        for ( int i = 1; i <=12; i++) {            
+        for ( int i = 1; i <=12; i++) {
             double irr = summaryReport.getWeightedAvgIrrRequired(i);
-            str =  String.format("%6.2f", irr);;
-            designDataCell(t, String.valueOf(str));
+            double irrGa = irr * PLANTEDACRES * 27154;
+            irrGa = irrGa / 1000000;
+
+            str =  String.format("%6.2f", irr);
+            designDataCell(tIn, String.valueOf(str));
             if (irr>=0){
                 totalVal += irr;
             }
-        }
-        str = String.format("%6.2f", totalVal);
-        designDataCell(t, str);
 
-        designRowTitleCell(t, "2-In-10 Irr Req");
+            str =  String.format("%6.2f", irrGa);
+            designDataCell(tGa, String.valueOf(str));
+            if (irrGa>=0){
+                totalValGa += irrGa;
+            }
+        }
+
+        str = String.format("%6.2f", totalVal);
+        designDataCell(tIn, str);
+
+        str = String.format("%6.2f", totalValGa);
+        designDataCell(tGa, str);
+        
+        designRowTitleCell(tIn, "2-In-10 Irr Req");
+        designRowTitleCell(tGa, "2-In-10 Irr Req");
+
         totalVal=0.0;
+        totalValGa=0.0;
+
         // Find the weighted average of the irrigation
         for ( int i = 1; i <=12; i++) {            
             double irr = summaryReport.getWeighted2In10IrrRequired(i);
+
+            
+            
             str =  String.format("%6.2f", irr);;
-            designDataCell(t, String.valueOf(str));
+            designDataCell(tIn, String.valueOf(str));
             
             if (irr>=0){
                 totalVal += irr;
             }
+            
+            double irrGa = irr * PLANTEDACRES * 27154;
+            irrGa = irrGa / 1000000;
+            str =  String.format("%6.2f", irrGa);
+            designDataCell(tGa, String.valueOf(str));
+            if (irrGa>=0){
+                totalValGa += irrGa;
+            }
         }
         str = String.format("%6.2f", totalVal);
-        designDataCell(t, str);
+        designDataCell(tIn, str);
+        
+        str = String.format("%6.2f", totalValGa);
+        designDataCell(tGa, str);
 
-        designRowTitleCell(t, "1-In-10 Irr Req");
+        designRowTitleCell(tIn, "1-In-10 Irr Req");
+        designRowTitleCell(tGa, "1-In-10 Irr Req");
+        
         totalVal=0.0;
+        totalValGa=0.0;
+
         // Find the weighted average of the irrigation
         for ( int i = 1; i <=12; i++) {            
             double irr = summaryReport.getWeighted1In10IrrRequired(i);
             str =  String.format("%6.2f", irr);
-            designDataCell(t, String.valueOf(str));
+            designDataCell(tIn, String.valueOf(str));
             if (irr>=0){
                 totalVal += irr;
             }
+            
+            double irrGa = irr * PLANTEDACRES * 27154;
+            irrGa = irrGa / 1000000;
+            str =  String.format("%6.2f", irrGa);
+            designDataCell(tGa, String.valueOf(str));
+            if (irrGa>=0){
+                totalValGa += irrGa;
+            }
         }
+
         str = String.format("%6.2f", totalVal);
-        designDataCell(t, str);
+        designDataCell(tIn, str);
+        str = String.format("%6.2f", totalValGa);
+        designDataCell(tGa, str);
     }
     
     private void finalSummaryOutput() {
@@ -2420,7 +2488,7 @@ public class AFSIRSUtils {
             addParagraphToTableSoilName(t, " ", " ");
             addParagraphToTableSoilName(t, "Soil Series Name : ", SNAME);
             summaryTables.add(t);
-            //bwOutputSummaryFile.add(t);
+            //bwOutputSummaryFile.add(tIn);
             
             infoInInches(bwOutputSummaryFile, summaryReport);
             probablityInfoInGallons(bwOutputSummaryFile, summaryReport, area);
@@ -2514,20 +2582,18 @@ public class AFSIRSUtils {
         designRowTitleCell(table, "Peak ET");
         totalVal = 0.0;
         str = "";
+
         for (int i = 1; i <= 12; i++) {
             double val = summaryReport1.getPeakEvaporationByMonth(i);
-            
             if (val>=0)
                 totalVal += val;
-            
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
         designDataCell(table, str);
-        designDataCell(table, "-");
         summaryTables.add(table);
-        //bwOutputSummaryFile1.add(table);
+        
     }
 
     private void infoInInches(Document bwOutputSummaryFile1, SummaryReport summaryReport1) throws DocumentException {
@@ -2564,13 +2630,10 @@ public class AFSIRSUtils {
                 summaryReport.setWeightedAvgIrrRequired(i, wIrr);                
                 totalVal += val;
             }
-
-            
             str = String.format("%6.2f", val);
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
-        //str = "-";
         designDataCell(table, str);
         /**
          * *********2-in-10 Irrigation Required************
@@ -2589,7 +2652,6 @@ public class AFSIRSUtils {
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
-        //str = "-";
         designDataCell(table, str);
         /**
          * *********1-in-10 Irrigation Required************
@@ -2608,10 +2670,8 @@ public class AFSIRSUtils {
             designDataCell(table, str);
         }
         str = String.format("%6.2f", totalVal);
-        //str = "-";
         designDataCell(table, str);
         summaryTables.add(table);
-        // bwOutputSummaryFile1.add(table);
     }
 
     private void createTableHeader(PdfPTable table) {
