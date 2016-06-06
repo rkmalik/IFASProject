@@ -50,9 +50,9 @@ public class GraphOutput extends javax.swing.JFrame {
     
     public void init(){
         addGraph();
-        addEvaporationAndTranspiration();
-        addRain();
-        //addWeather();
+        //addEvaporationAndTranspiration();
+        //addRain();
+        addWeather();
     }
     
 

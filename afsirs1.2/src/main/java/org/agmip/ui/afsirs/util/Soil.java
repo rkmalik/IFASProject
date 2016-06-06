@@ -26,9 +26,9 @@ public class Soil {
         double soilTypeArea;
 
 
-        public Soil(int id, String name, String soilSeriesKey, String compKey, String seriesName, int nl){
+        public Soil(int id, String soilCompName, String soilSeriesKey, String compKey, String seriesName, int nl){
             ID = id;
-            SNAME = name;
+            SNAME = soilCompName;
             SOILSERIESKEY = soilSeriesKey;
             COMPKEY = compKey;
             SERIESNAME = seriesName;
