@@ -145,6 +145,9 @@ public class AFSIRSUtils {
 
     //Soil Data
     String SNAME;
+    String SOILSMAPUNITCODE;
+    String SOILCOMPCODE;
+    
     String[] TXT;
     double[] DU, WCL, WCU, WC;
     int NL;
@@ -166,7 +169,8 @@ public class AFSIRSUtils {
     Document bwOutputSummaryFile;
     ArrayList<PdfPTable> summaryTables;
     private double[] soilFractions;
-    private double[] soilArea;
+    static private double[] soilArea;
+    private double totalArea;
     private Soil soil;
     private SoilData soilData;
 
@@ -1886,7 +1890,28 @@ public class AFSIRSUtils {
             summaryReport.setTwoin10IrrigationRequired(imo+1, probResult.X80);
             summaryReport.setOnein10IrrigationRequired(imo+1, probResult.X90);
             
-            pdat.PDATM[imo] = statResult.XMEAN;
+            //pdat.PDATM[imo] = statResult.XMEAN;
+            
+            if (probResult.X50>=0) {
+                pdat.PDATM[imo] = probResult.X50;
+            } else {
+                pdat.PDATM[imo] = 0.0;
+            }
+
+            if (probResult.X80>=0) {
+                pdat.PDATBW[imo] = probResult.X80;
+            } else {
+                pdat.PDATBW[imo] = 0.0;
+            }
+
+            if (probResult.X90>=0) {
+                pdat.PDATW[imo] = probResult.X90;                
+            } else {
+                pdat.PDATW[imo] = 0.0;
+            }
+            
+            System.out.println (" Mean" + probResult.X50 + " 2-In-10" + probResult.X80 + " 1-In-10" + probResult.X90);
+
             PDATM[imo] = statResult.XMEAN;
             if (ICODE >= 1) {
                 writeOutput(EOL + "                            MONTH = " + (imo + 1) + EOL);
@@ -1957,7 +1982,7 @@ public class AFSIRSUtils {
                         probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[i2w], TETP[i2w], TET[i2w], TDR[i2w]);
                 writeOutput(str + EOL);
                 PDATBW[i2w] = statResult.XMEAN;
-                pdat.PDATBW[i2w] = statResult.XMEAN;
+                //pdat.PDATBW[i2w] = statResult.XMEAN;
                 if (ICODE >= 1) {
                     writeOutput(EOL + "                       2-WEEK PERIOD = " + (i2w + 1) + EOL);
                     writeOutput("               SUMMARY OF WATER BUDGET COMPONENTS" + EOL);
@@ -2024,7 +2049,7 @@ public class AFSIRSUtils {
                         probResult.X50, probResult.X80, probResult.X90, probResult.X95, TRAIN[i7], TETP[i7], TET[i7], TDR[i7]);
                 writeOutput(str + EOL);
                 PDATW[i7] = statResult.XMEAN;
-                pdat.PDATW[i7] = statResult.XMEAN;
+                //pdat.PDATW[i7] = statResult.XMEAN;
                 if (ICODE >= 1) {
                     writeOutput(EOL + "                       WEEKLY PERIOD = " + (i7 + 1) + EOL);
                     writeOutput("               SUMMARY OF WATER BUDGET COMPONENTS" + EOL);
@@ -2038,6 +2063,7 @@ public class AFSIRSUtils {
         }
         pdat.soilName=SNAME;
         allSoilInfo.add(pdat);
+        System.out.println("Size of all Soil Data : "  + allSoilInfo.size());
     }
     
     
@@ -2229,10 +2255,13 @@ public class AFSIRSUtils {
             
             soilFractions = new double[soils.size()];
             soilArea = new double[soils.size()];
+            totalArea = 0.0;
+            System.out.println ("Size of the soilArea Array : "  + soilArea.length);
             
             int i = 0;
             for (Soil soil : soils) {
                 soilArea [i] = soil.getSoilTypeArea();
+                totalArea += soilArea[i];
                 i++;
             }
             
@@ -2245,6 +2274,11 @@ public class AFSIRSUtils {
                 soilFractions[i]+=soil.getSoilTypeArea();                
                 
                 SNAME = soil.getName();
+                SOILSMAPUNITCODE = soil.getSOILSERIESKEY();
+                SOILCOMPCODE = soil.getCOMPKEY();
+                
+                
+                
                 TXT = soil.getTXT();
                 DU = soil.getDU();
                 WCL = soil.getWCL();
@@ -2483,10 +2517,28 @@ public class AFSIRSUtils {
                 prepareWeightedAverageTable ();
             }
             
-            PdfPTable t = new PdfPTable(1);
-            addParagraphToTableSoilName(t, " ", " ");
-            addParagraphToTableSoilName(t, " ", " ");
+            PdfPTable t = new PdfPTable(3);
+            for ( int i = 0; i < 6; i++) {
+                addParagraphToTableSoilName(t, " ", " ");
+                addParagraphToTableSoilName(t, " ", " ");                
+            }
+
+                             
+
+            double soilPercent = 0.0;
+            
+            if (totalArea!=0) {
+                soilPercent = (soil.getSoilTypeArea()/totalArea);
+            }
+            
             addParagraphToTableSoilName(t, "Soil Series Name : ", SNAME);
+            addParagraphToTableSoilName(t, "Soil Map Unit Code : ", SOILSMAPUNITCODE);
+            addParagraphToTableSoilName(t, "Soil Component Code : ", SOILCOMPCODE);
+            addParagraphToTableSoilName(t, "Soil Percentage : ", String.format("%6.2f", soilPercent));
+            addParagraphToTableSoilName(t, " ", " ");
+            addParagraphToTableSoilName(t, " ", " ");
+            
+            
             summaryTables.add(t);
             //bwOutputSummaryFile.add(tIn);
             
@@ -2830,6 +2882,9 @@ class STATResult {
 class PDAT {
     String soilName = "";
     Double[] PDATM = new Double[12];
-    Double[] PDATBW = new Double[26];
-    Double[] PDATW = new Double[52];
+    Double[] PDATBW = new Double[12];
+    Double[] PDATW = new Double[12];
+
+    //Double[] PDATBW = new Double[26];
+    //Double[] PDATW = new Double[52];
 }

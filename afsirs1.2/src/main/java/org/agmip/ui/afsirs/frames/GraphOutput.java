@@ -73,7 +73,11 @@ public class GraphOutput extends javax.swing.JFrame {
         for (int i = 0; i < PDATA.get(0).getSoilDataPoints().length; i++) {
             for (int j = 0; j < PDATA.size(); j++) {
                 dataset.addValue(PDATA.get(j).getSoilDataPoints()[i], PDATA.get(j).getSoilName(), "" + (i + 1));
-                avg+=PDATA.get(j).getSoilDataPoints()[i]*soilArea[j];
+                Double res = PDATA.get(j).getSoilDataPoints()[i];
+                
+                //System.out.println ("Size of the DataSet array : "  + soilArea.length + " Current Index : " + j);
+                res = res*soilArea[j];
+                avg+= res;
             }
             avg /= areaSum;
             dataset.addValue(avg, "Weighted Avg", ""+(i+1));
@@ -97,10 +101,14 @@ public class GraphOutput extends javax.swing.JFrame {
         chartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
         jTabbedPane1.addTab("Irrigation Requirement", chartPanel);
         
-        /*if (utils.getICODE() >= 0) {
+        if (utils.getICODE() >= 0) {
 
-            JFreeChart chart1 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "BI-WEEK", "IRR", createDataset(1), PlotOrientation.VERTICAL, true, true, false);
-            JFreeChart chart2 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "WEEK", "IRR", createDataset(2), PlotOrientation.VERTICAL, true, true, false);
+            //JFreeChart chart1 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "BI-WEEK", "IRR", createDataset(1), PlotOrientation.VERTICAL, true, true, false);
+            //JFreeChart chart2 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "WEEK", "IRR", createDataset(2), PlotOrientation.VERTICAL, true, true, false);
+            JFreeChart chart1 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "1-In-10", "IRR", createDataset(1), PlotOrientation.VERTICAL, true, true, false);
+            JFreeChart chart2 = ChartFactory.createBarChart("IRRIGATION REQUIREMENTS(INCHES)", "2-In-10", "IRR", createDataset(2), PlotOrientation.VERTICAL, true, true, false);
+
+            
             chart1.setBackgroundPaint(Color.white);
             chart2.setBackgroundPaint(Color.white);
 
@@ -116,12 +124,14 @@ public class GraphOutput extends javax.swing.JFrame {
 
             ChartPanel chartPanel1 = new ChartPanel(chart1);
             chartPanel1.setPreferredSize(new java.awt.Dimension(600, 270));
-            jTabbedPane1.addTab("Bi-Week Graph", chartPanel1);
+            //jTabbedPane1.addTab("Bi-Week Graph", chartPanel1);
+            jTabbedPane1.addTab("1-In-10", chartPanel1);
 
             ChartPanel chartPanel2 = new ChartPanel(chart2);
             chartPanel2.setPreferredSize(new java.awt.Dimension(600, 270));
-            jTabbedPane1.addTab("Weekly Graph", chartPanel2);
-        }*/
+            //jTabbedPane1.addTab("Weekly Graph", chartPanel2);
+            jTabbedPane1.addTab("2-In-10", chartPanel2);
+        }
     }
     
     public void addRain () {
