@@ -60,6 +60,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
     private boolean fileChecked = false;
     private int IDCODE;
     private InputStreamReader climIR;
+    
 
     public SiteInfoFrame() {
         initComponents();
@@ -913,6 +914,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
 
         String outFile = siteNameTextBox.getText()+"-"+siteUnitName.getText();
         String outFileSummary = siteNameTextBox.getText()+"-"+siteUnitName.getText()+"-Summary.pdf";
+        String outFileSummaryExcel = siteNameTextBox.getText()+"-"+siteUnitName.getText()+"-Summary.xlsx";
 
         Date date = new Date();
         String siteName = siteNameTextBox.getText();
@@ -1091,6 +1093,7 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         //IDCODE, FIX, PIR, IVERS, CLIMFIL, IR, ARZI, EXIR
         utils.setOutFile(outFile);
         utils.setSummaryFile(outFileSummary);
+        utils.setSummaryFileExcel(outFileSummaryExcel);        
         utils.setUNIT(unitName);
         utils.setOWNER(ownerSName);
         utils.setTodayDate(date);
@@ -1136,6 +1139,8 @@ public class SiteInfoFrame extends javax.swing.JFrame {
         }
         utils.setIVERS(ivers == 0);
         if (climateLocationBox.getSelectedIndex() < climFileList.size()) {
+            String climateStation = (String)climateLocationBox.getSelectedItem();
+            utils.setCLIMATESTATION(climateStation);
             climateFile = climFileList.get(climateLocationBox.getSelectedIndex());
             climIR = new InputStreamReader(getClass().getResourceAsStream("/data/" + climateFile));
         }

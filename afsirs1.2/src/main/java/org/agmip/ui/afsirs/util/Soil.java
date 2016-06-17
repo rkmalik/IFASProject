@@ -27,11 +27,17 @@ public class Soil {
 
 
         public Soil(int id, String soilCompName, String soilSeriesKey, String compKey, String seriesName, int nl){
-            ID = id;
-            SNAME = soilCompName;
-            SOILSERIESKEY = soilSeriesKey;
-            COMPKEY = compKey;
+            
+            // SOil Series Name and the Soil Map Unit Code
             SERIESNAME = seriesName;
+            SOILSERIESKEY = soilSeriesKey;
+
+            // Soil Name and the Soil Code
+            SNAME = soilCompName;
+            COMPKEY = compKey;
+
+            
+            ID = id;
             NL = nl;
         }
 

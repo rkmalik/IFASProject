@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.awt.event.ItemEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -299,14 +300,14 @@ public class SWFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Layer", "<html><body>Depth from Soil surface to <br>bottom of layer(Inches)</body><html>", "<html><body>Volumetric Water Content<br>(0.01 - 0.90)</body></html>"
+                "Layer", "<html><body>Depth from Soil surface to <br>bottom of layer(Inches)</body><html>", "<html><body>Volumetric Water Content<br>(0.01 - 0.90)</body></html>", "(WCU-WCL)"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true
+                false, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -390,7 +391,6 @@ public class SWFrame extends javax.swing.JFrame {
         });
 
         buttonGroup1.add(jRadioFile);
-        jRadioFile.setSelected(true);
         jRadioFile.setText("Soil File");
         jRadioFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -412,6 +412,7 @@ public class SWFrame extends javax.swing.JFrame {
         jLabel3.setText("Soil Layer Characteristics");
 
         buttonGroup1.add(jRadioButtonSavedLocation);
+        jRadioButtonSavedLocation.setSelected(true);
         jRadioButtonSavedLocation.setText("Saved Location");
         jRadioButtonSavedLocation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -840,9 +841,9 @@ public class SWFrame extends javax.swing.JFrame {
             str += "Soil Name = " + SNAME + "\n";
             str += "Texture = " + TXT[0] + "\n";
             str += "Number of Layers = " + NL + "\n";
-            str += "    DU        WCL        WCU\n";
+            str += "    DU        WCL        WCU        (WCU-WCL)\n";
             for (int i = 0; i < NL; i++) {
-                str += (i + 1) + "  " + DU[i] + "       " + WCL[i] + "       " + WCU[i] + "\n";
+                str += (i + 1) + "  " + DU[i] + "       " + WCL[i] + "       " + WCU[i] + "       " + (WCU[i] - WCL[i]) + "\n";
             }
         }
         
@@ -986,11 +987,11 @@ public class SWFrame extends javax.swing.JFrame {
                 index = 0;
                 Soil soil = soilList.get(index);
                 for (int i = 0; i < soil.getNL(); i++) {
-                    Object[] vec = new Object[3];
+                    Object[] vec = new Object[4];
                     vec[0] = i + 1;
                     vec[1] = soil.getDU()[i];
-                    
                     vec[2] = soil.getWC()[i];
+                    vec[3] =  soil.getWCU()[i] - soil.getWCL()[i];
                     model.addRow(vec);
                     
                 }
@@ -1027,10 +1028,11 @@ public class SWFrame extends javax.swing.JFrame {
                 utils.setDefaultSoil(soil);
                 
                 for (int i = 0; i < soil.getNL(); i++) {
-                    Object[] vec = new Object[3];
+                    Object[] vec = new Object[4];
                     vec[0] = i + 1;
                     vec[1] = soil.getDU()[i];
                     vec[2] = soil.getWC()[i];
+                    vec[3] = (WCU[i]-WCL[i]);
                     model.addRow(vec);
                     
                 }
@@ -1090,10 +1092,12 @@ public class SWFrame extends javax.swing.JFrame {
             utils.setDefaultSoil(soil);
             
             for (int i = 0; i < soil.getNL(); i++) {
-                Object[] vec = new Object[3];
+                Object[] vec = new Object[4];
                 vec[0] = i + 1;
                 vec[1] = soil.getDU()[i];
                 vec[2] = soil.getWC()[i];
+                DecimalFormat df = new DecimalFormat("####0.000");
+                vec[3] = df.format(WCU[i]-WCL[i]);
                 model.addRow(vec);
             }
         }
@@ -1197,7 +1201,6 @@ public class SWFrame extends javax.swing.JFrame {
                     updateSoilDataBaseOnSoilFileSelection (i++);
                 }
             }
-            
             //updateSoilDataBaseOnSoilFileSelection (0);
             updateSoilInfoAndSoilLayerInfo (0);
             prevButtonSelectedSavedLocation = true;
@@ -1299,11 +1302,15 @@ public class SWFrame extends javax.swing.JFrame {
         ArrayList<Soil> soilList = new ArrayList<Soil> ();
         
         for (JsonNode n : soils) {
-            String soilName = n.path("soilName").textValue();
-            String soilSeriesKey=n.path("mukey").textValue();
-            String compKey=n.path("cokey").textValue();
+
             String soilSeriesName = n.path("mukeyName").textValue();
+            String soilSeriesKey=n.path("mukey").textValue();
+
+            String soilName = n.path("soilName").textValue();
+            String compKey=n.path("cokey").textValue();
+
             String soilTypeArea = n.path("compArea").textValue();
+
             JsonNode soilLayersNodes = n.path("soilLayer");
             
             int NL = 0;
@@ -1368,11 +1375,13 @@ public class SWFrame extends javax.swing.JFrame {
             
             //Soil soil = new Soil ();
             
-            String soilName = n.path("soilName").textValue();
-            String soilSeriesKey=n.path("mukey").textValue();
-            String compKey=n.path("cokey").textValue();
-            String soilTypeArea = n.path("compArea").textValue();
             String soilSeriesName = n.path("mukeyName").textValue();
+            String soilSeriesKey = n.path("mukey").textValue();
+
+            String soilName = n.path("soilName").textValue();
+            String compKey = n.path("cokey").textValue();
+
+            String soilTypeArea = n.path("compArea").textValue();
             
             str += "Soil Series Code = " + soilSeriesKey + "\n";
             str += "Soil Series Name = " + soilSeriesName + "\n";
@@ -1393,17 +1402,17 @@ public class SWFrame extends javax.swing.JFrame {
             String formatter = "%2s%-15s%-15s%-15s\n";
             for (JsonNode node : soilLayersNodes) {
                 double slll_wcl= node.get("slll").asDouble()/100.00;
-                wcl = String.format("%.3f", slll_wcl);
+                //wcl = String.format("%.3f", slll_wcl);
                 double sllb_du= node.get("sllb").asDouble()*0.39370;
-                du = String.format("%.3f", sllb_du);
+                //du = String.format("%.3f", sllb_du);
                 double sldul_wcu = node.get("sldul").asDouble()/100.00;
+                //wcu = String.format("%.3f", sldul_wcu);
 
-                wcu = String.format("%.3f", sldul_wcu);
-                strTmp +=  String.format ("%-5d%-25.3f%-25.3f%-25.3f\n", ++numberOfLayers, sllb_du, slll_wcl,  sldul_wcu);
+                strTmp +=  String.format ("%5d        %-20.3f     %-20.3f     %-20.3f     %-20.3f\n", ++numberOfLayers, sllb_du, slll_wcl,  sldul_wcu, (sldul_wcu-slll_wcl));
             }
             
             str += "Number of Layers = " + numberOfLayers + "\n";
-            str+= String.format ("%-5s%-15s%-15s%-15s\n", "LN", "DU(inches)", "WCL", "WCU\n");
+            str+= String.format ("%5s      %-20s %-20s  %-20s  %-20s\n", "LN", "DU(inches)", "WCL", "WCU", "(WCU - WCL)");
             //str += "LN   DU(inches)   WCL(inches)   WCU(inches)\n";
             str+= strTmp;
             str+= "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" ;
@@ -1413,7 +1422,6 @@ public class SWFrame extends javax.swing.JFrame {
         return str;
     }
     public void readFromFile(int code) throws IOException {
-
         BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/data/soil.dat")));
         br.readLine();
         br.readLine();
@@ -1452,7 +1460,6 @@ public class SWFrame extends javax.swing.JFrame {
             WC[i] =  Math.floor(WCL[i] * 100) / 100;
             i++;
         }
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

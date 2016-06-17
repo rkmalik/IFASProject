@@ -11,6 +11,8 @@ package org.agmip.ui.afsirs.util;
  */
 public class Messages {
     
+    private final static String EOL = "\r\n";
+    
     public static final int MAX_VERSION = 6;
     public static final int MIN_VERSION = 2;
     
@@ -44,16 +46,60 @@ public class Messages {
                         " "
     };
     
+    
+    public static final String DOC_HEADER_EXCEL = 
+                        "AGRICULTURAL" + EOL + 
+                        "FIELD"+ EOL +
+                        "SCALE"+ EOL +
+                        "IRRIGATION"+ EOL +
+                        "REQUIREMENTS"+ EOL +
+                        "SIMULATION" + EOL +
+                        "MODEL"+ EOL +
+                        "AFSIRS MODEL: INTERACTIVE VERSION " + Messages.MAX_VERSION+"."+Messages.MIN_VERSION+ EOL +
+                        "THIS MODEL SIMULATES IRRIGATION REQUIREMENTS"+ EOL +
+                        "FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS."+ EOL +
+                        "PROBABILITIES OF OCCURRENCE OF IRRIGATION REQUIREMENTS"+ EOL +
+                        "ARE CALCULATED USING HISTORICAL WEATHER DATA BASES"+ EOL +
+                        "FOR NINE FLORIDA LOCATIONS."+ EOL +
+                        "INSTRUCTIONS FOR THE USE OF THIS MODEL ARE GIVEN"+ EOL +
+                        "IN THE AFSIRS MODEL USER'S GUIDE."+ EOL +
+                        "DETAILS OF THE OPERATION OF THIS MODEL, ITS APPLICATIONS"+ EOL +
+                        "AND LIMITATIONS ARE GIVEN IN THE AFSIRS MODEL TECHNICAL MANUAL."+ EOL +
+                        "AFSIRS MODEL: INTERACTIVE VERSION "+Messages.MAX_VERSION+"."+Messages.MIN_VERSION+ EOL +
+                        "THIS MODEL SIMULATES IRRIGATION REQUIREMENTS"+ EOL +
+                        "FOR FLORIDA CROPS, SOILS, AND CLIMATE CONDITIONS."+ EOL +
+                        " "+ EOL +
+                        " ";
+    
     public static final String USER_DETAILS [] = {
                         "Owner : "  ,
                         "Site : ",
                         "Unit : ",
                         "Crop : ",
                         "Irrigation Method : ",
-                        "Planting Date : ",
-                        "Harvest Date : ",
+                        "Simulation Start Date : ",
+                        "Simulation End Date : ",
                         "Area (ACRES): ",
-                        ""
+                        "Climate Station : "
     };
+    
+        
+    public static final String USER_DETAILS_EXCEL [] = {
+                        "Owner"  ,
+                        "Site",
+                        "Unit",
+                        "Crop",
+                        "Irrigation Method",
+                        "Simulation Start Date",
+                        "Simulation End Date",
+                        "Area (ACRES)",
+                        "Climate Station"
+    };
+    
+    
+    public static final String FOOTNOTE [] = {
+                        "Avg Irrigation Requirement refers to 50% Probablity."  ,
+    };
+    
 
 }

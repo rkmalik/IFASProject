@@ -208,7 +208,6 @@
                                   <Group type="102" attributes="0">
                                       <EmptySpace min="-2" pref="185" max="-2" attributes="0"/>
                                       <Component id="climFileNameLabel" min="-2" pref="22" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace type="separate" max="-2" attributes="0"/>

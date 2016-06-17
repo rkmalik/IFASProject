@@ -290,9 +290,9 @@ public class GraphOutput extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jButton1 = new javax.swing.JButton();
-        outputButton = new javax.swing.JButton();
         rerunsimulation = new javax.swing.JButton();
         summaryButton = new javax.swing.JButton();
+        outputFileOptions = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RESULT");
@@ -306,13 +306,6 @@ public class GraphOutput extends javax.swing.JFrame {
             }
         });
 
-        outputButton.setText("Output");
-        outputButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                outputButtonActionPerformed(evt);
-            }
-        });
-
         rerunsimulation.setText("Re-Run Simulation");
         rerunsimulation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -320,12 +313,14 @@ public class GraphOutput extends javax.swing.JFrame {
             }
         });
 
-        summaryButton.setText("Summary");
+        summaryButton.setText("Browse");
         summaryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 summaryButtonActionPerformed(evt);
             }
         });
+
+        outputFileOptions.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Summary Pdf", "Summary Excel", "Output" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -338,10 +333,10 @@ public class GraphOutput extends javax.swing.JFrame {
                         .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1332, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(outputFileOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(summaryButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(outputButton)
-                        .addGap(30, 30, 30)
+                        .addGap(98, 98, 98)
                         .addComponent(rerunsimulation)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)))
@@ -353,9 +348,9 @@ public class GraphOutput extends javax.swing.JFrame {
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(outputButton)
                     .addComponent(rerunsimulation)
-                    .addComponent(summaryButton))
+                    .addComponent(summaryButton)
+                    .addComponent(outputFileOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 537, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(35, Short.MAX_VALUE))
@@ -375,16 +370,6 @@ public class GraphOutput extends javax.swing.JFrame {
         startFrame.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void outputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputButtonActionPerformed
-        // TODO add your handling code here:
-        File file = new File(utils.getOutFile());
-        try {
-            Desktop.getDesktop().open(file);
-        } catch (IOException e) {
-            System.out.println("Error Opening the outpt file !!");
-        }
-    }//GEN-LAST:event_outputButtonActionPerformed
-
     private void rerunsimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rerunsimulationActionPerformed
         AFSIRSUtils.resetData();
         this.setVisible(false);
@@ -395,7 +380,24 @@ public class GraphOutput extends javax.swing.JFrame {
     }//GEN-LAST:event_rerunsimulationActionPerformed
 
     private void summaryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summaryButtonActionPerformed
-        File file = new File(utils.getSummaryFile());
+        int index = outputFileOptions.getSelectedIndex();
+        String fileName = ""; 
+        switch (index) {
+            
+            case 0 : 
+                fileName += utils.getSummaryFile();
+                break;
+            case 1 : 
+                fileName += utils.getSummaryFileExcel();
+                break;
+            case 2 : 
+                fileName += utils.getOutFile();
+        }
+        
+        File file = new File(fileName);
+
+//        String fileName = utils.getSummaryFile();
+//        File file = new File(fileName);
         try {
             Desktop.getDesktop().open(file);
         } catch (IOException e) {
@@ -407,7 +409,7 @@ public class GraphOutput extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JButton outputButton;
+    private javax.swing.JComboBox<String> outputFileOptions;
     private javax.swing.JButton rerunsimulation;
     private javax.swing.JButton summaryButton;
     // End of variables declaration//GEN-END:variables
